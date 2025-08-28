@@ -48,21 +48,20 @@ class Pos extends CI_Controller
         }
         $data['store'] = $this->Store_model->get_current();
         $data['nota'] = $this->Payment_model->get_next_sale_id();
-        $data['members'] = $this->Member_model->get_all();
         $this->load->view('pos/index', $data);
     }
 
     /**
-     * Endpoint AJAX untuk pencarian member.
+     * Endpoint AJAX untuk mengambil detail member berdasarkan kode.
      */
-    public function member_search()
+    public function member_lookup()
     {
         $this->authorize();
-        $keyword = $this->input->get('q');
-        $members = $this->Member_model->search($keyword);
+        $kode = $this->input->get('kode');
+        $member = $this->Member_model->get_by_kode($kode);
         $this->output
             ->set_content_type('application/json')
-            ->set_output(json_encode($members));
+            ->set_output(json_encode($member));
     }
 
     /**
@@ -98,15 +97,22 @@ class Pos extends CI_Controller
         if (!$product) {
             redirect('pos');
         }
+        $qty = (int) $this->input->post('qty');
+        if (!$qty) {
+            $qty = (int) $this->input->get('qty');
+        }
+        if ($qty < 1) {
+            $qty = 1;
+        }
         $cart = $this->session->userdata('cart') ?: [];
         if (isset($cart[$id])) {
-            $cart[$id]['qty'] += 1;
+            $cart[$id]['qty'] += $qty;
         } else {
             $cart[$id] = [
                 'id'         => $product->id,
                 'nama_produk'=> $product->nama_produk,
                 'harga_jual' => $product->harga_jual,
-                'qty'        => 1
+                'qty'        => $qty
             ];
         }
         $this->session->set_userdata('cart', $cart);
@@ -169,11 +175,6 @@ class Pos extends CI_Controller
             return;
         }
         $customerId = $this->input->post('customer_id');
-        if (!$customerId) {
-            $this->session->set_flashdata('error', 'Customer wajib dipilih.');
-            redirect('pos');
-            return;
-        }
         $cart = $this->session->userdata('cart') ?: [];
         if (empty($cart)) {
             $this->session->set_flashdata('error', 'Keranjang kosong.');
