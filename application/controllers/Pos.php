@@ -175,6 +175,9 @@ class Pos extends CI_Controller
             return;
         }
         $customerId = $this->input->post('customer_id');
+        if (!is_numeric($customerId)) {
+            $customerId = null;
+        }
         $cart = $this->session->userdata('cart') ?: [];
         if (empty($cart)) {
             $this->session->set_flashdata('error', 'Keranjang kosong.');

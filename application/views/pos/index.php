@@ -210,7 +210,7 @@ var lookupUrl = '<?php echo site_url('pos/member_lookup'); ?>';
 
 if (typeSelect && typeSelect.value === 'non') {
     numberInput.value = 'non member';
-    document.getElementById('customer-id').value = 'non member';
+    document.getElementById('customer-id').value = '';
 }
 
 if (typeSelect) {
@@ -235,7 +235,7 @@ if (typeSelect) {
             nameInput.value = '';
             phoneInput.value = '';
             addressInput.value = '';
-            document.getElementById('customer-id').value = 'non member';
+            document.getElementById('customer-id').value = '';
         }
     });
 }
