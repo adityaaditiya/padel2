@@ -18,7 +18,7 @@
     </div>
     <div class="form-group">
         <label for="tanggal_booking">Tanggal</label>
-        <input type="date" name="tanggal_booking" id="tanggal_booking" class="form-control" value="<?php echo set_value('tanggal_booking', date('Y-m-d')); ?>" min="<?php echo date('Y-m-d'); ?>" required>
+        <input type="date" name="tanggal_booking" id="tanggal_booking" class="form-control" value="<?php echo set_value('tanggal_booking', date('Y-m-d')); ?>" min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d', strtotime('+2 months')); ?>" required>
     </div>
     <div class="form-group">
         <label for="jam_mulai">Jam Mulai</label>
