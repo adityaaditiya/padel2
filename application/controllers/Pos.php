@@ -98,15 +98,22 @@ class Pos extends CI_Controller
         if (!$product) {
             redirect('pos');
         }
+        $qty = (int) $this->input->post('qty');
+        if (!$qty) {
+            $qty = (int) $this->input->get('qty');
+        }
+        if ($qty < 1) {
+            $qty = 1;
+        }
         $cart = $this->session->userdata('cart') ?: [];
         if (isset($cart[$id])) {
-            $cart[$id]['qty'] += 1;
+            $cart[$id]['qty'] += $qty;
         } else {
             $cart[$id] = [
                 'id'         => $product->id,
                 'nama_produk'=> $product->nama_produk,
                 'harga_jual' => $product->harga_jual,
-                'qty'        => 1
+                'qty'        => $qty
             ];
         }
         $this->session->set_userdata('cart', $cart);
