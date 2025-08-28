@@ -14,6 +14,7 @@
         <select name="category" id="category" class="form-control">
             <option value="BON OPERASIONAL">BON OPERASIONAL</option>
             <option value="BON TRANSFER BANK">BON TRANSFER BANK</option>
+            <option value="BON OWNER">BON OWNER</option>
             <option value="DEBIT CREDIT CARD">DEBIT CREDIT CARD</option>
             <option value="MODAL">MODAL</option>
         </select>
