@@ -46,7 +46,7 @@ function booking_sort_url($field, $date, $status, $sort, $order)
         <?php foreach ($bookings as $b): ?>
             <tr>
                 <td><?php echo htmlspecialchars($b->tanggal_booking); ?></td>
-                <td><?php echo htmlspecialchars($b->id_court); ?></td>
+                <td><?php echo htmlspecialchars($b->nama_lapangan); ?></td>
                 <td><?php echo htmlspecialchars(date('H:i', strtotime($b->jam_mulai))); ?></td>
                 <td><?php echo htmlspecialchars(date('H:i', strtotime($b->jam_selesai))); ?></td>
                 <td><?php echo htmlspecialchars($b->kode_member); ?></td>
