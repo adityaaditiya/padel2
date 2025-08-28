@@ -42,7 +42,7 @@ class Members extends CI_Controller
         $this->authorize();
         $this->form_validation->set_rules('nama_lengkap', 'Nama Lengkap', 'required');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|callback_email_check');
-        $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required');
+        $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|callback_phone_check');
         $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
         $this->form_validation->set_rules('alamat', 'Alamat', 'required');
         $this->form_validation->set_rules('kecamatan', 'Kecamatan', 'required');
@@ -85,7 +85,7 @@ class Members extends CI_Controller
         $this->authorize();
         $this->form_validation->set_rules('nama_lengkap', 'Nama Lengkap', 'required');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|callback_email_check['.$id.']');
-        $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required');
+        $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|callback_phone_check['.$id.']');
         $this->form_validation->set_rules('alamat', 'Alamat', 'required');
         $this->form_validation->set_rules('kecamatan', 'Kecamatan', 'required');
         $this->form_validation->set_rules('kota', 'Kota', 'required');
@@ -148,7 +148,7 @@ class Members extends CI_Controller
 
         $this->form_validation->set_rules('nama_lengkap', 'Nama Lengkap', 'required');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|callback_email_check['.$id.']');
-        $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required');
+        $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|callback_phone_check['.$id.']');
         if ($this->input->post('password')) {
             $this->form_validation->set_rules('password', 'Password', 'min_length[6]');
         }
@@ -191,6 +191,15 @@ class Members extends CI_Controller
     {
         if ($this->User_model->email_exists($email, $id)) {
             $this->form_validation->set_message('email_check', 'Email sudah digunakan.');
+            return FALSE;
+        }
+        return TRUE;
+    }
+
+    public function phone_check($no_telepon, $id = NULL)
+    {
+        if ($this->User_model->phone_exists($no_telepon, $id)) {
+            $this->form_validation->set_message('phone_check', 'No telepon sudah digunakan.');
             return FALSE;
         }
         return TRUE;
