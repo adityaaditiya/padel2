@@ -207,11 +207,16 @@ var phoneInput = document.getElementById('modal-phone');
 var addressInput = document.getElementById('modal-address');
 var chooseBtn = document.getElementById('choose-member');
 var lookupUrl = '<?php echo site_url('pos/member_lookup'); ?>';
-
+  
+if (typeSelect && typeSelect.value === 'non') {
+    numberInput.value = 'non member';
+    document.getElementById('customer-id').value = 'non member';
+}
 if (typeSelect) {
     typeSelect.addEventListener('change', function() {
         if (this.value === 'member') {
             numberInput.disabled = false;
+            numberInput.value = '';
             nameInput.readOnly = true;
             phoneInput.readOnly = true;
             addressInput.readOnly = true;
@@ -221,7 +226,7 @@ if (typeSelect) {
             document.getElementById('customer-id').value = '';
             numberInput.focus();
         } else {
-            numberInput.value = '';
+            numberInput.value = 'non member';
             numberInput.disabled = true;
             nameInput.readOnly = false;
             phoneInput.readOnly = false;
@@ -229,7 +234,7 @@ if (typeSelect) {
             nameInput.value = '';
             phoneInput.value = '';
             addressInput.value = '';
-            document.getElementById('customer-id').value = '';
+            document.getElementById('customer-id').value = 'non member';
         }
     });
 }
