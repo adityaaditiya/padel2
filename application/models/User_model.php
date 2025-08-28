@@ -48,6 +48,24 @@ class User_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    public function email_exists($email, $exclude_id = NULL)
+    {
+        $this->db->where('email', $email);
+        if ($exclude_id !== NULL) {
+            $this->db->where('id !=', $exclude_id);
+        }
+        return $this->db->get($this->table)->num_rows() > 0;
+    }
+
+    public function phone_exists($no_telepon, $exclude_id = NULL)
+    {
+        $this->db->where('no_telepon', $no_telepon);
+        if ($exclude_id !== NULL) {
+            $this->db->where('id !=', $exclude_id);
+        }
+        return $this->db->get($this->table)->num_rows() > 0;
+    }
+
     public function update($id, $data)
     {
         return $this->db->where('id', $id)->update($this->table, $data);
