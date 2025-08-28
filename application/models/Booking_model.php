@@ -11,7 +11,7 @@ class Booking_model extends CI_Model
     public function get_by_date($date, $sort = 'jam_mulai', $order = 'asc')
     {
         $allowed = [
-            'id_court'       => 'bookings.id_court',
+            'id_court'       => 'courts.nama_lapangan',
             'kode_member'    => 'm.kode_member',
             'tanggal_booking'=> 'bookings.tanggal_booking',
             'jam_mulai'      => 'bookings.jam_mulai',
@@ -22,9 +22,10 @@ class Booking_model extends CI_Model
         ];
         $sort_field = isset($allowed[$sort]) ? $allowed[$sort] : $allowed['jam_mulai'];
         $order      = strtolower($order) === 'desc' ? 'desc' : 'asc';
-        return $this->db->select('bookings.*, m.kode_member')
+        return $this->db->select('bookings.*, m.kode_member, courts.nama_lapangan')
                         ->from($this->table)
                         ->join('member_data m', 'm.user_id = bookings.id_user', 'left')
+                        ->join('courts', 'courts.id = bookings.id_court', 'left')
                         ->where('bookings.tanggal_booking', $date)
                         ->where('bookings.status_booking !=', 'batal')
                         ->order_by($sort_field, $order)
@@ -35,7 +36,7 @@ class Booking_model extends CI_Model
     public function get_pending($sort = 'jam_mulai', $order = 'asc')
     {
         $allowed = [
-            'id_court'       => 'bookings.id_court',
+            'id_court'       => 'courts.nama_lapangan',
             'kode_member'    => 'm.kode_member',
             'tanggal_booking'=> 'bookings.tanggal_booking',
             'jam_mulai'      => 'bookings.jam_mulai',
@@ -46,9 +47,10 @@ class Booking_model extends CI_Model
         ];
         $sort_field = isset($allowed[$sort]) ? $allowed[$sort] : $allowed['jam_mulai'];
         $order      = strtolower($order) === 'desc' ? 'desc' : 'asc';
-        return $this->db->select('bookings.*, m.kode_member')
+        return $this->db->select('bookings.*, m.kode_member, courts.nama_lapangan')
                         ->from($this->table)
                         ->join('member_data m', 'm.user_id = bookings.id_user', 'left')
+                        ->join('courts', 'courts.id = bookings.id_court', 'left')
                         ->where('bookings.status_booking', 'pending')
                         ->order_by($sort_field, $order)
                         ->get()
