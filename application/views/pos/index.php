@@ -26,6 +26,7 @@
                     <th>Produk</th>
                     <th>Harga</th>
                     <th>Kategori</th>
+                    <th>Qty</th>
                     <th></th>
                 </tr>
             </thead>
@@ -35,7 +36,8 @@
                     <td><?php echo htmlspecialchars($p->nama_produk); ?></td>
                     <td>Rp <?php echo number_format($p->harga_jual, 0, ',', '.'); ?></td>
                     <td><?php echo htmlspecialchars($p->kategori); ?></td>
-                    <td><a href="<?php echo site_url('pos/add/'.$p->id); ?>" class="btn btn-sm btn-success">Tambah</a></td>
+                    <td><input type="number" value="1" min="1" class="form-control form-control-sm product-qty" data-id="<?php echo $p->id; ?>"></td>
+                    <td><button type="button" class="btn btn-sm btn-success add-to-cart" data-id="<?php echo $p->id; ?>">Tambah</button></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
@@ -154,14 +156,16 @@ var addUrl = '<?php echo site_url('pos/add/'); ?>';
 
 function renderProducts(items) {
     productsBody.innerHTML = '';
-    items.forEach(function(p) {
+    for (var i = 0; i < items.length; i++) {
+        var p = items[i];
         var tr = document.createElement('tr');
         tr.innerHTML = '<td>' + p.nama_produk + '</td>' +
                        '<td>Rp ' + Number(p.harga_jual).toLocaleString('id-ID') + '</td>' +
                        '<td>' + p.kategori + '</td>' +
-                       '<td><a href="' + addUrl + p.id + '" class="btn btn-sm btn-success">Tambah</a></td>';
+                       '<td><input type="number" value="1" min="1" class="form-control form-control-sm product-qty" data-id="' + p.id + '"></td>' +
+                       '<td><button type="button" class="btn btn-sm btn-success add-to-cart" data-id="' + p.id + '">Tambah</button></td>';
         productsBody.appendChild(tr);
-    });
+    }
 }
 
 function updateProducts() {
@@ -244,6 +248,12 @@ document.addEventListener('click', function(e) {
         document.getElementById('customer-id').value = id;
         document.getElementById('customer-name').value = name;
         $('#memberModal').modal('hide');
+    } else if (e.target.classList.contains('add-to-cart')) {
+        var pid = e.target.getAttribute('data-id');
+        var qtyInput = document.querySelector('input.product-qty[data-id="' + pid + '"]');
+        var qty = qtyInput ? parseInt(qtyInput.value, 10) : 1;
+        if (!qty || qty < 1) { qty = 1; }
+        window.location.href = addUrl + pid + '?qty=' + qty;
     }
 });
 
