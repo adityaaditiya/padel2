@@ -40,7 +40,7 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_selesai', $date, $status, $sort, $order)); ?>">Jam Selesai</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_booking', $date, $status, $sort, $order)); ?>">Status</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('keterangan', $date, $status, $sort, $order)); ?>">Keterangan</a></th>
-                <?php if ($role !== 'pelanggan'): ?>
+                <?php if ($role === 'kasir'): ?>
                     <th>Aksi</th>
                 <?php endif; ?>
             </tr>
