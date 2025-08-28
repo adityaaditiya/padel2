@@ -40,6 +40,18 @@ class Member_model extends CI_Model
     }
 
     /**
+     * Ambil satu member berdasarkan kode member.
+     */
+    public function get_by_kode($kode)
+    {
+        $this->db->select('u.id, u.nama_lengkap, u.no_telepon, m.alamat');
+        $this->db->from('users u');
+        $this->db->join('member_data m', 'm.user_id = u.id', 'left');
+        $this->db->where(['m.kode_member' => $kode, 'u.role' => 'pelanggan']);
+        return $this->db->get()->row();
+    }
+
+    /**
      * Ambil satu member berdasarkan ID user.
      */
     public function get_by_id($id)
