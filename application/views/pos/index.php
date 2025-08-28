@@ -183,28 +183,30 @@ var totalCell = document.getElementById('cart-total');
 
 function recalcTotal() {
     var total = 0;
-    qtyInputs.forEach(function(input) {
-        var price = parseFloat(input.dataset.price);
+    for (var i = 0; i < qtyInputs.length; i++) {
+        var input = qtyInputs[i];
+        var price = parseFloat(input.getAttribute('data-price'));
         var qty = parseFloat(input.value) || 0;
         total += price * qty;
-    });
+    }
     if (totalCell) {
         totalCell.textContent = 'Rp ' + total.toLocaleString('id-ID');
     }
 }
 
-qtyInputs.forEach(function(input) {
-    input.addEventListener('input', function() {
-        var price = parseFloat(this.dataset.price);
+for (var i = 0; i < qtyInputs.length; i++) {
+    qtyInputs[i].addEventListener('input', function() {
+        var price = parseFloat(this.getAttribute('data-price'));
         var qty = parseFloat(this.value) || 0;
         var subtotal = price * qty;
-        var cell = this.closest('tr').querySelector('.subtotal');
+        var row = this.parentNode.parentNode;
+        var cell = row.querySelector('.subtotal');
         if (cell) {
             cell.textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
         }
         recalcTotal();
     });
-});
+}
 var memberSearchInput = document.getElementById('member-search');
 var memberSearchBtn = document.getElementById('member-search-btn');
 var memberTableBody = document.querySelector('#member-table tbody');
