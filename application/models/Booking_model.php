@@ -13,6 +13,7 @@ class Booking_model extends CI_Model
         $allowed = [
             'id_court'       => 'bookings.id_court',
             'kode_member'    => 'm.kode_member',
+            'tanggal_booking'=> 'bookings.tanggal_booking',
             'jam_mulai'      => 'bookings.jam_mulai',
             'jam_selesai'    => 'bookings.jam_selesai',
             'status_booking' => 'bookings.status_booking',
@@ -35,6 +36,7 @@ class Booking_model extends CI_Model
         $allowed = [
             'id_court'       => 'bookings.id_court',
             'kode_member'    => 'm.kode_member',
+            'tanggal_booking'=> 'bookings.tanggal_booking',
             'jam_mulai'      => 'bookings.jam_mulai',
             'jam_selesai'    => 'bookings.jam_selesai',
             'status_booking' => 'bookings.status_booking',

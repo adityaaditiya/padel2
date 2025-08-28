@@ -177,7 +177,7 @@ class Booking extends CI_Controller
             redirect('auth/login');
         }
         $role = $this->session->userdata('role');
-        if ($role !== 'kasir') {
+        if ($role === 'pelanggan') {
             redirect('dashboard');
         }
         $status     = $this->input->post('status');
