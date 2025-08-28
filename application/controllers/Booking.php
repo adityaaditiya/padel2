@@ -110,6 +110,12 @@ class Booking extends CI_Controller
                 redirect('booking/create');
                 return;
             }
+            $maxDate = date('Y-m-d', strtotime('+2 months'));
+            if (strtotime($date) > strtotime($maxDate)) {
+                $this->session->set_flashdata('error', 'Tanggal booking tidak boleh lebih dari dua bulan dari hari ini.');
+                redirect('booking/create');
+                return;
+            }
             $start    = $this->input->post('jam_mulai');
             $end      = $this->input->post('jam_selesai');
             $durasi   = (strtotime($end) - strtotime($start)) / 3600;
