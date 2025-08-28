@@ -1,0 +1,40 @@
+<?php $this->load->view('templates/header'); ?>
+<h2>Tambah Member</h2>
+<?php echo validation_errors('<div class="alert alert-danger">', '</div>'); ?>
+<form method="post" action="<?php echo site_url('members/store'); ?>">
+    <div class="form-group">
+        <label for="nama_lengkap">Nama Lengkap</label>
+        <input type="text" name="nama_lengkap" id="nama_lengkap" class="form-control" value="<?php echo set_value('nama_lengkap'); ?>" required>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" class="form-control" value="<?php echo set_value('email'); ?>" required>
+    </div>
+    <div class="form-group">
+        <label for="no_telepon">No Telepon</label>
+        <input type="text" name="no_telepon" id="no_telepon" class="form-control" value="<?php echo set_value('no_telepon'); ?>" required>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="alamat">Alamat / Jalan</label>
+        <input type="text" name="alamat" id="alamat" class="form-control" value="<?php echo set_value('alamat'); ?>" required>
+    </div>
+    <div class="form-group">
+        <label for="kecamatan">Kecamatan</label>
+        <input type="text" name="kecamatan" id="kecamatan" class="form-control" value="<?php echo set_value('kecamatan'); ?>" required>
+    </div>
+    <div class="form-group">
+        <label for="kota">Kota</label>
+        <input type="text" name="kota" id="kota" class="form-control" value="<?php echo set_value('kota'); ?>" required>
+    </div>
+    <div class="form-group">
+        <label for="provinsi">Provinsi</label>
+        <input type="text" name="provinsi" id="provinsi" class="form-control" value="<?php echo set_value('provinsi'); ?>" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Simpan</button>
+    <a href="<?php echo site_url('members'); ?>" class="btn btn-secondary">Batal</a>
+</form>
+<?php $this->load->view('templates/footer'); ?>
