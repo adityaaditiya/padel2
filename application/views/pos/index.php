@@ -207,12 +207,11 @@ var phoneInput = document.getElementById('modal-phone');
 var addressInput = document.getElementById('modal-address');
 var chooseBtn = document.getElementById('choose-member');
 var lookupUrl = '<?php echo site_url('pos/member_lookup'); ?>';
-
+  
 if (typeSelect && typeSelect.value === 'non') {
     numberInput.value = 'non member';
     document.getElementById('customer-id').value = 'non member';
 }
-
 if (typeSelect) {
     typeSelect.addEventListener('change', function() {
         if (this.value === 'member') {
