@@ -1,8 +1,8 @@
 <?php $this->load->view('templates/header'); ?>
 <h2>Daftar Transaksi POS</h2>
 <form method="get" class="mb-3">
-    <input type="date" name="start" value="<?php echo htmlspecialchars($filter_start); ?>">
-    <input type="date" name="end" value="<?php echo htmlspecialchars($filter_end); ?>">
+    <input type="date" name="start" value="<?php echo set_value('', date('Y-m-d')); ?>">
+    <input type="date" name="end" value="<?php echo set_value('', date('Y-m-d')); ?>">
     <button type="submit" class="btn btn-primary btn-sm px-2">Cari</button>
 </form>
 
