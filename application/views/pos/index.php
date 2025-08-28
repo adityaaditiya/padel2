@@ -109,30 +109,32 @@
         </button>
       </div>
       <div class="modal-body">
-        <div class="form-inline mb-2">
-          <input type="text" id="member-search" class="form-control mr-2" placeholder="Cari customer">
-          <button type="button" id="member-search-btn" class="btn btn-primary btn-sm">Cari</button>
+        <div class="form-group">
+          <label for="customer-type">Pilihan</label>
+          <select id="customer-type" class="form-control">
+            <option value="non">Non Member</option>
+            <option value="member">Member</option>
+          </select>
         </div>
-        <table class="table table-bordered table-sm" id="member-table">
-          <thead>
-            <tr>
-              <th>Kode</th>
-              <th>Nama</th>
-              <th>Telepon</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-          <?php foreach ($members as $m): ?>
-            <tr>
-              <td><?php echo htmlspecialchars($m->kode_member); ?></td>
-              <td><?php echo htmlspecialchars($m->nama_lengkap); ?></td>
-              <td><?php echo htmlspecialchars($m->no_telepon); ?></td>
-              <td><button type="button" class="btn btn-sm btn-success select-member" data-id="<?php echo $m->id; ?>" data-name="<?php echo htmlspecialchars($m->nama_lengkap); ?>">Pilih</button></td>
-            </tr>
-          <?php endforeach; ?>
-          </tbody>
-        </table>
+        <div class="form-group">
+          <label for="member-number">Nomor Member</label>
+          <input type="text" id="member-number" class="form-control" disabled>
+        </div>
+        <div class="form-group">
+          <label for="modal-name">Nama</label>
+          <input type="text" id="modal-name" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="modal-phone">No Telepon</label>
+          <input type="text" id="modal-phone" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="modal-address">Alamat</label>
+          <textarea id="modal-address" class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="choose-member">Pilih</button>
       </div>
     </div>
   </div>
@@ -197,44 +199,78 @@ function recalcTotal() {
 }
 
 recalcTotal();
-var memberSearchInput = document.getElementById('member-search');
-var memberSearchBtn = document.getElementById('member-search-btn');
-var memberTableBody = document.querySelector('#member-table tbody');
-var memberSearchUrl = '<?php echo site_url('pos/member_search'); ?>';
 
-function renderMembers(list) {
-    memberTableBody.innerHTML = '';
-    list.forEach(function(m) {
-        var tr = document.createElement('tr');
-        tr.innerHTML = '<td>' + (m.kode_member || '') + '</td>' +
-                       '<td>' + m.nama_lengkap + '</td>' +
-                       '<td>' + (m.no_telepon || '') + '</td>' +
-                       '<td><button type="button" class="btn btn-sm btn-success select-member" data-id="' + m.id + '" data-name="' + m.nama_lengkap + '">Pilih</button></td>';
-        memberTableBody.appendChild(tr);
+var typeSelect = document.getElementById('customer-type');
+var numberInput = document.getElementById('member-number');
+var nameInput = document.getElementById('modal-name');
+var phoneInput = document.getElementById('modal-phone');
+var addressInput = document.getElementById('modal-address');
+var chooseBtn = document.getElementById('choose-member');
+var lookupUrl = '<?php echo site_url('pos/member_lookup'); ?>';
+
+if (typeSelect) {
+    typeSelect.addEventListener('change', function() {
+        if (this.value === 'member') {
+            numberInput.disabled = false;
+            nameInput.readOnly = true;
+            phoneInput.readOnly = true;
+            addressInput.readOnly = true;
+            nameInput.value = '';
+            phoneInput.value = '';
+            addressInput.value = '';
+            document.getElementById('customer-id').value = '';
+            numberInput.focus();
+        } else {
+            numberInput.value = '';
+            numberInput.disabled = true;
+            nameInput.readOnly = false;
+            phoneInput.readOnly = false;
+            addressInput.readOnly = false;
+            nameInput.value = '';
+            phoneInput.value = '';
+            addressInput.value = '';
+            document.getElementById('customer-id').value = '';
+        }
     });
 }
 
-function searchMembers() {
-    var params = new URLSearchParams();
-    if (memberSearchInput.value) params.append('q', memberSearchInput.value);
-    fetch(memberSearchUrl + '?' + params.toString())
-        .then(function(r){ return r.json(); })
-        .then(renderMembers);
+if (numberInput) {
+    numberInput.addEventListener('keyup', function() {
+        var kode = this.value;
+        if (kode.length > 0) {
+            fetch(lookupUrl + '?kode=' + encodeURIComponent(kode))
+                .then(function(r){ return r.json(); })
+                .then(function(m){
+                    if (m) {
+                        document.getElementById('customer-id').value = m.id;
+                        nameInput.value = m.nama_lengkap;
+                        phoneInput.value = m.no_telepon || '';
+                        addressInput.value = m.alamat || '';
+                    } else {
+                        document.getElementById('customer-id').value = '';
+                        nameInput.value = '';
+                        phoneInput.value = '';
+                        addressInput.value = '';
+                    }
+                });
+        } else {
+            document.getElementById('customer-id').value = '';
+            nameInput.value = '';
+            phoneInput.value = '';
+            addressInput.value = '';
+        }
+    });
 }
 
-if (memberSearchBtn && memberSearchInput) {
-    memberSearchBtn.addEventListener('click', searchMembers);
-    memberSearchInput.addEventListener('keyup', function(e){ if (e.key === 'Enter') searchMembers(); });
+if (chooseBtn) {
+    chooseBtn.addEventListener('click', function() {
+        document.getElementById('customer-name').value = nameInput.value;
+        $('#memberModal').modal('hide');
+    });
 }
 
 document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('select-member')) {
-        var id = e.target.getAttribute('data-id');
-        var name = e.target.getAttribute('data-name');
-        document.getElementById('customer-id').value = id;
-        document.getElementById('customer-name').value = name;
-        $('#memberModal').modal('hide');
-    } else if (e.target.classList.contains('add-to-cart')) {
+    if (e.target.classList.contains('add-to-cart')) {
         var pid = e.target.getAttribute('data-id');
         var qtyInput = document.querySelector('input.product-qty[data-id="' + pid + '"]');
         var qty = qtyInput ? parseInt(qtyInput.value, 10) : 1;
@@ -242,16 +278,5 @@ document.addEventListener('click', function(e) {
         window.location.href = addUrl + pid + '?qty=' + qty;
     }
 });
-
-var checkoutForm = document.getElementById('checkout-form');
-if (checkoutForm) {
-    checkoutForm.addEventListener('submit', function(e) {
-        var customerId = document.getElementById('customer-id').value;
-        if (!customerId) {
-            e.preventDefault();
-            alert('Pilih customer terlebih dahulu.');
-        }
-    });
-}
 </script>
 <?php $this->load->view('templates/footer'); ?>
