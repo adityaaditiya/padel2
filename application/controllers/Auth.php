@@ -64,8 +64,12 @@ class Auth extends CI_Controller
 
         if ($this->input->method() === 'post') {
             $this->form_validation->set_rules('nama_lengkap', 'Nama Lengkap', 'required');
-            $this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]');
-            $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|is_unique[users.no_telepon]');
+            $this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]', [
+                'is_unique' => 'Email sudah digunakan.'
+            ]);
+            $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|is_unique[users.no_telepon]', [
+                'is_unique' => 'No telepon sudah digunakan.'
+            ]);
             $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
             $this->form_validation->set_rules('password_confirm', 'Konfirmasi Password', 'required|matches[password]');
 
