@@ -16,6 +16,7 @@ class Booking_model extends CI_Model
             'tanggal_booking'=> 'bookings.tanggal_booking',
             'jam_mulai'      => 'bookings.jam_mulai',
             'jam_selesai'    => 'bookings.jam_selesai',
+            'status_pembayaran' => 'bookings.status_pembayaran',
             'status_booking' => 'bookings.status_booking',
             'keterangan'     => 'bookings.keterangan'
         ];
@@ -39,6 +40,7 @@ class Booking_model extends CI_Model
             'tanggal_booking'=> 'bookings.tanggal_booking',
             'jam_mulai'      => 'bookings.jam_mulai',
             'jam_selesai'    => 'bookings.jam_selesai',
+            'status_pembayaran' => 'bookings.status_pembayaran',
             'status_booking' => 'bookings.status_booking',
             'keterangan'     => 'bookings.keterangan'
         ];

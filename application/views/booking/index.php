@@ -33,30 +33,29 @@ function booking_sort_url($field, $date, $status, $sort, $order)
     <table class="table table-bordered" id="booking-table">
         <thead>
             <tr>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('id_court', $date, $status, $sort, $order)); ?>">Lapangan</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('kode_member', $date, $status, $sort, $order)); ?>">Kode Member</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('tanggal_booking', $date, $status, $sort, $order)); ?>">Tanggal</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('id_court', $date, $status, $sort, $order)); ?>">Lapangan</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_mulai', $date, $status, $sort, $order)); ?>">Jam Mulai</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_selesai', $date, $status, $sort, $order)); ?>">Jam Selesai</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_booking', $date, $status, $sort, $order)); ?>">Status</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('kode_member', $date, $status, $sort, $order)); ?>">Kode Member</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_pembayaran', $date, $status, $sort, $order)); ?>">Status</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('keterangan', $date, $status, $sort, $order)); ?>">Keterangan</a></th>
-                <?php if ($role === 'kasir'): ?>
-                    <th>Aksi</th>
-                <?php endif; ?>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_booking', $date, $status, $sort, $order)); ?>">Status Booking</a></th>
             </tr>
         </thead>
         <tbody>
         <?php foreach ($bookings as $b): ?>
             <tr>
-                <td><?php echo htmlspecialchars($b->id_court); ?></td>
-                <td><?php echo htmlspecialchars($b->kode_member); ?></td>
                 <td><?php echo htmlspecialchars($b->tanggal_booking); ?></td>
+                <td><?php echo htmlspecialchars($b->id_court); ?></td>
                 <td><?php echo htmlspecialchars(date('H:i', strtotime($b->jam_mulai))); ?></td>
                 <td><?php echo htmlspecialchars(date('H:i', strtotime($b->jam_selesai))); ?></td>
-                <td><?php echo htmlspecialchars($b->status_booking); ?></td>
+                <td><?php echo htmlspecialchars($b->kode_member); ?></td>
+                <td><?php echo htmlspecialchars($b->status_pembayaran); ?></td>
                 <td><?php echo htmlspecialchars($b->keterangan); ?></td>
-                <?php if ($role !== 'pelanggan'): ?>
-                    <td>
+                <td>
+                    <?php echo htmlspecialchars($b->status_booking); ?>
+                    <?php if ($role === 'kasir'): ?>
                         <?php if ($b->status_booking === 'pending'): ?>
                             <form method="post" action="<?php echo site_url('booking/update_status/' . $b->id); ?>" style="display:inline-block">
                                 <input type="hidden" name="status" value="confirmed">
@@ -74,8 +73,8 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                                 <button type="submit" name="status" value="batal" class="btn btn-sm btn-danger">Batal</button>
                             </form>
                         <?php endif; ?>
-                    </td>
-                <?php endif; ?>
+                    <?php endif; ?>
+                </td>
             </tr>
         <?php endforeach; ?>
         </tbody>
