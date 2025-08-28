@@ -1,11 +1,15 @@
 <?php $this->load->view('templates/header'); ?>
 <?php $role  = $this->session->userdata('role'); ?>
-<?php $sort  = isset($sort) ? $sort : 'jam_mulai'; ?>
-<?php $order = isset($order) ? $order : 'asc'; ?>
+<?php $sort   = isset($sort) ? $sort : 'jam_mulai'; ?>
+<?php $order  = isset($order) ? $order : 'asc'; ?>
+<?php $status = isset($status) ? $status : ''; ?>
 <?php
-function booking_sort_url($field, $date, $sort, $order)
+function booking_sort_url($field, $date, $status, $sort, $order)
 {
     $next = ($sort === $field && $order === 'asc') ? 'desc' : 'asc';
+    if ($status === 'pending') {
+        return site_url('booking') . '?status=pending&sort=' . $field . '&order=' . $next;
+    }
     return site_url('booking') . '?date=' . urlencode($date) . '&sort=' . $field . '&order=' . $next;
 }
 ?>
@@ -13,20 +17,26 @@ function booking_sort_url($field, $date, $sort, $order)
 <form method="get" class="form-inline mb-3">
     <label for="date" class="mr-2">Tanggal:</label>
     <input type="date" id="date" name="date" class="form-control mr-2" value="<?php echo htmlspecialchars($date); ?>">
+    <label for="status" class="mr-2">Status:</label>
+    <select id="status" name="status" class="form-control mr-2">
+        <option value="">Semua</option>
+        <option value="pending" <?php echo isset($status) && $status === 'pending' ? 'selected' : ''; ?>>Pending</option>
+    </select>
     <button type="submit" class="btn btn-primary">Lihat</button>
     <a href="<?php echo site_url('booking/create'); ?>" class="btn btn-success ml-2">Booking Baru</a>
 </form>
+<input type="text" id="search" class="form-control mb-3" placeholder="Cari booking...">
 
 <?php if (!empty($bookings)): ?>
-    <table class="table table-bordered">
+    <table class="table table-bordered" id="booking-table">
         <thead>
             <tr>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('id_court', $date, $sort, $order)); ?>">Lapangan</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('kode_member', $date, $sort, $order)); ?>">Kode Member</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_mulai', $date, $sort, $order)); ?>">Jam Mulai</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_selesai', $date, $sort, $order)); ?>">Jam Selesai</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_booking', $date, $sort, $order)); ?>">Status</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('keterangan', $date, $sort, $order)); ?>">Keterangan</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('id_court', $date, $status, $sort, $order)); ?>">Lapangan</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('kode_member', $date, $status, $sort, $order)); ?>">Kode Member</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_mulai', $date, $status, $sort, $order)); ?>">Jam Mulai</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_selesai', $date, $status, $sort, $order)); ?>">Jam Selesai</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_booking', $date, $status, $sort, $order)); ?>">Status</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('keterangan', $date, $status, $sort, $order)); ?>">Keterangan</a></th>
                 <?php if ($role === 'kasir'): ?>
                     <th>Aksi</th>
                 <?php endif; ?>
@@ -69,4 +79,16 @@ function booking_sort_url($field, $date, $sort, $order)
 <?php else: ?>
     <p>Tidak ada booking pada tanggal ini.</p>
 <?php endif; ?>
+<script>
+document.getElementById('status').addEventListener('change', function() {
+    document.getElementById('date').disabled = this.value === 'pending';
+});
+document.getElementById('status').dispatchEvent(new Event('change'));
+document.getElementById('search').addEventListener('keyup', function() {
+    var filter = this.value.toLowerCase();
+    document.querySelectorAll('#booking-table tbody tr').forEach(function(row) {
+        row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+    });
+});
+</script>
 <?php $this->load->view('templates/footer'); ?>

@@ -24,17 +24,23 @@ class Booking extends CI_Controller
         if (!$this->session->userdata('logged_in')) {
             redirect('auth/login');
         }
-        $date = $this->input->get('date');
+        $date   = $this->input->get('date');
         if (!$date) {
             $date = date('Y-m-d');
         }
-        $sort  = $this->input->get('sort') ?: 'jam_mulai';
-        $order = $this->input->get('order') ?: 'asc';
-        $data['date']  = $date;
-        $data['sort']  = $sort;
-        $data['order'] = $order;
-        $data['courts']   = $this->Court_model->get_all();
-        $data['bookings'] = $this->Booking_model->get_by_date($date, $sort, $order);
+        $status = $this->input->get('status');
+        $sort   = $this->input->get('sort') ?: 'jam_mulai';
+        $order  = $this->input->get('order') ?: 'asc';
+        $data['date']   = $date;
+        $data['sort']   = $sort;
+        $data['order']  = $order;
+        $data['status'] = $status;
+        $data['courts'] = $this->Court_model->get_all();
+        if ($status === 'pending') {
+            $data['bookings'] = $this->Booking_model->get_pending($sort, $order);
+        } else {
+            $data['bookings'] = $this->Booking_model->get_by_date($date, $sort, $order);
+        }
         $this->load->view('booking/index', $data);
     }
 
@@ -107,6 +113,12 @@ class Booking extends CI_Controller
             $date     = $this->input->post('tanggal_booking');
             if (strtotime($date) < strtotime(date('Y-m-d'))) {
                 $this->session->set_flashdata('error', 'Tanggal booking tidak boleh sebelum hari ini.');
+                redirect('booking/create');
+                return;
+            }
+            $maxDate = date('Y-m-d', strtotime('+2 months'));
+            if (strtotime($date) > strtotime($maxDate)) {
+                $this->session->set_flashdata('error', 'Tanggal booking tidak boleh lebih dari dua bulan dari hari ini.');
                 redirect('booking/create');
                 return;
             }
