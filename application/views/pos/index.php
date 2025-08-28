@@ -36,7 +36,7 @@
                     <td><?php echo htmlspecialchars($p->nama_produk); ?></td>
                     <td>Rp <?php echo number_format($p->harga_jual, 0, ',', '.'); ?></td>
                     <td><?php echo htmlspecialchars($p->kategori); ?></td>
-                    <td><input type="number" value="1" min="1" class="form-control form-control-sm product-qty" data-id="<?php echo $p->id; ?>"></td>
+                    <td><input type="number" value="1" min="1" class="form-control form-control-sm product-qty" data-id="<?php echo $p->id; ?>" style="width:60px"></td>
                     <td><button type="button" class="btn btn-sm btn-success add-to-cart" data-id="<?php echo $p->id; ?>">Tambah</button></td>
                 </tr>
             <?php endforeach; ?>
@@ -46,8 +46,7 @@
     <div class="col-md-6">
         <h4>Keranjang</h4>
         <?php if (!empty($cart)): ?>
-            <form method="post" action="<?php echo site_url('pos/update_cart'); ?>">
-                <table class="table table-bordered">
+            <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Nota</th>
@@ -74,7 +73,7 @@
                                 </td>
                             <?php $first = false; endif; ?>
                             <td><?php echo htmlspecialchars($item['nama_produk']); ?></td>
-                            <td><input type="number" name="qty[<?php echo $item['id']; ?>]" value="<?php echo $item['qty']; ?>" min="1" class="form-control form-control-sm cart-qty" data-price="<?php echo $item['harga_jual']; ?>"></td>
+                            <td><span class="cart-qty" data-price="<?php echo $item['harga_jual']; ?>"><?php echo $item['qty']; ?></span></td>
                             <td class="subtotal">Rp <?php echo number_format($item['harga_jual'] * $item['qty'], 0, ',', '.'); ?></td>
                             <td><a href="<?php echo site_url('pos/remove/'.$item['id']); ?>" class="btn btn-sm btn-danger">Hapus</a></td>
                         </tr>
@@ -87,8 +86,7 @@
                             <th id="cart-total">Rp <?php echo number_format($total, 0, ',', '.'); ?></th>
                         </tr>
                     </tfoot>
-                </table>
-            </form>
+            </table>
             <form method="post" action="<?php echo site_url('pos/checkout'); ?>" id="checkout-form">
                 <input type="hidden" name="device_date" id="device_date">
                 <input type="hidden" name="nota" value="<?php echo $nota; ?>">
@@ -162,7 +160,7 @@ function renderProducts(items) {
         tr.innerHTML = '<td>' + p.nama_produk + '</td>' +
                        '<td>Rp ' + Number(p.harga_jual).toLocaleString('id-ID') + '</td>' +
                        '<td>' + p.kategori + '</td>' +
-                       '<td><input type="number" value="1" min="1" class="form-control form-control-sm product-qty" data-id="' + p.id + '"></td>' +
+                       '<td><input type="number" value="1" min="1" class="form-control form-control-sm product-qty" style="width:60px" data-id="' + p.id + '"></td>' +
                        '<td><button type="button" class="btn btn-sm btn-success add-to-cart" data-id="' + p.id + '">Tambah</button></td>';
         productsBody.appendChild(tr);
     }
@@ -182,15 +180,15 @@ if (searchInput && categorySelect) {
     categorySelect.addEventListener('change', updateProducts);
 }
 
-var qtyInputs = document.querySelectorAll('.cart-qty');
+var qtyCells = document.querySelectorAll('.cart-qty');
 var totalCell = document.getElementById('cart-total');
 
 function recalcTotal() {
     var total = 0;
-    for (var i = 0; i < qtyInputs.length; i++) {
-        var input = qtyInputs[i];
-        var price = parseFloat(input.getAttribute('data-price'));
-        var qty = parseFloat(input.value) || 0;
+    for (var i = 0; i < qtyCells.length; i++) {
+        var cell = qtyCells[i];
+        var price = parseFloat(cell.getAttribute('data-price'));
+        var qty = parseFloat(cell.textContent) || 0;
         total += price * qty;
     }
     if (totalCell) {
@@ -198,19 +196,7 @@ function recalcTotal() {
     }
 }
 
-for (var i = 0; i < qtyInputs.length; i++) {
-    qtyInputs[i].addEventListener('input', function() {
-        var price = parseFloat(this.getAttribute('data-price'));
-        var qty = parseFloat(this.value) || 0;
-        var subtotal = price * qty;
-        var row = this.parentNode.parentNode;
-        var cell = row.querySelector('.subtotal');
-        if (cell) {
-            cell.textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
-        }
-        recalcTotal();
-    });
-}
+recalcTotal();
 var memberSearchInput = document.getElementById('member-search');
 var memberSearchBtn = document.getElementById('member-search-btn');
 var memberTableBody = document.querySelector('#member-table tbody');
