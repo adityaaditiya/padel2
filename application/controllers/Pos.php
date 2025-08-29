@@ -87,6 +87,27 @@ class Pos extends CI_Controller
         $data['sales'] = ($start && $end) ? $this->Sale_model->get_all($start, $end) : [];
         $this->load->view('pos/transactions', $data);
     }
+
+    /**
+     * Cetak ulang nota untuk transaksi yang sudah ada.
+     */
+    public function reprint($id)
+    {
+        $this->authorize();
+        if (!is_numeric($id)) {
+            redirect('pos/transactions');
+            return;
+        }
+        $sale = $this->Sale_model->get_by_id($id);
+        if (!$sale) {
+            $this->session->set_flashdata('error', 'Transaksi tidak ditemukan.');
+            redirect('pos/transactions');
+            return;
+        }
+        $this->print_receipt($id);
+        $this->session->set_flashdata('success', 'Nota berhasil dicetak ulang.');
+        redirect('pos/transactions');
+    }
     /**
      * Tambah produk ke keranjang.
      */

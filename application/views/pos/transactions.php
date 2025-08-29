@@ -17,6 +17,7 @@
                     <th>Customer</th>
                     <th>Total</th>
                     <th>Tanggal</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +27,7 @@
                     <td><?php echo htmlspecialchars($s->customer_name ?: 'non member'); ?></td>
                     <td>Rp <?php echo number_format($s->total_belanja, 0, ',', '.'); ?></td>
                     <td><?php echo htmlspecialchars($s->tanggal_transaksi); ?></td>
+                    <td><a href="<?php echo site_url('pos/reprint/'.$s->id); ?>" class="btn btn-sm btn-secondary">Reprint</a></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
