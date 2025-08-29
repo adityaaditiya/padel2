@@ -14,9 +14,6 @@
         <option value="cash_in" <?php echo $category === 'cash_in' ? 'selected' : ''; ?>>Tambah Uang Kas</option>
         <option value="cash_out" <?php echo $category === 'cash_out' ? 'selected' : ''; ?>>Ambil Uang Kas</option>
     </select>
-    <button type="submit" class="btn btn-primary">Tampilkan</button>
-    <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
-    <input type="hidden" name="page" value="1">
 </form>
 <div class="form-group mb-3" style="max-width: 250px;">
     <input type="text" id="search" class="form-control" placeholder="Cari...">
@@ -92,7 +89,6 @@
         <input type="hidden" name="page" value="1">
     </form>
 </div>
-
 <div class="mt-3">
     <button id="exportPdf" class="btn btn-secondary">Export PDF</button>
     <button id="exportExcel" class="btn btn-success ml-2">Export Excel</button>
