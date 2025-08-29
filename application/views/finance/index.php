@@ -14,16 +14,6 @@
         <option value="cash_in" <?php echo $category === 'cash_in' ? 'selected' : ''; ?>>Tambah Uang Kas</option>
         <option value="cash_out" <?php echo $category === 'cash_out' ? 'selected' : ''; ?>>Ambil Uang Kas</option>
     </select>
-    <label for="per_page" class="mr-2">Per Halaman:</label>
-    <select name="per_page" id="per_page" class="form-control mr-2">
-        <option value="10" <?php echo $per_page == 10 ? 'selected' : ''; ?>>10</option>
-        <option value="25" <?php echo $per_page == 25 ? 'selected' : ''; ?>>25</option>
-        <option value="50" <?php echo $per_page == 50 ? 'selected' : ''; ?>>50</option>
-        <option value="100" <?php echo $per_page == 100 ? 'selected' : ''; ?>>100</option>
-    </select>
-    <button type="submit" class="btn btn-primary">Tampilkan</button>
-    <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
-    <input type="hidden" name="page" value="1">
 </form>
 <div class="form-group mb-3" style="max-width: 250px;">
     <input type="text" id="search" class="form-control" placeholder="Cari...">
@@ -85,9 +75,9 @@
         </ul>
     </nav>
     <?php endif; ?>
-    <form method="get" class="form-inline ml-3">
+    <form method="get" class="form-inline ml-3" id="perPageForm">
         <label for="per_page" class="mr-2">Per Halaman:</label>
-        <select name="per_page" id="per_page" class="form-control mr-2">
+        <select name="per_page" id="per_page" class="form-control mr-2" onchange="this.form.submit()">
             <option value="10" <?php echo $per_page == 10 ? 'selected' : ''; ?>>10</option>
             <option value="25" <?php echo $per_page == 25 ? 'selected' : ''; ?>>25</option>
             <option value="50" <?php echo $per_page == 50 ? 'selected' : ''; ?>>50</option>
@@ -97,7 +87,6 @@
         <input type="hidden" name="end_date" value="<?php echo htmlspecialchars($end_date); ?>">
         <input type="hidden" name="category" value="<?php echo htmlspecialchars($category); ?>">
         <input type="hidden" name="page" value="1">
-        <button type="submit" class="btn btn-primary">Tampilkan</button>
     </form>
 </div>
 <div class="mt-3">
