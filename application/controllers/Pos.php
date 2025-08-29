@@ -291,6 +291,8 @@ class Pos extends CI_Controller
         }
         $connector = new WindowsPrintConnector('T82');
         $printer = new Printer($connector, $profile);
+        // Geser margin ke kanan agar cetakan sedikit lebih ke kanan
+        $printer->setPrintLeftMargin(20);
         $printer->setJustification(Printer::JUSTIFY_CENTER);
         $printer->text("Padel Store\n");
         $printer->text(date("d-m-Y H:i") . "\n");
