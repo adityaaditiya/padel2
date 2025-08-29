@@ -15,6 +15,8 @@
         <option value="cash_out" <?php echo $category === 'cash_out' ? 'selected' : ''; ?>>Ambil Uang Kas</option>
     </select>
     <button type="submit" class="btn btn-primary">Tampilkan</button>
+    <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
+    <input type="hidden" name="page" value="1">
 </form>
 <div class="form-group mb-3" style="max-width: 250px;">
     <input type="text" id="search" class="form-control" placeholder="Cari...">
@@ -57,11 +59,77 @@
         </tr>
     </tfoot>
 </table>
+<div class="d-flex align-items-center">
+    <?php if ($total_pages > 1): ?>
+    <nav>
+        <ul class="pagination mb-0">
+            <?php for ($p = 1; $p <= $total_pages; $p++): ?>
+                <?php $query = http_build_query([
+                    'start_date' => $start_date,
+                    'end_date'   => $end_date,
+                    'category'   => $category,
+                    'per_page'   => $per_page,
+                    'page'       => $p
+                ]); ?>
+                <li class="page-item <?php echo $p === $page ? 'active' : ''; ?>">
+                    <a class="page-link" href="?<?php echo $query; ?>"><?php echo $p; ?></a>
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
+    <?php endif; ?>
+    <form method="get" class="form-inline ml-3">
+        <label for="per_page" class="mr-2">Per Halaman:</label>
+        <select name="per_page" id="per_page" class="form-control mr-2">
+            <option value="10" <?php echo $per_page == 10 ? 'selected' : ''; ?>>10</option>
+            <option value="25" <?php echo $per_page == 25 ? 'selected' : ''; ?>>25</option>
+            <option value="50" <?php echo $per_page == 50 ? 'selected' : ''; ?>>50</option>
+            <option value="100" <?php echo $per_page == 100 ? 'selected' : ''; ?>>100</option>
+        </select>
+        <input type="hidden" name="start_date" value="<?php echo htmlspecialchars($start_date); ?>">
+        <input type="hidden" name="end_date" value="<?php echo htmlspecialchars($end_date); ?>">
+        <input type="hidden" name="category" value="<?php echo htmlspecialchars($category); ?>">
+        <input type="hidden" name="page" value="1">
+        <button type="submit" class="btn btn-primary">Tampilkan</button>
+    </form>
+</div>
 
 <div class="mt-3">
     <button id="exportPdf" class="btn btn-secondary">Export PDF</button>
     <button id="exportExcel" class="btn btn-success ml-2">Export Excel</button>
 </div>
+
+<table id="allFinanceTable" style="display:none;">
+    <thead>
+        <tr>
+            <th>Tanggal</th>
+            <th>Keterangan</th>
+            <th>Uang Masuk</th>
+            <th>Uang Keluar</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($all_details as $row): ?>
+        <tr>
+            <td><?php echo htmlspecialchars($row['tanggal']); ?></td>
+            <td><?php echo htmlspecialchars($row['keterangan']); ?></td>
+            <td>Rp <?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+            <td>Rp <?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="2">Total</th>
+            <th>Rp <?php echo number_format($report['total_masuk'], 0, ',', '.'); ?></th>
+            <th>Rp <?php echo number_format($report['total_keluar'], 0, ',', '.'); ?></th>
+        </tr>
+        <tr>
+            <th colspan="2">Saldo</th>
+            <th colspan="2">Rp <?php echo number_format($report['saldo'], 0, ',', '.'); ?></th>
+        </tr>
+    </tfoot>
+</table>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -112,12 +180,12 @@ document.getElementById('exportPdf').addEventListener('click', function () {
     const end = document.getElementById('end_date').value;
     doc.text(title, 14, 15);
     doc.text(`Periode: ${start} s/d ${end}`, 14, 25);
-    doc.autoTable({ html: '#financeTable', startY: 30 });
+    doc.autoTable({ html: '#allFinanceTable', startY: 30 });
     doc.save('laporan_keuangan.pdf');
 });
 
 document.getElementById('exportExcel').addEventListener('click', function () {
-    const table = document.getElementById('financeTable');
+    const table = document.getElementById('allFinanceTable');
     const wb = XLSX.utils.book_new();
     const tableData = XLSX.utils.sheet_to_json(XLSX.utils.table_to_sheet(table), { header: 1 });
     const title = document.querySelector('h2').innerText.trim();
