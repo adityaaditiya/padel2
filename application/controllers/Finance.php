@@ -43,10 +43,27 @@ class Finance extends CI_Controller
         if (!$end) {
             $end = date('Y-m-t');
         }
-        $data['start_date'] = $start;
-        $data['end_date']   = $end;
-        $data['category']   = $category;
-        $data['report']     = $this->Report_model->get_financial_report($start, $end, $category);
+        $per_page = (int) $this->input->get('per_page');
+        $allowed_per_page = [10, 25, 50, 100];
+        if (!in_array($per_page, $allowed_per_page, true)) {
+            $per_page = 10;
+        }
+        $page     = max(1, (int) $this->input->get('page'));
+
+        $report = $this->Report_model->get_financial_report($start, $end, $category);
+        $all_details = $report['details'];
+        $total_rows = count($all_details);
+        $start_index = ($page - 1) * $per_page;
+        $report['details'] = array_slice($all_details, $start_index, $per_page);
+
+        $data['start_date']   = $start;
+        $data['end_date']     = $end;
+        $data['category']     = $category;
+        $data['report']       = $report;
+        $data['page']         = $page;
+        $data['total_pages']  = (int) ceil($total_rows / $per_page);
+        $data['per_page']     = $per_page;
+        $data['all_details']  = $all_details;
         $this->load->view('finance/index', $data);
     }
 }
