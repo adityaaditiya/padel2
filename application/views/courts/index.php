@@ -11,6 +11,7 @@
             <th>Nama Lapangan</th>
             <th>Harga per Jam</th>
             <th>Status</th>
+            <th>Gambar</th>
             <th>Aksi</th>
         </tr>
     </thead>
@@ -21,6 +22,7 @@
             <td><?php echo htmlspecialchars($court->nama_lapangan); ?></td>
             <td><?php echo number_format($court->harga_per_jam, 0, ',', '.'); ?></td>
             <td><?php echo htmlspecialchars($court->status); ?></td>
+            <td><img src="<?php echo base_url('uploads/courts/'.$court->gambar); ?>" alt="Gambar Lapangan" width="100"></td>
             <td>
                 <a href="<?php echo site_url('courts/edit/'.$court->id); ?>" class="btn btn-sm btn-warning">Edit</a>
                 <a href="<?php echo site_url('courts/delete/'.$court->id); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin?');">Hapus</a>
