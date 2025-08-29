@@ -17,6 +17,7 @@
                     <th>Customer</th>
                     <th>Total</th>
                     <th>Tanggal</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,9 +27,17 @@
                     <td><?php echo htmlspecialchars($s->customer_name ?: 'non member'); ?></td>
                     <td>Rp <?php echo number_format($s->total_belanja, 0, ',', '.'); ?></td>
                     <td><?php echo htmlspecialchars($s->tanggal_transaksi); ?></td>
+                    <td><a href="<?php echo site_url('pos/reprint/'.$s->id); ?>" class="btn btn-sm btn-secondary">Reprint</a></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="2" class="text-right">Total Halaman</th>
+                    <th id="page-total">Rp <?php echo number_format($page_total, 0, ',', '.'); ?></th>
+                    <th colspan="2"></th>
+                </tr>
+            </tfoot>
         </table>
     <?php else: ?>
         <p>Tidak ada transaksi pada rentang tanggal tersebut.</p>
@@ -39,6 +48,21 @@
 <?php $this->load->view('templates/footer'); ?>
 <script>
 document.addEventListener('DOMContentLoaded', function(){
+    function updateTotal() {
+        var rows = document.querySelectorAll('#transaction-table tbody tr');
+        var total = 0;
+        rows.forEach(function(row){
+            if (row.style.display !== 'none') {
+                var text = row.cells[2].textContent.replace(/[^0-9]/g, '');
+                total += parseInt(text, 10) || 0;
+            }
+        });
+        var cell = document.getElementById('page-total');
+        if (cell) {
+            cell.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(total);
+        }
+    }
+
     var searchInput = document.getElementById('search');
     if (searchInput) {
         searchInput.addEventListener('keyup', function(){
@@ -57,8 +81,11 @@ document.addEventListener('DOMContentLoaded', function(){
             if (error) {
                 error.style.display = any || filter.length === 0 ? 'none' : 'block';
             }
+            updateTotal();
         });
     }
+
+    updateTotal();
 });
 </script>
 
