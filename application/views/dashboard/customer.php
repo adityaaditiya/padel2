@@ -1,7 +1,6 @@
 <?php $this->load->view('templates/header'); ?>
 <h2>Dashboard Pelanggan</h2>
-<p>Selamat datang di PadelPro. Gunakan menu Booking untuk melakukan custom jam booking lapangan.</p>
-
+<p>Hey Padel Lovers! 🎾 Mau pesan lapangan di jam custom? Tekan saja Booking Sekarang tanpa pilih jadwal—lebih fleksibel dan gampang!</p>
 <div class="row">
     <?php if (!empty($courts)): ?>
         <?php foreach ($courts as $court): ?>
@@ -31,7 +30,6 @@
                             <?php endif; ?>
                             <button type="submit" class="btn btn-primary mt-auto">Booking Sekarang</button>
                         </form>
-
                     </div>
                 </div>
             </div>
@@ -42,4 +40,3 @@
 </div>
 
 <?php $this->load->view('templates/footer'); ?>
-
