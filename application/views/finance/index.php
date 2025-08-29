@@ -57,6 +57,18 @@
         </tr>
     </tfoot>
 </table>
+<?php if ($total_pages > 1): ?>
+<nav>
+    <ul class="pagination">
+        <?php for ($p = 1; $p <= $total_pages; $p++): ?>
+            <?php $query = http_build_query(['start_date' => $start_date, 'end_date' => $end_date, 'category' => $category, 'page' => $p]); ?>
+            <li class="page-item <?php echo $p === $page ? 'active' : ''; ?>">
+                <a class="page-link" href="?<?php echo $query; ?>"><?php echo $p; ?></a>
+            </li>
+        <?php endfor; ?>
+    </ul>
+</nav>
+<?php endif; ?>
 
 <div class="mt-3">
     <button id="exportPdf" class="btn btn-secondary">Export PDF</button>
