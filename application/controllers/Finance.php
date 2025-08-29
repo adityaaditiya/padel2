@@ -43,7 +43,11 @@ class Finance extends CI_Controller
         if (!$end) {
             $end = date('Y-m-t');
         }
-        $per_page = 20;
+        $per_page = (int) $this->input->get('per_page');
+        $allowed_per_page = [10, 25, 50, 100];
+        if (!in_array($per_page, $allowed_per_page, true)) {
+            $per_page = 10;
+        }
         $page     = max(1, (int) $this->input->get('page'));
 
         $report = $this->Report_model->get_financial_report($start, $end, $category);
