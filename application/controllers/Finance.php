@@ -51,9 +51,10 @@ class Finance extends CI_Controller
         $page     = max(1, (int) $this->input->get('page'));
 
         $report = $this->Report_model->get_financial_report($start, $end, $category);
-        $total_rows = count($report['details']);
+        $all_details = $report['details'];
+        $total_rows = count($all_details);
         $start_index = ($page - 1) * $per_page;
-        $report['details'] = array_slice($report['details'], $start_index, $per_page);
+        $report['details'] = array_slice($all_details, $start_index, $per_page);
 
         $data['start_date']   = $start;
         $data['end_date']     = $end;
@@ -62,6 +63,7 @@ class Finance extends CI_Controller
         $data['page']         = $page;
         $data['total_pages']  = (int) ceil($total_rows / $per_page);
         $data['per_page']     = $per_page;
+        $data['all_details']  = $all_details;
         $this->load->view('finance/index', $data);
     }
 }
