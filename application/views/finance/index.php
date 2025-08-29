@@ -14,6 +14,9 @@
         <option value="cash_in" <?php echo $category === 'cash_in' ? 'selected' : ''; ?>>Tambah Uang Kas</option>
         <option value="cash_out" <?php echo $category === 'cash_out' ? 'selected' : ''; ?>>Ambil Uang Kas</option>
     </select>
+    <button type="submit" class="btn btn-primary">Tampilkan</button>
+    <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
+    <input type="hidden" name="page" value="1">
 </form>
 <div class="form-group mb-3" style="max-width: 250px;">
     <input type="text" id="search" class="form-control" placeholder="Cari...">
@@ -175,7 +178,7 @@ document.getElementById('exportPdf').addEventListener('click', function () {
     const end = document.getElementById('end_date').value;
     doc.text(title, 14, 15);
     doc.text(`Periode: ${start} s/d ${end}`, 14, 25);
-    doc.autoTable({ html: '#allFinanceTable', startY: 30 });
+    doc.autoTable({ html: '#allFinanceTable', startY: 30, showFoot: 'lastPage' });
     doc.save('laporan_keuangan.pdf');
 });
 
