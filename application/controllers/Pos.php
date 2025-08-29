@@ -87,6 +87,27 @@ class Pos extends CI_Controller
         $data['sales'] = ($start && $end) ? $this->Sale_model->get_all($start, $end) : [];
         $this->load->view('pos/transactions', $data);
     }
+
+    /**
+     * Cetak ulang nota untuk transaksi yang sudah ada.
+     */
+    public function reprint($id)
+    {
+        $this->authorize();
+        if (!is_numeric($id)) {
+            redirect('pos/transactions');
+            return;
+        }
+        $sale = $this->Sale_model->get_by_id($id);
+        if (!$sale) {
+            $this->session->set_flashdata('error', 'Transaksi tidak ditemukan.');
+            redirect('pos/transactions');
+            return;
+        }
+        $this->print_receipt($id);
+        $this->session->set_flashdata('success', 'Nota berhasil dicetak ulang.');
+        redirect('pos/transactions');
+    }
     /**
      * Tambah produk ke keranjang.
      */
@@ -189,6 +210,13 @@ class Pos extends CI_Controller
         foreach ($cart as $item) {
             $total += $item['harga_jual'] * $item['qty'];
         }
+        // Ambil jumlah bayar dari input
+        $bayar = (float) $this->input->post('bayar');
+        if ($bayar < $total) {
+            $this->session->set_flashdata('error', 'Jumlah bayar kurang.');
+            redirect('pos');
+            return;
+        }
         // Buat nomor nota sederhana
         $nomor_nota = 'INV-' . time();
         $saleData = [
@@ -213,7 +241,7 @@ class Pos extends CI_Controller
         // Buat pembayaran (tunai default)
         $payment = [
             'id_sale'        => $sale_id,
-            'jumlah_bayar'   => $total,
+            'jumlah_bayar'   => $bayar,
             'metode_pembayaran' => 'tunai',
             'id_kasir'       => $this->session->userdata('id')
         ];
@@ -241,6 +269,17 @@ class Pos extends CI_Controller
         $printer->text("Padel Store\n");
         $printer->text(date("d-m-Y H:i") . "\n");
         $printer->text("Nota: {$sale->nomor_nota}\n");
+        $member = null;
+        if (!empty($sale->customer_id)) {
+            $member = $this->Member_model->get_by_id($sale->customer_id);
+        }
+        if ($member) {
+            $printer->text("Nomor Member: {$member->kode_member}\n");
+            $printer->text("Nama: {$member->nama_lengkap}\n");
+        } else {
+            $printer->text("Nomor Member: -\n");
+            $printer->text("Nama: Non Member\n");
+        }
         $printer->text(str_repeat('-', 32) . "\n");
         $printer->setJustification(Printer::JUSTIFY_LEFT);
         foreach ($details as $d) {
@@ -250,7 +289,10 @@ class Pos extends CI_Controller
         $printer->text(str_repeat('-', 32) . "\n");
         $printer->text('Total: Rp ' . number_format($sale->total_belanja,0,',','.') . "\n");
         if (!empty($payments)) {
-            $printer->text('Bayar: Rp ' . number_format($payments[0]->jumlah_bayar,0,',','.') . "\n");
+            $bayar = $payments[0]->jumlah_bayar;
+            $kembali = $bayar - $sale->total_belanja;
+            $printer->text('Bayar: Rp ' . number_format($bayar,0,',','.') . "\n");
+            $printer->text('Kembali: Rp ' . number_format($kembali,0,',','.') . "\n");
         }
         $printer->feed(2);
         $printer->cut();
