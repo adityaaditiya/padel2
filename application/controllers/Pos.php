@@ -90,10 +90,14 @@ class Pos extends CI_Controller
         }
         $page = max(1, (int) $this->input->get('page'));
 
-        $all_sales  = ($start && $end) ? $this->Sale_model->get_all($start, $end) : [];
-        $total_rows = count($all_sales);
         $start_index = ($page - 1) * $per_page;
-        $sales = array_slice($all_sales, $start_index, $per_page);
+        if ($start && $end) {
+            $total_rows = $this->Sale_model->count_filtered($start, $end);
+            $sales = $this->Sale_model->get_paginated($start, $end, $per_page, $start_index);
+        } else {
+            $total_rows = 0;
+            $sales = [];
+        }
 
         $page_total = 0;
         foreach ($sales as $sale) {
