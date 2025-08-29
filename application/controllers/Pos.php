@@ -111,7 +111,6 @@ class Pos extends CI_Controller
         $data['page']         = $page;
         $data['total_pages']  = (int) ceil($total_rows / $per_page);
         $data['per_page']     = $per_page;
-
         $this->load->view('pos/transactions', $data);
     }
 
@@ -293,7 +292,7 @@ class Pos extends CI_Controller
         $connector = new WindowsPrintConnector('T82');
         $printer = new Printer($connector, $profile);
         // Geser margin ke kanan agar cetakan sedikit lebih ke kanan
-        $printer->setPrintLeftMargin(20);
+        $printer->setPrintLeftMargin(80);
         $printer->setJustification(Printer::JUSTIFY_CENTER);
         $printer->text("Padel Store\n");
         $printer->text(date("d-m-Y H:i") . "\n");
@@ -306,8 +305,7 @@ class Pos extends CI_Controller
             $printer->text("Nomor Member: {$member->kode_member}\n");
             $printer->text("Nama: {$member->nama_lengkap}\n");
         } else {
-            $printer->text("Nomor Member: -\n");
-            $printer->text("Nama: Non Member\n");
+            $printer->text("-Non Member-\n");
         }
         $printer->text(str_repeat('-', 32) . "\n");
         $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -315,13 +313,17 @@ class Pos extends CI_Controller
             $line = sprintf("%s\n%dx %s\n", $d->nama_produk, $d->jumlah, number_format($d->harga_jual,0,',','.'));
             $printer->text($line);
         }
-        $printer->text(str_repeat('-', 32) . "\n");
+        $printer->text(str_repeat('-', 37) . "\n");
         $printer->text('Total: Rp ' . number_format($sale->total_belanja,0,',','.') . "\n");
         if (!empty($payments)) {
             $bayar = $payments[0]->jumlah_bayar;
             $kembali = $bayar - $sale->total_belanja;
             $printer->text('Bayar: Rp ' . number_format($bayar,0,',','.') . "\n");
             $printer->text('Kembali: Rp ' . number_format($kembali,0,',','.') . "\n");
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text(str_repeat('-', 32) . "\n");
+            $printer->text("Kritik & Saran\n");
+            $printer->text("WA 0877-3383-6235\n");
         }
         $printer->feed(2);
         $printer->cut();

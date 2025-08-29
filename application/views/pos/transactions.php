@@ -33,7 +33,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <th colspan="2" class="text-right">Total Halaman</th>
+                    <!-- <th colspan="2" class="text-right">Total Halaman</th> -->
                     <th id="page-total">Rp <?php echo number_format($page_total, 0, ',', '.'); ?></th>
                     <th colspan="2"></th>
                 </tr>

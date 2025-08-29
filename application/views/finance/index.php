@@ -79,7 +79,7 @@
     </nav>
     <?php endif; ?>
     <form method="get" class="form-inline ml-3" id="perPageForm">
-        <label for="per_page" class="mr-2">Per Halaman:</label>
+        <!-- <label for="per_page" class="mr-2">Per Halaman:</label> -->
         <select name="per_page" id="per_page" class="form-control mr-2" onchange="this.form.submit()">
             <option value="10" <?php echo $per_page == 10 ? 'selected' : ''; ?>>10</option>
             <option value="25" <?php echo $per_page == 25 ? 'selected' : ''; ?>>25</option>
@@ -92,7 +92,6 @@
         <input type="hidden" name="page" value="1">
     </form>
 </div>
-
 <div class="mt-3">
     <button id="exportPdf" class="btn btn-secondary">Export PDF</button>
     <button id="exportExcel" class="btn btn-success ml-2">Export Excel</button>
