@@ -45,7 +45,7 @@ class Dashboard extends CI_Controller
                 $start_hour     = 8;
                 $end_hour       = 23;
                 foreach ($courts as $court) {
-                    $bookings = $this->Booking_model->get_by_court_and_date($court->id, $today);
+                    $bookings  = $this->Booking_model->get_by_court_and_date($court->id, $today);
                     $available = [];
                     for ($h = $start_hour; $h < $end_hour; $h++) {
                         $slot_start = sprintf('%02d:00:00', $h);
@@ -58,7 +58,11 @@ class Dashboard extends CI_Controller
                             }
                         }
                         if (!$occupied) {
-                            $available[] = sprintf('%s - %s', substr($slot_start, 0, 5), substr($slot_end, 0, 5));
+                            $available[] = [
+                                'start' => substr($slot_start, 0, 5),
+                                'end'   => substr($slot_end, 0, 5),
+                                'label' => sprintf('%s - %s', substr($slot_start, 0, 5), substr($slot_end, 0, 5))
+                            ];
                         }
                     }
                     $court->available_slots = $available;
