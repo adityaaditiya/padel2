@@ -1,7 +1,6 @@
 <?php $this->load->view('templates/header'); ?>
 <h2>Dashboard Pelanggan</h2>
-<p>Selamat datang di PadelPro. Gunakan menu untuk melakukan booking lapangan.</p>
-
+<p>Hey Padel Lovers! 🎾 Mau pesan lapangan di jam custom? Tekan saja Booking Sekarang tanpa pilih jadwal—lebih fleksibel dan gampang!</p>
 <div class="row">
     <?php if (!empty($courts)): ?>
         <?php foreach ($courts as $court): ?>
