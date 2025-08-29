@@ -92,7 +92,6 @@
         <input type="hidden" name="page" value="1">
     </form>
 </div>
-
 <div class="mt-3">
     <button id="exportPdf" class="btn btn-secondary">Export PDF</button>
     <button id="exportExcel" class="btn btn-success ml-2">Export Excel</button>
