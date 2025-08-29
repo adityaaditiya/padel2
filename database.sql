@@ -81,6 +81,7 @@ CREATE TABLE `courts` (
   `nama_lapangan` varchar(100) NOT NULL,
   `harga_per_jam` decimal(10,2) NOT NULL,
   `status` enum('tersedia','maintenance') NOT NULL DEFAULT 'tersedia',
+  `gambar` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -88,10 +89,10 @@ CREATE TABLE `courts` (
 -- Dumping data for table `courts`
 --
 
-INSERT INTO `courts` (`id`, `nama_lapangan`, `harga_per_jam`, `status`, `created_at`) VALUES
-(1, 'lapangan 1', '300000.00', 'tersedia', '2025-08-26 01:47:49'),
-(2, 'lapangan 2', '300000.00', 'tersedia', '2025-08-26 01:47:57'),
-(3, 'lapangan 3', '300000.00', 'tersedia', '2025-08-26 01:48:02');
+INSERT INTO `courts` (`id`, `nama_lapangan`, `harga_per_jam`, `status`, `gambar`, `created_at`) VALUES
+(1, 'lapangan 1', '300000.00', 'tersedia', 'lapangan1.jpg', '2025-08-26 01:47:49'),
+(2, 'lapangan 2', '300000.00', 'tersedia', 'lapangan2.jpg', '2025-08-26 01:47:57'),
+(3, 'lapangan 3', '300000.00', 'tersedia', 'lapangan3.jpg', '2025-08-26 01:48:02');
 
 -- --------------------------------------------------------
 

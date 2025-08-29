@@ -305,7 +305,6 @@ class Pos extends CI_Controller
             $printer->text("Nomor Member: {$member->kode_member}\n");
             $printer->text("Nama: {$member->nama_lengkap}\n");
         } else {
-            // $printer->text("Nomor Member: -\n");
             $printer->text("-Non Member-\n");
         }
         $printer->text(str_repeat('-', 32) . "\n");

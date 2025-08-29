@@ -49,10 +49,24 @@ class Courts extends CI_Controller
         $this->form_validation->set_rules('nama_lapangan', 'Nama Lapangan', 'required');
         $this->form_validation->set_rules('harga_per_jam', 'Harga per Jam', 'required|numeric');
         if ($this->form_validation->run() === TRUE) {
+            $config = [
+                'upload_path'   => './uploads/courts/',
+                'allowed_types' => 'jpg|jpeg|png',
+                'max_size'      => 2048,
+                'encrypt_name'  => TRUE,
+            ];
+            $this->load->library('upload', $config);
+            if (!$this->upload->do_upload('gambar')) {
+                $data['upload_error'] = $this->upload->display_errors('<div class="alert alert-danger">', '</div>');
+                $this->load->view('courts/create', $data);
+                return;
+            }
+            $upload_data = $this->upload->data();
             $data = [
                 'nama_lapangan' => $this->input->post('nama_lapangan', TRUE),
                 'harga_per_jam' => $this->input->post('harga_per_jam', TRUE),
-                'status'        => $this->input->post('status', TRUE)
+                'status'        => $this->input->post('status', TRUE),
+                'gambar'        => $upload_data['file_name'],
             ];
             $this->Court_model->insert($data);
             $this->session->set_flashdata('success', 'Data lapangan berhasil ditambahkan.');
@@ -81,10 +95,25 @@ class Courts extends CI_Controller
         $this->form_validation->set_rules('nama_lapangan', 'Nama Lapangan', 'required');
         $this->form_validation->set_rules('harga_per_jam', 'Harga per Jam', 'required|numeric');
         if ($this->form_validation->run() === TRUE) {
+            $config = [
+                'upload_path'   => './uploads/courts/',
+                'allowed_types' => 'jpg|jpeg|png',
+                'max_size'      => 2048,
+                'encrypt_name'  => TRUE,
+            ];
+            $this->load->library('upload', $config);
+            if (!$this->upload->do_upload('gambar')) {
+                $data['court'] = $this->Court_model->get_by_id($id);
+                $data['upload_error'] = $this->upload->display_errors('<div class="alert alert-danger">', '</div>');
+                $this->load->view('courts/edit', $data);
+                return;
+            }
+            $upload_data = $this->upload->data();
             $data = [
                 'nama_lapangan' => $this->input->post('nama_lapangan', TRUE),
                 'harga_per_jam' => $this->input->post('harga_per_jam', TRUE),
-                'status'        => $this->input->post('status', TRUE)
+                'status'        => $this->input->post('status', TRUE),
+                'gambar'        => $upload_data['file_name'],
             ];
             $this->Court_model->update($id, $data);
             $this->session->set_flashdata('success', 'Data lapangan berhasil diupdate.');
