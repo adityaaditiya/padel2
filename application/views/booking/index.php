@@ -78,6 +78,20 @@ function booking_sort_url($field, $date, $status, $sort, $order)
         <?php endforeach; ?>
         </tbody>
     </table>
+    <div class="d-flex justify-content-between align-items-center">
+        <div>Show
+            <select id="rows-per-page" class="custom-select w-auto d-inline-block">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            entries
+        </div>
+        <nav>
+            <ul id="pagination" class="pagination mb-0"></ul>
+        </nav>
+    </div>
 <?php else: ?>
     <p>Tidak ada booking pada tanggal ini.</p>
 <?php endif; ?>
@@ -89,11 +103,62 @@ if (statusEl) {
     });
     statusEl.dispatchEvent(new Event('change'));
 }
-document.getElementById('search').addEventListener('keyup', function() {
-    var filter = this.value.toLowerCase();
-    document.querySelectorAll('#booking-table tbody tr').forEach(function(row) {
-        row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+var table = document.getElementById('booking-table');
+if (table) {
+    var allRows = Array.from(table.querySelectorAll('tbody tr'));
+    var rows = allRows.slice();
+    var rowsPerPageSelect = document.getElementById('rows-per-page');
+    var pagination = document.getElementById('pagination');
+
+    function renderTable() {
+        var rowsPerPage = parseInt(rowsPerPageSelect.value, 10);
+        var totalRows = rows.length;
+        var pageCount = Math.ceil(totalRows / rowsPerPage) || 1;
+        var currentPage = 1;
+
+        function displayPage(page) {
+            currentPage = page;
+            var start = (page - 1) * rowsPerPage;
+            var end = start + rowsPerPage;
+            allRows.forEach(function(row) {
+                row.style.display = 'none';
+            });
+            rows.slice(start, end).forEach(function(row) {
+                row.style.display = '';
+            });
+            pagination.innerHTML = '';
+            for (var i = 1; i <= pageCount; i++) {
+                var li = document.createElement('li');
+                li.className = 'page-item' + (i === currentPage ? ' active' : '');
+                var a = document.createElement('a');
+                a.className = 'page-link';
+                a.href = '#';
+                a.textContent = i;
+                (function(i){
+                    a.addEventListener('click', function(e){
+                        e.preventDefault();
+                        displayPage(i);
+                    });
+                })(i);
+                li.appendChild(a);
+                pagination.appendChild(li);
+            }
+        }
+
+        displayPage(1);
+    }
+
+    rowsPerPageSelect.addEventListener('change', renderTable);
+
+    document.getElementById('search').addEventListener('keyup', function() {
+        var filter = this.value.toLowerCase();
+        rows = allRows.filter(function(row) {
+            return row.textContent.toLowerCase().includes(filter);
+        });
+        renderTable();
     });
-});
+
+    renderTable();
+}
 </script>
 <?php $this->load->view('templates/footer'); ?>
