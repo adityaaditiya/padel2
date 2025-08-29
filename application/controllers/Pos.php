@@ -82,13 +82,31 @@ class Pos extends CI_Controller
         $this->authorize();
         $start = $this->input->get('start');
         $end   = $this->input->get('end');
+
+        $per_page = (int) $this->input->get('per_page');
+        $allowed_per_page = [10, 25, 50, 100];
+        if (!in_array($per_page, $allowed_per_page, true)) {
+            $per_page = 10;
+        }
+        $page = max(1, (int) $this->input->get('page'));
+
+        $all_sales  = ($start && $end) ? $this->Sale_model->get_all($start, $end) : [];
+        $total_rows = count($all_sales);
+        $start_index = ($page - 1) * $per_page;
+        $sales = array_slice($all_sales, $start_index, $per_page);
+
+        $page_total = 0;
+        foreach ($sales as $sale) {
+            $page_total += $sale->total_belanja;
+        }
+
         $data['filter_start'] = $start;
         $data['filter_end']   = $end;
-        $data['sales'] = ($start && $end) ? $this->Sale_model->get_all($start, $end) : [];
-        $data['page_total'] = 0;
-        foreach ($data['sales'] as $sale) {
-            $data['page_total'] += $sale->total_belanja;
-        }
+        $data['sales']        = $sales;
+        $data['page_total']   = $page_total;
+        $data['page']         = $page;
+        $data['total_pages']  = (int) ceil($total_rows / $per_page);
+        $data['per_page']     = $per_page;
         $this->load->view('pos/transactions', $data);
     }
 
