@@ -57,6 +57,19 @@ class Booking_model extends CI_Model
                         ->result();
     }
 
+    /**
+     * Ambil booking suatu lapangan pada tanggal tertentu.
+     */
+    public function get_by_court_and_date($id_court, $date)
+    {
+        return $this->db->where('id_court', $id_court)
+                        ->where('tanggal_booking', $date)
+                        ->where('status_booking !=', 'batal')
+                        ->order_by('jam_mulai', 'asc')
+                        ->get($this->table)
+                        ->result();
+    }
+
     public function insert($data)
     {
         return $this->db->insert($this->table, $data);
