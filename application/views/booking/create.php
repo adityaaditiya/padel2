@@ -12,21 +12,21 @@
         <select name="id_court" id="id_court" class="form-control" required>
             <option value="">-- Pilih Lapangan --</option>
             <?php foreach ($courts as $court): ?>
-                <option value="<?php echo $court->id; ?>"><?php echo htmlspecialchars($court->nama_lapangan); ?></option>
+                <option value="<?php echo $court->id; ?>" <?php echo set_select('id_court', $court->id, isset($selected_court) && (int)$selected_court === (int)$court->id); ?>><?php echo htmlspecialchars($court->nama_lapangan); ?></option>
             <?php endforeach; ?>
         </select>
     </div>
     <div class="form-group">
         <label for="tanggal_booking">Tanggal</label>
-        <input type="date" name="tanggal_booking" id="tanggal_booking" class="form-control" value="<?php echo set_value('tanggal_booking', date('Y-m-d')); ?>" min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d', strtotime('+2 months')); ?>" required>
+        <input type="date" name="tanggal_booking" id="tanggal_booking" class="form-control" value="<?php echo set_value('tanggal_booking', isset($selected_date) ? $selected_date : date('Y-m-d')); ?>" min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d', strtotime('+2 months')); ?>" required>
     </div>
     <div class="form-group">
         <label for="jam_mulai">Jam Mulai</label>
-        <input type="time" name="jam_mulai" id="jam_mulai" class="form-control" required>
+        <input type="time" name="jam_mulai" id="jam_mulai" class="form-control" value="<?php echo set_value('jam_mulai', isset($selected_start) ? $selected_start : ''); ?>" required>
     </div>
     <div class="form-group">
         <label for="jam_selesai">Jam Selesai</label>
-        <input type="time" name="jam_selesai" id="jam_selesai" class="form-control" required>
+        <input type="time" name="jam_selesai" id="jam_selesai" class="form-control" value="<?php echo set_value('jam_selesai', isset($selected_end) ? $selected_end : ''); ?>" required>
     </div>
     <button type="submit" class="btn btn-primary">Simpan Booking</button>
     <a href="<?php echo site_url('booking'); ?>" class="btn btn-secondary">Batal</a>

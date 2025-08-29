@@ -70,6 +70,19 @@ class Booking extends CI_Controller
         }
         $data['courts'] = $this->Court_model->get_all();
         $data['store']  = $this->Store_model->get_current();
+
+        // Prefill form when coming from dashboard with selected slot
+        $data['selected_court'] = $this->input->get('id_court');
+        $data['selected_date']  = $this->input->get('date');
+        $slot                   = $this->input->get('slot');
+        if ($slot) {
+            $parts = explode('-', $slot);
+            if (count($parts) === 2) {
+                $data['selected_start'] = $parts[0];
+                $data['selected_end']   = $parts[1];
+            }
+        }
+
         $this->load->view('booking/create', $data);
     }
 
