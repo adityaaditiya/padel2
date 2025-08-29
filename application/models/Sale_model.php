@@ -40,4 +40,38 @@ class Sale_model extends CI_Model
         $this->db->order_by('s.tanggal_transaksi', 'DESC');
         return $this->db->get()->result();
     }
+
+    /**
+     * Hitung total baris untuk filter tertentu.
+     */
+    public function count_filtered($start_date = null, $end_date = null)
+    {
+        $this->db->from($this->table . ' s');
+        if ($start_date) {
+            $this->db->where('DATE(s.tanggal_transaksi) >=', $start_date);
+        }
+        if ($end_date) {
+            $this->db->where('DATE(s.tanggal_transaksi) <=', $end_date);
+        }
+        return $this->db->count_all_results();
+    }
+
+    /**
+     * Ambil data dengan batasan (pagination) untuk mencegah load seluruh dataset.
+     */
+    public function get_paginated($start_date = null, $end_date = null, $limit = 10, $offset = 0)
+    {
+        $this->db->select('s.*, u.nama_lengkap AS customer_name');
+        $this->db->from($this->table . ' s');
+        $this->db->join('users u', 'u.id = s.customer_id', 'left');
+        if ($start_date) {
+            $this->db->where('DATE(s.tanggal_transaksi) >=', $start_date);
+        }
+        if ($end_date) {
+            $this->db->where('DATE(s.tanggal_transaksi) <=', $end_date);
+        }
+        $this->db->order_by('s.tanggal_transaksi', 'DESC');
+        $this->db->limit($limit, $offset);
+        return $this->db->get()->result();
+    }
 }
