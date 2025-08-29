@@ -210,6 +210,13 @@ class Pos extends CI_Controller
         foreach ($cart as $item) {
             $total += $item['harga_jual'] * $item['qty'];
         }
+        // Ambil jumlah bayar dari input
+        $bayar = (float) $this->input->post('bayar');
+        if ($bayar < $total) {
+            $this->session->set_flashdata('error', 'Jumlah bayar kurang.');
+            redirect('pos');
+            return;
+        }
         // Buat nomor nota sederhana
         $nomor_nota = 'INV-' . time();
         $saleData = [
@@ -234,7 +241,7 @@ class Pos extends CI_Controller
         // Buat pembayaran (tunai default)
         $payment = [
             'id_sale'        => $sale_id,
-            'jumlah_bayar'   => $total,
+            'jumlah_bayar'   => $bayar,
             'metode_pembayaran' => 'tunai',
             'id_kasir'       => $this->session->userdata('id')
         ];
@@ -282,7 +289,10 @@ class Pos extends CI_Controller
         $printer->text(str_repeat('-', 32) . "\n");
         $printer->text('Total: Rp ' . number_format($sale->total_belanja,0,',','.') . "\n");
         if (!empty($payments)) {
-            $printer->text('Bayar: Rp ' . number_format($payments[0]->jumlah_bayar,0,',','.') . "\n");
+            $bayar = $payments[0]->jumlah_bayar;
+            $kembali = $bayar - $sale->total_belanja;
+            $printer->text('Bayar: Rp ' . number_format($bayar,0,',','.') . "\n");
+            $printer->text('Kembali: Rp ' . number_format($kembali,0,',','.') . "\n");
         }
         $printer->feed(2);
         $printer->cut();
