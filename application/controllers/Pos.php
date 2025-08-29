@@ -107,7 +107,6 @@ class Pos extends CI_Controller
         $data['page']         = $page;
         $data['total_pages']  = (int) ceil($total_rows / $per_page);
         $data['per_page']     = $per_page;
-
         $this->load->view('pos/transactions', $data);
     }
 
