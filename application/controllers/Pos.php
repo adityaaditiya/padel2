@@ -85,6 +85,10 @@ class Pos extends CI_Controller
         $data['filter_start'] = $start;
         $data['filter_end']   = $end;
         $data['sales'] = ($start && $end) ? $this->Sale_model->get_all($start, $end) : [];
+        $data['page_total'] = 0;
+        foreach ($data['sales'] as $sale) {
+            $data['page_total'] += $sale->total_belanja;
+        }
         $this->load->view('pos/transactions', $data);
     }
 
