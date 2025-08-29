@@ -17,7 +17,7 @@
     </div>
     <div class="form-group">
         <label for="no_telepon">No. Telepon</label>
-        <input type="text" class="form-control" id="no_telepon" name="no_telepon" value="<?php echo set_value('no_telepon'); ?>">
+        <input type="text" class="form-control" id="no_telepon" name="no_telepon" value="<?php echo set_value('no_telepon'); ?>" required>
     </div>
     <div class="form-group">
         <label for="password">Password</label>

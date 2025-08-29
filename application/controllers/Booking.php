@@ -24,17 +24,23 @@ class Booking extends CI_Controller
         if (!$this->session->userdata('logged_in')) {
             redirect('auth/login');
         }
-        $date = $this->input->get('date');
+        $date   = $this->input->get('date');
         if (!$date) {
             $date = date('Y-m-d');
         }
-        $sort  = $this->input->get('sort') ?: 'jam_mulai';
-        $order = $this->input->get('order') ?: 'asc';
-        $data['date']  = $date;
-        $data['sort']  = $sort;
-        $data['order'] = $order;
-        $data['courts']   = $this->Court_model->get_all();
-        $data['bookings'] = $this->Booking_model->get_by_date($date, $sort, $order);
+        $status = $this->input->get('status');
+        $sort   = $this->input->get('sort') ?: 'jam_mulai';
+        $order  = $this->input->get('order') ?: 'asc';
+        $data['date']   = $date;
+        $data['sort']   = $sort;
+        $data['order']  = $order;
+        $data['status'] = $status;
+        $data['courts'] = $this->Court_model->get_all();
+        if ($status === 'pending') {
+            $data['bookings'] = $this->Booking_model->get_pending($sort, $order);
+        } else {
+            $data['bookings'] = $this->Booking_model->get_by_date($date, $sort, $order);
+        }
         $this->load->view('booking/index', $data);
     }
 
@@ -65,6 +71,21 @@ class Booking extends CI_Controller
         $data['courts'] = $this->Court_model->get_all();
         $data['store']  = $this->Store_model->get_current();
         $this->load->view('booking/create', $data);
+    }
+
+    /**
+     * Endpoint AJAX untuk mengambil detail member berdasarkan kode.
+     */
+    public function member_lookup()
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('auth/login');
+        }
+        $kode = $this->input->get('kode');
+        $member = $this->Member_model->get_by_kode($kode);
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode($member));
     }
 
     /**
@@ -110,6 +131,12 @@ class Booking extends CI_Controller
                 redirect('booking/create');
                 return;
             }
+            $maxDate = date('Y-m-d', strtotime('+2 months'));
+            if (strtotime($date) > strtotime($maxDate)) {
+                $this->session->set_flashdata('error', 'Tanggal booking tidak boleh lebih dari dua bulan dari hari ini.');
+                redirect('booking/create');
+                return;
+            }
             $start    = $this->input->post('jam_mulai');
             $end      = $this->input->post('jam_selesai');
             $durasi   = (strtotime($end) - strtotime($start)) / 3600;
@@ -124,8 +151,13 @@ class Booking extends CI_Controller
             }
             $court = $this->Court_model->get_by_id($id_court);
             $total = $court->harga_per_jam * $durasi;
+            $user_id = $this->session->userdata('id');
+            $selected = $this->input->post('member_id');
+            if ($selected && ctype_digit($selected)) {
+                $user_id = $selected;
+            }
             $data = [
-                'id_user'          => $this->session->userdata('id'),
+                'id_user'          => $user_id,
                 'id_court'         => $id_court,
                 'tanggal_booking'  => $date,
                 'jam_mulai'        => $start,
