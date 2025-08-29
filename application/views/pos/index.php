@@ -207,9 +207,11 @@ var phoneInput = document.getElementById('modal-phone');
 var addressInput = document.getElementById('modal-address');
 var chooseBtn = document.getElementById('choose-member');
 var lookupUrl = '<?php echo site_url('pos/member_lookup'); ?>';
+var customerIdInput = document.getElementById('customer-id');
+var customerNameInput = document.getElementById('customer-name');
 if (typeSelect && typeSelect.value === 'non') {
     numberInput.value = 'non member';
-    document.getElementById('customer-id').value = '';
+    if (customerIdInput) customerIdInput.value = '';
 }
 
 if (typeSelect) {
@@ -223,7 +225,7 @@ if (typeSelect) {
             nameInput.value = '';
             phoneInput.value = '';
             addressInput.value = '';
-            document.getElementById('customer-id').value = '';
+            if (customerIdInput) customerIdInput.value = '';
             numberInput.focus();
         } else {
             numberInput.value = 'non member';
@@ -234,7 +236,7 @@ if (typeSelect) {
             nameInput.value = '';
             phoneInput.value = '';
             addressInput.value = '';
-            document.getElementById('customer-id').value = '';
+            if (customerIdInput) customerIdInput.value = '';
         }
     });
 }
@@ -247,19 +249,19 @@ if (numberInput) {
                 .then(function(r){ return r.json(); })
                 .then(function(m){
                     if (m) {
-                        document.getElementById('customer-id').value = m.id;
+                        if (customerIdInput) customerIdInput.value = m.id;
                         nameInput.value = m.nama_lengkap;
                         phoneInput.value = m.no_telepon || '';
                         addressInput.value = m.alamat || '';
                     } else {
-                        document.getElementById('customer-id').value = '';
+                        if (customerIdInput) customerIdInput.value = '';
                         nameInput.value = '';
                         phoneInput.value = '';
                         addressInput.value = '';
                     }
                 });
         } else {
-            document.getElementById('customer-id').value = '';
+            if (customerIdInput) customerIdInput.value = '';
             nameInput.value = '';
             phoneInput.value = '';
             addressInput.value = '';
@@ -267,9 +269,9 @@ if (numberInput) {
     });
 }
 
-if (chooseBtn) {
+if (chooseBtn && customerNameInput) {
     chooseBtn.addEventListener('click', function() {
-        document.getElementById('customer-name').value = nameInput.value;
+        customerNameInput.value = nameInput.value;
         $('#memberModal').modal('hide');
     });
 }
