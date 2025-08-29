@@ -23,6 +23,9 @@ $formatted_store_date = $store_date ? date('d-m-Y', strtotime($store_date)) : da
         <ul class="navbar-nav mr-auto">
             <?php if ($this->session->userdata('logged_in')): ?>
                 <?php $role = $this->session->userdata('role'); ?>
+                <?php if ($role === 'pelanggan'): ?>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo site_url('dashboard'); ?>">Dashboard</a></li>
+                <?php endif; ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="bookingDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Booking</a>
                     <div class="dropdown-menu" aria-labelledby="bookingDropdown">
