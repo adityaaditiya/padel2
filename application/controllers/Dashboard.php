@@ -13,6 +13,7 @@ class Dashboard extends CI_Controller
         parent::__construct();
         $this->load->library('session');
         $this->load->helper(['url']);
+        $this->load->model('Court_model');
     }
 
     /**
@@ -24,8 +25,9 @@ class Dashboard extends CI_Controller
             redirect('auth/login');
         }
 
-        $role = $this->session->userdata('role');
-        $view = '';
+        $role  = $this->session->userdata('role');
+        $data  = [];
+        $view  = '';
         switch ($role) {
             case 'kasir':
                 $view = 'dashboard/kasir';
@@ -37,9 +39,10 @@ class Dashboard extends CI_Controller
                 $view = 'dashboard/owner';
                 break;
             default:
-                $view = 'dashboard/customer';
+                $view             = 'dashboard/customer';
+                $data['courts']   = $this->Court_model->get_all();
                 break;
         }
-        $this->load->view($view);
+        $this->load->view($view, $data);
     }
 }
