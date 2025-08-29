@@ -14,7 +14,6 @@ class Dashboard extends CI_Controller
         $this->load->library('session');
         $this->load->helper(['url']);
         $this->load->model(['Court_model','Booking_model']);
-
     }
 
     /**
@@ -65,7 +64,6 @@ class Dashboard extends CI_Controller
                     $court->available_slots = $available;
                 }
                 $data['courts'] = $courts;
-
                 break;
         }
         $this->load->view($view, $data);

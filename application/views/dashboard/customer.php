@@ -13,15 +13,15 @@
                         <p class="card-text">Harga per jam: <?php echo number_format($court->harga_per_jam, 0, ',', '.'); ?></p>
                         <?php if (!empty($court->available_slots)): ?>
                             <p class="card-text">Jam kosong hari ini:</p>
-                            <ul class="list-unstyled mb-3">
+                            <ul class="list-unstyled mb-3 row">
                                 <?php foreach ($court->available_slots as $slot): ?>
-                                    <li><?php echo htmlspecialchars($slot); ?></li>
+                                    <li class="col-6"><?php echo htmlspecialchars($slot); ?></li>
                                 <?php endforeach; ?>
                             </ul>
                         <?php else: ?>
                             <p class="card-text mb-3">Tidak ada jadwal kosong hari ini.</p>
                         <?php endif; ?>
-                        <a href="<?php echo site_url('booking'); ?>" class="btn btn-primary mt-auto">Lihat Jadwal Booking</a>
+                        <a href="<?php echo site_url('booking/create'); ?>" class="btn btn-primary mt-auto">Booking Sekarang</a>
                     </div>
                 </div>
             </div>
