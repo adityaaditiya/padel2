@@ -81,9 +81,19 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                          <th></th>
+                            <th></th>
                             <th>Total</th>
-                            <th id="cart-total">Rp <?php echo number_format($total, 0, ',', '.'); ?></th>
+                            <th id="cart-total" data-total="<?php echo $total; ?>">Rp <?php echo number_format($total, 0, ',', '.'); ?></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>Bayar</th>
+                            <th><input type="number" min="0" class="form-control form-control-sm" id="pay-input" name="bayar" form="checkout-form"></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>Kembali</th>
+                            <th id="change-output">Rp 0</th>
                         </tr>
                     </tfoot>
             </table>
@@ -184,6 +194,8 @@ if (searchInput && categorySelect) {
 
 var qtyCells = document.querySelectorAll('.cart-qty');
 var totalCell = document.getElementById('cart-total');
+var payInput = document.getElementById('pay-input');
+var changeOutput = document.getElementById('change-output');
 
 function recalcTotal() {
     var total = 0;
@@ -195,10 +207,27 @@ function recalcTotal() {
     }
     if (totalCell) {
         totalCell.textContent = 'Rp ' + total.toLocaleString('id-ID');
+        totalCell.setAttribute('data-total', total);
+    }
+    if (payInput && changeOutput) {
+        var bayar = parseFloat(payInput.value) || 0;
+        var kembali = bayar - total;
+        if (kembali < 0) kembali = 0;
+        changeOutput.textContent = 'Rp ' + kembali.toLocaleString('id-ID');
     }
 }
 
 recalcTotal();
+
+if (payInput && changeOutput && totalCell) {
+    payInput.addEventListener('input', function() {
+        var total = parseFloat(totalCell.getAttribute('data-total')) || 0;
+        var bayar = parseFloat(this.value) || 0;
+        var kembali = bayar - total;
+        if (kembali < 0) kembali = 0;
+        changeOutput.textContent = 'Rp ' + kembali.toLocaleString('id-ID');
+    });
+}
 
 var typeSelect = document.getElementById('customer-type');
 var numberInput = document.getElementById('member-number');
@@ -207,9 +236,11 @@ var phoneInput = document.getElementById('modal-phone');
 var addressInput = document.getElementById('modal-address');
 var chooseBtn = document.getElementById('choose-member');
 var lookupUrl = '<?php echo site_url('pos/member_lookup'); ?>';
+var customerIdInput = document.getElementById('customer-id');
+var customerNameInput = document.getElementById('customer-name');
 if (typeSelect && typeSelect.value === 'non') {
     numberInput.value = 'non member';
-    document.getElementById('customer-id').value = '';
+    if (customerIdInput) customerIdInput.value = '';
 }
 
 if (typeSelect) {
@@ -223,7 +254,7 @@ if (typeSelect) {
             nameInput.value = '';
             phoneInput.value = '';
             addressInput.value = '';
-            document.getElementById('customer-id').value = '';
+            if (customerIdInput) customerIdInput.value = '';
             numberInput.focus();
         } else {
             numberInput.value = 'non member';
@@ -234,7 +265,7 @@ if (typeSelect) {
             nameInput.value = '';
             phoneInput.value = '';
             addressInput.value = '';
-            document.getElementById('customer-id').value = '';
+            if (customerIdInput) customerIdInput.value = '';
         }
     });
 }
@@ -247,19 +278,19 @@ if (numberInput) {
                 .then(function(r){ return r.json(); })
                 .then(function(m){
                     if (m) {
-                        document.getElementById('customer-id').value = m.id;
+                        if (customerIdInput) customerIdInput.value = m.id;
                         nameInput.value = m.nama_lengkap;
                         phoneInput.value = m.no_telepon || '';
                         addressInput.value = m.alamat || '';
                     } else {
-                        document.getElementById('customer-id').value = '';
+                        if (customerIdInput) customerIdInput.value = '';
                         nameInput.value = '';
                         phoneInput.value = '';
                         addressInput.value = '';
                     }
                 });
         } else {
-            document.getElementById('customer-id').value = '';
+            if (customerIdInput) customerIdInput.value = '';
             nameInput.value = '';
             phoneInput.value = '';
             addressInput.value = '';
@@ -267,9 +298,9 @@ if (numberInput) {
     });
 }
 
-if (chooseBtn) {
+if (chooseBtn && customerNameInput) {
     chooseBtn.addEventListener('click', function() {
-        document.getElementById('customer-name').value = nameInput.value;
+        customerNameInput.value = nameInput.value;
         $('#memberModal').modal('hide');
     });
 }
