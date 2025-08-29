@@ -241,6 +241,17 @@ class Pos extends CI_Controller
         $printer->text("Padel Store\n");
         $printer->text(date("d-m-Y H:i") . "\n");
         $printer->text("Nota: {$sale->nomor_nota}\n");
+        $member = null;
+        if (!empty($sale->customer_id)) {
+            $member = $this->Member_model->get_by_id($sale->customer_id);
+        }
+        if ($member) {
+            $printer->text("Nomor Member: {$member->kode_member}\n");
+            $printer->text("Nama: {$member->nama_lengkap}\n");
+        } else {
+            $printer->text("Nomor Member: -\n");
+            $printer->text("Nama: Non Member\n");
+        }
         $printer->text(str_repeat('-', 32) . "\n");
         $printer->setJustification(Printer::JUSTIFY_LEFT);
         foreach ($details as $d) {
