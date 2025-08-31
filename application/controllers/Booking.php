@@ -149,8 +149,23 @@ class Booking extends CI_Controller
             }
             $court = $this->Court_model->get_by_id($id_court);
             $total = $court->harga_per_jam * $durasi;
+            $id_user = $this->session->userdata('id');
+            if ($this->session->userdata('role') === 'kasir') {
+                $type = $this->input->post('customer_type');
+                if ($type === 'member') {
+                    $cust = (int) $this->input->post('customer_id');
+                    if (!$cust) {
+                        $this->session->set_flashdata('error', 'Nomor member tidak valid.');
+                        redirect('booking/create');
+                        return;
+                    }
+                    $id_user = $cust;
+                } else {
+                    $id_user = 0;
+                }
+            }
             $data = [
-                'id_user'          => $this->session->userdata('id'),
+                'id_user'          => $id_user,
                 'id_court'         => $id_court,
                 'tanggal_booking'  => $date,
                 'jam_mulai'        => $start,
@@ -160,11 +175,11 @@ class Booking extends CI_Controller
                 'status_booking'   => 'pending',
                 'status_pembayaran'=> 'belum_bayar'
             ];
-        $this->Booking_model->insert($data);
-        $this->session->set_flashdata('success', 'Booking berhasil disimpan, silakan lakukan pembayaran.');
-        redirect('booking');
-        return;
-    }
+            $this->Booking_model->insert($data);
+            $this->session->set_flashdata('success', 'Booking berhasil disimpan, silakan lakukan pembayaran.');
+            redirect('booking');
+            return;
+        }
         $this->create();
     }
 

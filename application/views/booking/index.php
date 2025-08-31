@@ -49,7 +49,7 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                 <td><?php echo htmlspecialchars($b->nama_lapangan); ?></td>
                 <td><?php echo htmlspecialchars(date('H:i', strtotime($b->jam_mulai))); ?></td>
                 <td><?php echo htmlspecialchars(date('H:i', strtotime($b->jam_selesai))); ?></td>
-                <td><?php echo htmlspecialchars($b->kode_member); ?></td>
+                <td><?php echo htmlspecialchars(!empty($b->kode_member) ? $b->kode_member : 'non member'); ?></td>
                 <td><?php echo htmlspecialchars($b->status_booking); ?></td>
                 <td><?php echo htmlspecialchars($b->keterangan); ?></td>
                 <?php if ($role === 'kasir'): ?>
