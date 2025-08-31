@@ -160,8 +160,6 @@ class Booking extends CI_Controller
                         return;
                     }
                     $id_user = $cust;
-                } else {
-                    $id_user = 0;
                 }
             }
             $data = [
