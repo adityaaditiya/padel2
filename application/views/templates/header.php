@@ -12,6 +12,8 @@ $formatted_store_date = $store_date ? date('d-m-Y', strtotime($store_date)) : da
     <title>PadelPro</title>
     <!-- Bootstrap CSS via CDN -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
