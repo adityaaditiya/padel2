@@ -252,11 +252,6 @@ class Booking extends CI_Controller
         redirect('booking');
     }
 
-    /**
-     * Cetak nota booking menggunakan printer thermal T82.
-     *
-     * Dapat dipanggil ulang untuk re-print.
-     */
     public function print_receipt($id)
     {
         if (!$this->session->userdata('logged_in')) {
@@ -271,7 +266,6 @@ class Booking extends CI_Controller
         if (!$booking) {
             show_404();
         }
-
         $member = $this->Member_model->get_by_id($booking->id_user);
 
         try {
