@@ -1,6 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\CapabilityProfile;
+
 /**
  * Controller untuk modul booking pelanggan.
  *
@@ -135,9 +139,9 @@ class Booking extends CI_Controller
                 redirect('booking/create');
                 return;
             }
-            $start    = $this->input->post('jam_mulai');
-            $end      = $this->input->post('jam_selesai');
-            $durasi   = (strtotime($end) - strtotime($start)) / 3600;
+            $start  = $this->input->post('jam_mulai');
+            $end    = $this->input->post('jam_selesai');
+            $durasi = (strtotime($end) - strtotime($start)) / 60; // minutes
             if ($durasi <= 0) {
                 $this->session->set_flashdata('error', 'Jam selesai harus lebih besar dari jam mulai.');
                 redirect('booking/create');
@@ -147,24 +151,54 @@ class Booking extends CI_Controller
                 $this->session->set_flashdata('error', 'Lapangan sudah terbooking pada jam tersebut.');
                 redirect('booking/create');
             }
-            $court = $this->Court_model->get_by_id($id_court);
-            $total = $court->harga_per_jam * $durasi;
+            $court         = $this->Court_model->get_by_id($id_court);
+            $harga_booking = ($court->harga_per_jam / 60) * $durasi;
+            $diskon_persen = (float) $this->input->post('diskon_persen');
+            $diskon_rupiah = (float) $this->input->post('diskon_rupiah');
+            if ($diskon_persen > 0 && $diskon_rupiah <= 0) {
+                $diskon_rupiah = $harga_booking * ($diskon_persen / 100);
+            } elseif ($diskon_rupiah > 0 && $diskon_persen <= 0) {
+                $diskon_persen = $harga_booking > 0 ? ($diskon_rupiah / $harga_booking) * 100 : 0;
+            }
+            $total   = $harga_booking - $diskon_rupiah;
+            if ($total < 0) {
+                $total = 0;
+            }
+            $id_user = $this->session->userdata('id');
+            if ($this->session->userdata('role') === 'kasir') {
+                $type = $this->input->post('customer_type');
+                if ($type === 'member') {
+                    $cust = (int) $this->input->post('customer_id');
+                    if (!$cust) {
+                        $this->session->set_flashdata('error', 'Nomor member tidak valid.');
+                        redirect('booking/create');
+                        return;
+                    }
+                    $id_user = $cust;
+                }
+            }
             $data = [
-                'id_user'          => $this->session->userdata('id'),
+                'id_user'          => $id_user,
                 'id_court'         => $id_court,
                 'tanggal_booking'  => $date,
                 'jam_mulai'        => $start,
                 'jam_selesai'      => $end,
                 'durasi'           => $durasi,
+                'harga_booking'    => $harga_booking,
+                'diskon'           => $diskon_rupiah,
                 'total_harga'      => $total,
                 'status_booking'   => 'pending',
                 'status_pembayaran'=> 'belum_bayar'
             ];
-        $this->Booking_model->insert($data);
-        $this->session->set_flashdata('success', 'Booking berhasil disimpan, silakan lakukan pembayaran.');
-        redirect('booking');
-        return;
-    }
+            $booking_id = $this->Booking_model->insert($data);
+            $this->session->set_flashdata('success', 'Booking berhasil disimpan, silakan lakukan pembayaran.');
+            if ($this->session->userdata('role') === 'kasir') {
+                $this->print_receipt($booking_id);
+                return;
+            }
+            redirect('booking');
+            return;
+        }
         $this->create();
     }
 
@@ -215,6 +249,63 @@ class Booking extends CI_Controller
         }
         $this->Booking_model->update($id, $data);
         $this->session->set_flashdata('success', 'Status booking diperbarui.');
+        redirect('booking');
+    }
+
+    /**
+     * Cetak nota booking menggunakan printer thermal T82.
+     *
+     * Dapat dipanggil ulang untuk re-print.
+     */
+    public function print_receipt($id)
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('auth/login');
+        }
+        $role = $this->session->userdata('role');
+        if (!in_array($role, ['kasir', 'admin_keuangan', 'owner'])) {
+            show_error('Forbidden', 403);
+        }
+
+        $booking = $this->Booking_model->find_with_court($id);
+        if (!$booking) {
+            show_404();
+        }
+
+        $member = $this->Member_model->get_by_id($booking->id_user);
+
+        try {
+            $profile = CapabilityProfile::load('T82');
+        } catch (\Exception $e) {
+            $profile = CapabilityProfile::load('default');
+        }
+
+        $connector = new WindowsPrintConnector('T82');
+        $printer   = new Printer($connector, $profile);
+        $printer->setPrintLeftMargin(80);
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->text("Padel Store\n");
+        $printer->text(date('d-m-Y H:i') . "\n");
+        if ($member && !empty($member->kode_member)) {
+            $printer->text('Nomor Member: ' . $member->kode_member . "\n");
+        } else {
+            $printer->text("-Non Member-\n");
+        }
+        $printer->text(str_repeat('-', 32) . "\n");
+        $printer->setJustification(Printer::JUSTIFY_LEFT);
+        $printer->text('ID Booking : ' . $booking->id . "\n");
+        $printer->text('Tanggal    : ' . $booking->tanggal_booking . "\n");
+        $printer->text('Lapangan   : ' . $booking->nama_lapangan . "\n");
+        $printer->text('Mulai      : ' . $booking->jam_mulai . "\n");
+        $printer->text('Selesai    : ' . $booking->jam_selesai . "\n");
+        $durasiMenit = (strtotime($booking->jam_selesai) - strtotime($booking->jam_mulai)) / 60;
+        $printer->text('Durasi     : ' . $durasiMenit . " menit\n");
+        $printer->text('Harga      : Rp ' . number_format($booking->harga_booking,0,',','.') . "\n");
+        $printer->text('Diskon     : Rp ' . number_format($booking->diskon,0,',','.') . "\n");
+        $printer->text('Total      : Rp ' . number_format($booking->total_harga,0,',','.') . "\n");
+        $printer->feed(2);
+        $printer->cut();
+        $printer->close();
         redirect('booking');
     }
 

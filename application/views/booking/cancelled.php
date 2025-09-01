@@ -11,7 +11,7 @@
         <thead>
             <tr>
                 <th>Lapangan</th>
-                <th>Pelanggan</th>
+                <th>Kode Member</th>
                 <th>Jam Mulai</th>
                 <th>Jam Selesai</th>
                 <th>Keterangan</th>
@@ -21,7 +21,7 @@
         <?php foreach ($bookings as $b): ?>
             <tr>
                 <td><?php echo htmlspecialchars($b->id_court); ?></td>
-                <td><?php echo htmlspecialchars($b->id_user); ?></td>
+                <td><?php echo htmlspecialchars(!empty($b->kode_member) ? $b->kode_member : 'non member'); ?></td>
                 <td><?php echo htmlspecialchars($b->jam_mulai); ?></td>
                 <td><?php echo htmlspecialchars($b->jam_selesai); ?></td>
                 <td><?php echo htmlspecialchars($b->keterangan); ?></td>
