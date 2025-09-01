@@ -147,8 +147,19 @@ class Booking extends CI_Controller
                 $this->session->set_flashdata('error', 'Lapangan sudah terbooking pada jam tersebut.');
                 redirect('booking/create');
             }
-            $court = $this->Court_model->get_by_id($id_court);
-            $total = $court->harga_per_jam * $durasi;
+            $court         = $this->Court_model->get_by_id($id_court);
+            $harga_booking = $court->harga_per_jam * $durasi;
+            $diskon_persen = (float) $this->input->post('diskon_persen');
+            $diskon_rupiah = (float) $this->input->post('diskon_rupiah');
+            if ($diskon_persen > 0 && $diskon_rupiah <= 0) {
+                $diskon_rupiah = $harga_booking * ($diskon_persen / 100);
+            } elseif ($diskon_rupiah > 0 && $diskon_persen <= 0) {
+                $diskon_persen = $harga_booking > 0 ? ($diskon_rupiah / $harga_booking) * 100 : 0;
+            }
+            $total   = $harga_booking - $diskon_rupiah;
+            if ($total < 0) {
+                $total = 0;
+            }
             $id_user = $this->session->userdata('id');
             if ($this->session->userdata('role') === 'kasir') {
                 $type = $this->input->post('customer_type');
@@ -169,6 +180,8 @@ class Booking extends CI_Controller
                 'jam_mulai'        => $start,
                 'jam_selesai'      => $end,
                 'durasi'           => $durasi,
+                'harga_booking'    => $harga_booking,
+                'diskon'           => $diskon_rupiah,
                 'total_harga'      => $total,
                 'status_booking'   => 'pending',
                 'status_pembayaran'=> 'belum_bayar'
