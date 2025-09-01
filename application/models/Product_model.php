@@ -24,7 +24,7 @@ class Product_model extends CI_Model
         return $this->categories;
     }
 
-    public function get_all($start_date = null, $end_date = null)
+    public function get_all($start_date = null, $end_date = null, $limit = null, $offset = null)
     {
         if ($start_date) {
             $this->db->where('DATE(created_at) >=', $start_date);
@@ -32,7 +32,21 @@ class Product_model extends CI_Model
         if ($end_date) {
             $this->db->where('DATE(created_at) <=', $end_date);
         }
+        if ($limit !== null) {
+            $this->db->limit($limit, $offset);
+        }
         return $this->db->get($this->table)->result();
+    }
+
+    public function count_all($start_date = null, $end_date = null)
+    {
+        if ($start_date) {
+            $this->db->where('DATE(created_at) >=', $start_date);
+        }
+        if ($end_date) {
+            $this->db->where('DATE(created_at) <=', $end_date);
+        }
+        return $this->db->count_all_results($this->table);
     }
 
     /**

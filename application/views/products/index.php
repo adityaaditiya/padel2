@@ -9,6 +9,7 @@
     <input type="date" name="end_date" class="form-control mr-2" value="<?php echo html_escape($end_date); ?>">
     <button type="submit" class="btn btn-secondary">Filter</button>
 </form>
+
 <input type="text" id="productSearch" class="form-control mb-3 w-auto d-inline-block" style="max-width: 250px;" placeholder="Cari produk...">
 <small id="searchFeedback" class="form-text text-danger d-none">Produk tidak ditemukan</small>
 
@@ -39,6 +40,21 @@
     <?php endforeach; ?>
     </tbody>
 </table>
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="btn-group" role="group" aria-label="Per halaman">
+        <?php foreach ([10,25,50,100] as $size): ?>
+            <a href="<?php echo site_url('products?' . http_build_query([
+                'start_date' => $start_date,
+                'end_date'   => $end_date,
+                'per_page'   => $size
+            ])); ?>" class="btn btn-outline-secondary<?php echo ($per_page == $size) ? ' active' : ''; ?>"><?php echo $size; ?></a>
+        <?php endforeach; ?>
+    </div>
+    <div>
+        <?php echo $this->pagination->create_links(); ?>
+    </div>
+</div>
 
 <?php $params = http_build_query(['start_date' => $start_date, 'end_date' => $end_date]); ?>
 <a href="<?php echo site_url('products/export_excel?' . $params); ?>" class="btn btn-success mt-2">Export Excel</a>
