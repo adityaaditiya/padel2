@@ -58,7 +58,6 @@
 
 <?php $params = http_build_query(['start_date' => $start_date, 'end_date' => $end_date]); ?>
 <a href="<?php echo site_url('products/export_excel?' . $params); ?>" class="btn btn-success mt-2">Export Excel</a>
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('productSearch');
