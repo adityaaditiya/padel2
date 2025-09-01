@@ -7,13 +7,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Product_model extends CI_Model
 {
     protected $table = 'products';
+    /**
+     * Daftar kategori yang digunakan di seluruh aplikasi.
+     *
+     * Menggunakan satu sumber kebenaran agar halaman lain
+     * (seperti POS) dapat menampilkan semua kategori meski
+     * belum ada produk di dalamnya.
+     */
+    public $categories = ['makanan','snack','cofee','non cofee','tea','perlengkapan padel'];
 
     /**
-     * Ambil semua kategori produk yang tersedia.
+     * Ambil semua kategori yang diizinkan.
      */
     public function get_categories()
     {
-        return $this->db->select('kategori')->distinct()->order_by('kategori')->get($this->table)->result();
+        return $this->categories;
     }
 
     public function get_all()

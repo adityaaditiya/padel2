@@ -6,7 +6,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class Products extends CI_Controller
 {
-    private $categories = ['makanan','snack','cofee','non cofee','tea'];
     public function __construct()
     {
         parent::__construct();
@@ -36,7 +35,7 @@ class Products extends CI_Controller
     public function create()
     {
         $this->authorize();
-        $data['categories'] = $this->categories;
+        $data['categories'] = $this->Product_model->get_categories();
         $this->load->view('products/create', $data);
     }
 
@@ -46,7 +45,8 @@ class Products extends CI_Controller
         $this->form_validation->set_rules('nama_produk', 'Nama Produk', 'required');
         $this->form_validation->set_rules('harga_jual', 'Harga Jual', 'required|numeric');
         $this->form_validation->set_rules('stok', 'Stok', 'required|integer');
-        $this->form_validation->set_rules('kategori', 'Kategori', 'required|in_list['.implode(',', $this->categories).']');
+        $category_list = $this->Product_model->get_categories();
+        $this->form_validation->set_rules('kategori', 'Kategori', 'required|in_list['.implode(',', $category_list).']');
         if ($this->form_validation->run() === TRUE) {
             $data = [
                 'nama_produk' => $this->input->post('nama_produk', TRUE),
@@ -66,7 +66,7 @@ class Products extends CI_Controller
     {
         $this->authorize();
         $data['product'] = $this->Product_model->get_by_id($id);
-        $data['categories'] = $this->categories;
+        $data['categories'] = $this->Product_model->get_categories();
         $this->load->view('products/edit', $data);
     }
 
@@ -76,7 +76,8 @@ class Products extends CI_Controller
         $this->form_validation->set_rules('nama_produk', 'Nama Produk', 'required');
         $this->form_validation->set_rules('harga_jual', 'Harga Jual', 'required|numeric');
         $this->form_validation->set_rules('stok', 'Stok', 'required|integer');
-        $this->form_validation->set_rules('kategori', 'Kategori', 'required|in_list['.implode(',', $this->categories).']');
+        $category_list = $this->Product_model->get_categories();
+        $this->form_validation->set_rules('kategori', 'Kategori', 'required|in_list['.implode(',', $category_list).']');
         if ($this->form_validation->run() === TRUE) {
             $data = [
                 'nama_produk' => $this->input->post('nama_produk', TRUE),
