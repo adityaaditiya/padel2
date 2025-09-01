@@ -4,7 +4,11 @@
     <div class="alert alert-success"><?php echo $this->session->flashdata('success'); ?></div>
 <?php endif; ?>
 <a href="<?php echo site_url('products/create'); ?>" class="btn btn-primary mb-2">Tambah Produk</a>
-<table class="table table-bordered">
+
+<input type="text" id="productSearch" class="form-control mb-3 w-auto d-inline-block" style="max-width: 250px;" placeholder="Cari produk...">
+<small id="searchFeedback" class="form-text text-danger d-none">Produk tidak ditemukan</small>
+
+<table id="productsTable" class="table table-bordered">
     <thead>
         <tr>
             <th>ID</th>
@@ -31,4 +35,34 @@
     <?php endforeach; ?>
     </tbody>
 </table>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('productSearch');
+    const table = document.getElementById('productsTable');
+    const feedback = document.getElementById('searchFeedback');
+
+    searchInput.addEventListener('keyup', function () {
+        const filter = searchInput.value.toLowerCase();
+        let visibleCount = 0;
+
+        const rows = table.getElementsByTagName('tr');
+        for (let i = 1; i < rows.length; i++) {
+            const text = rows[i].textContent.toLowerCase();
+            const match = text.indexOf(filter) > -1;
+            rows[i].style.display = match ? '' : 'none';
+            if (match) {
+                visibleCount++;
+            }
+        }
+
+        if (filter && visibleCount === 0) {
+            feedback.classList.remove('d-none');
+        } else {
+            feedback.classList.add('d-none');
+        }
+    });
+});
+</script>
+
 <?php $this->load->view('templates/footer'); ?>
