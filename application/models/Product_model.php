@@ -24,8 +24,14 @@ class Product_model extends CI_Model
         return $this->categories;
     }
 
-    public function get_all()
+    public function get_all($start_date = null, $end_date = null)
     {
+        if ($start_date) {
+            $this->db->where('DATE(created_at) >=', $start_date);
+        }
+        if ($end_date) {
+            $this->db->where('DATE(created_at) <=', $end_date);
+        }
         return $this->db->get($this->table)->result();
     }
 

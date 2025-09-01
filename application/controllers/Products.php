@@ -28,8 +28,32 @@ class Products extends CI_Controller
     public function index()
     {
         $this->authorize();
-        $data['products'] = $this->Product_model->get_all();
+        $start_date = $this->input->get('start_date');
+        $end_date   = $this->input->get('end_date');
+        $data['start_date'] = $start_date;
+        $data['end_date']   = $end_date;
+        $data['products'] = $this->Product_model->get_all($start_date, $end_date);
         $this->load->view('products/index', $data);
+    }
+
+    public function export_excel()
+    {
+        $this->authorize();
+        $start_date = $this->input->get('start_date');
+        $end_date   = $this->input->get('end_date');
+        $products   = $this->Product_model->get_all($start_date, $end_date);
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment; filename="daftar_produk.xls"');
+
+        $data = [
+            'title'      => 'Daftar Produk',
+            'start_date' => $start_date,
+            'end_date'   => $end_date,
+            'products'   => $products
+        ];
+
+        $this->load->view('products/export_excel', $data);
     }
 
     public function create()
