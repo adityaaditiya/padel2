@@ -40,6 +40,10 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('kode_member', $date, $status, $sort, $order)); ?>">Kode Member</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_booking', $date, $status, $sort, $order)); ?>">Status</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('keterangan', $date, $status, $sort, $order)); ?>">Keterangan</a></th>
+                <?php if ($role === 'kasir'): ?>
+                    <th>Nota</th>
+                    <th>Aksi</th>
+                <?php endif; ?>
             </tr>
         </thead>
         <tbody>
@@ -53,8 +57,10 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                 <td><?php echo htmlspecialchars($b->status_booking); ?></td>
                 <td><?php echo htmlspecialchars($b->keterangan); ?></td>
                 <?php if ($role === 'kasir'): ?>
-                <td>
-                    
+                    <td>
+                        <a href="<?php echo site_url('booking/print_receipt/' . $b->id); ?>" class="btn btn-sm btn-secondary">Reprint</a>
+                    </td>
+                    <td>
                         <?php if ($b->status_booking === 'pending'): ?>
                             <form method="post" action="<?php echo site_url('booking/update_status/' . $b->id); ?>" style="display:inline-block">
                                 <input type="hidden" name="status" value="confirmed">
@@ -72,8 +78,8 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                                 <button type="submit" name="status" value="batal" class="btn btn-sm btn-danger">Batal</button>
                             </form>
                         <?php endif; ?>
-                    <?php endif; ?>
-                </td>
+                    </td>
+                <?php endif; ?>
             </tr>
         <?php endforeach; ?>
         </tbody>

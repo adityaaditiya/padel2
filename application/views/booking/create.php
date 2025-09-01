@@ -162,12 +162,16 @@ function updatePayment(e){
     }
     var start = startInput.value;
     var end = endInput.value;
+var durasi = 0;
+if (start && end) {
+    durasi = timeToMinutes(end) - timeToMinutes(start);
+    if (durasi < 0) durasi = 0;
+}
     var durasi = 0;
     if (start && end) {
         durasi = (timeToMinutes(end) - timeToMinutes(start)) / 60;
         if (durasi < 0) durasi = 0;
     }
-    var harga = pricePerHour * durasi;
     if (hargaBookingInput) hargaBookingInput.value = harga ? harga.toFixed(0) : '';
     var discPercent = parseFloat(diskonPersenInput.value) || 0;
     var discAmount = parseFloat(diskonRupiahInput.value) || 0;
