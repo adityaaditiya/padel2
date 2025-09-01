@@ -5,7 +5,7 @@
 <?php endif; ?>
 <a href="<?php echo site_url('products/create'); ?>" class="btn btn-primary mb-2">Tambah Produk</a>
 
-<input type="text" id="productSearch" class="form-control mb-3" placeholder="Cari produk...">
+<input type="text" id="productSearch" class="form-control mb-3 w-auto d-inline-block" style="max-width: 250px;" placeholder="Cari produk...">
 <small id="searchFeedback" class="form-text text-danger d-none">Produk tidak ditemukan</small>
 
 <table id="productsTable" class="table table-bordered">
