@@ -186,9 +186,13 @@ class Booking extends CI_Controller
                 'status_booking'   => 'pending',
                 'status_pembayaran'=> 'belum_bayar'
             ];
-            $this->Booking_model->insert($data);
+            $booking_id = $this->Booking_model->insert($data);
             $this->session->set_flashdata('success', 'Booking berhasil disimpan, silakan lakukan pembayaran.');
-            redirect('booking');
+            if ($this->session->userdata('role') === 'kasir') {
+                redirect('booking/print_receipt/' . $booking_id);
+            } else {
+                redirect('booking');
+            }
             return;
         }
         $this->create();
@@ -242,6 +246,23 @@ class Booking extends CI_Controller
         $this->Booking_model->update($id, $data);
         $this->session->set_flashdata('success', 'Status booking diperbarui.');
         redirect('booking');
+    }
+
+    /**
+     * Tampilkan nota dan cetak otomatis untuk booking tertentu.
+     */
+    public function print_receipt($id)
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('auth/login');
+        }
+        $booking = $this->Booking_model->find_with_court($id);
+        if (!$booking) {
+            show_404();
+        }
+        $data['booking'] = $booking;
+        $data['store']   = $this->Store_model->get_current();
+        $this->load->view('booking/receipt', $data);
     }
 
     /**

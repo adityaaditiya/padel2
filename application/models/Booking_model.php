@@ -72,7 +72,21 @@ class Booking_model extends CI_Model
 
     public function insert($data)
     {
-        return $this->db->insert($this->table, $data);
+        $this->db->insert($this->table, $data);
+        return $this->db->insert_id();
+    }
+
+    /**
+     * Ambil satu booking beserta nama lapangan.
+     */
+    public function find_with_court($id)
+    {
+        return $this->db->select('b.*, c.nama_lapangan')
+                        ->from($this->table . ' b')
+                        ->join('courts c', 'c.id = b.id_court', 'left')
+                        ->where('b.id', $id)
+                        ->get()
+                        ->row();
     }
 
     /**
