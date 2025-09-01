@@ -49,7 +49,6 @@ class Products extends CI_Controller
         $data['end_date']   = $end_date;
         $data['per_page']   = $per_page;
         $data['products']   = $this->Product_model->get_all($start_date, $end_date, $per_page, $page);
-
         $this->load->view('products/index', $data);
     }
 

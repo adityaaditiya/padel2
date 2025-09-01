@@ -42,14 +42,13 @@
 </table>
 
 <div class="d-flex justify-content-between align-items-center mt-3">
-    <div class="btn-group" role="group" aria-label="Per halaman">
-        <?php foreach ([10,25,50,100] as $size): ?>
-            <a href="<?php echo site_url('products?' . http_build_query([
-                'start_date' => $start_date,
-                'end_date'   => $end_date,
-                'per_page'   => $size
-            ])); ?>" class="btn btn-outline-secondary<?php echo ($per_page == $size) ? ' active' : ''; ?>"><?php echo $size; ?></a>
-        <?php endforeach; ?>
+    <div class="form-inline">
+        <label for="perPageSelect" class="mr-2 mb-0">Per halaman</label>
+        <select id="perPageSelect" class="form-control">
+            <?php foreach ([10,25,50,100] as $size): ?>
+                <option value="<?php echo $size; ?>" <?php echo ($per_page == $size) ? 'selected' : ''; ?>><?php echo $size; ?></option>
+            <?php endforeach; ?>
+        </select>
     </div>
     <div>
         <?php echo $this->pagination->create_links(); ?>
@@ -58,11 +57,13 @@
 
 <?php $params = http_build_query(['start_date' => $start_date, 'end_date' => $end_date]); ?>
 <a href="<?php echo site_url('products/export_excel?' . $params); ?>" class="btn btn-success mt-2">Export Excel</a>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('productSearch');
     const table = document.getElementById('productsTable');
     const feedback = document.getElementById('searchFeedback');
+
 
     searchInput.addEventListener('keyup', function () {
         const filter = searchInput.value.toLowerCase();
@@ -84,6 +85,16 @@ document.addEventListener('DOMContentLoaded', function () {
             feedback.classList.add('d-none');
         }
     });
+
+    if (perPageSelect) {
+        perPageSelect.addEventListener('change', function () {
+            const params = new URLSearchParams(window.location.search);
+            params.set('per_page', this.value);
+            params.delete('page');
+            window.location.search = params.toString();
+        });
+    }
+
 });
 </script>
 
