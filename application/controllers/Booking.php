@@ -252,6 +252,56 @@ class Booking extends CI_Controller
         redirect('booking');
     }
 
+    public function print_receipt($id)
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('auth/login');
+        }
+        $role = $this->session->userdata('role');
+        if (!in_array($role, ['kasir', 'admin_keuangan', 'owner'])) {
+            show_error('Forbidden', 403);
+        }
+
+        $booking = $this->Booking_model->find_with_court($id);
+        if (!$booking) {
+            show_404();
+        }
+        $member = $this->Member_model->get_by_id($booking->id_user);
+
+        try {
+            $profile = CapabilityProfile::load('T82');
+        } catch (\Exception $e) {
+            $profile = CapabilityProfile::load('default');
+        }
+
+        $connector = new WindowsPrintConnector('T82');
+        $printer   = new Printer($connector, $profile);
+        $printer->setPrintLeftMargin(80);
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->text("Padel Store\n");
+        $printer->text(date('d-m-Y H:i') . "\n");
+        if ($member && !empty($member->kode_member)) {
+            $printer->text('Nomor Member: ' . $member->kode_member . "\n");
+        } else {
+            $printer->text("-Non Member-\n");
+        }
+        $printer->text(str_repeat('-', 32) . "\n");
+        $printer->setJustification(Printer::JUSTIFY_LEFT);
+        $printer->text('ID Booking : ' . $booking->id . "\n");
+        $printer->text('Tanggal    : ' . $booking->tanggal_booking . "\n");
+        $printer->text('Lapangan   : ' . $booking->nama_lapangan . "\n");
+        $printer->text('Mulai      : ' . $booking->jam_mulai . "\n");
+        $printer->text('Selesai    : ' . $booking->jam_selesai . "\n");
+        $printer->text('Durasi     : ' . $booking->durasi . " jam\n");
+        $printer->text('Harga      : Rp ' . number_format($booking->harga_booking,0,',','.') . "\n");
+        $printer->text('Diskon     : Rp ' . number_format($booking->diskon,0,',','.') . "\n");
+        $printer->text('Total      : Rp ' . number_format($booking->total_harga,0,',','.') . "\n");
+        $printer->feed(2);
+        $printer->cut();
+        $printer->close();
+        redirect('booking');
+    }
+
     /**
      * Cetak nota booking menggunakan printer thermal T82.
      *

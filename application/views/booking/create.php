@@ -167,7 +167,11 @@ if (start && end) {
     durasi = timeToMinutes(end) - timeToMinutes(start);
     if (durasi < 0) durasi = 0;
 }
-var harga = pricePerHour * (durasi / 60);
+    var durasi = 0;
+    if (start && end) {
+        durasi = (timeToMinutes(end) - timeToMinutes(start)) / 60;
+        if (durasi < 0) durasi = 0;
+    }
     if (hargaBookingInput) hargaBookingInput.value = harga ? harga.toFixed(0) : '';
     var discPercent = parseFloat(diskonPersenInput.value) || 0;
     var discAmount = parseFloat(diskonRupiahInput.value) || 0;
