@@ -6,7 +6,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class Products extends CI_Controller
 {
-    private $categories = ['makanan','snack','cofee','non cofee','tea'];
     public function __construct()
     {
         parent::__construct();
@@ -29,14 +28,54 @@ class Products extends CI_Controller
     public function index()
     {
         $this->authorize();
-        $data['products'] = $this->Product_model->get_all();
+        $start_date = $this->input->get('start_date');
+        $end_date   = $this->input->get('end_date');
+        $per_page   = (int) $this->input->get('per_page') ?: 10;
+        $page       = (int) $this->input->get('page');
+
+        $this->load->library('pagination');
+        $config['base_url'] = site_url('products?'.http_build_query([
+            'start_date' => $start_date,
+            'end_date'   => $end_date,
+            'per_page'   => $per_page
+        ]));
+        $config['total_rows'] = $this->Product_model->count_all($start_date, $end_date);
+        $config['per_page'] = $per_page;
+        $config['page_query_string'] = TRUE;
+        $config['query_string_segment'] = 'page';
+        $this->pagination->initialize($config);
+
+        $data['start_date'] = $start_date;
+        $data['end_date']   = $end_date;
+        $data['per_page']   = $per_page;
+        $data['products']   = $this->Product_model->get_all($start_date, $end_date, $per_page, $page);
         $this->load->view('products/index', $data);
+    }
+
+    public function export_excel()
+    {
+        $this->authorize();
+        $start_date = $this->input->get('start_date');
+        $end_date   = $this->input->get('end_date');
+        $products   = $this->Product_model->get_all($start_date, $end_date);
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment; filename="daftar_produk.xls"');
+
+        $data = [
+            'title'      => 'Daftar Produk',
+            'start_date' => $start_date,
+            'end_date'   => $end_date,
+            'products'   => $products
+        ];
+
+        $this->load->view('products/export_excel', $data);
     }
 
     public function create()
     {
         $this->authorize();
-        $data['categories'] = $this->categories;
+        $data['categories'] = $this->Product_model->get_categories();
         $this->load->view('products/create', $data);
     }
 
@@ -46,7 +85,8 @@ class Products extends CI_Controller
         $this->form_validation->set_rules('nama_produk', 'Nama Produk', 'required');
         $this->form_validation->set_rules('harga_jual', 'Harga Jual', 'required|numeric');
         $this->form_validation->set_rules('stok', 'Stok', 'required|integer');
-        $this->form_validation->set_rules('kategori', 'Kategori', 'required|in_list['.implode(',', $this->categories).']');
+        $category_list = $this->Product_model->get_categories();
+        $this->form_validation->set_rules('kategori', 'Kategori', 'required|in_list['.implode(',', $category_list).']');
         if ($this->form_validation->run() === TRUE) {
             $data = [
                 'nama_produk' => $this->input->post('nama_produk', TRUE),
@@ -66,7 +106,7 @@ class Products extends CI_Controller
     {
         $this->authorize();
         $data['product'] = $this->Product_model->get_by_id($id);
-        $data['categories'] = $this->categories;
+        $data['categories'] = $this->Product_model->get_categories();
         $this->load->view('products/edit', $data);
     }
 
@@ -76,7 +116,8 @@ class Products extends CI_Controller
         $this->form_validation->set_rules('nama_produk', 'Nama Produk', 'required');
         $this->form_validation->set_rules('harga_jual', 'Harga Jual', 'required|numeric');
         $this->form_validation->set_rules('stok', 'Stok', 'required|integer');
-        $this->form_validation->set_rules('kategori', 'Kategori', 'required|in_list['.implode(',', $this->categories).']');
+        $category_list = $this->Product_model->get_categories();
+        $this->form_validation->set_rules('kategori', 'Kategori', 'required|in_list['.implode(',', $category_list).']');
         if ($this->form_validation->run() === TRUE) {
             $data = [
                 'nama_produk' => $this->input->post('nama_produk', TRUE),

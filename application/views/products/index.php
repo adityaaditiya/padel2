@@ -4,7 +4,16 @@
     <div class="alert alert-success"><?php echo $this->session->flashdata('success'); ?></div>
 <?php endif; ?>
 <a href="<?php echo site_url('products/create'); ?>" class="btn btn-primary mb-2">Tambah Produk</a>
-<table class="table table-bordered">
+<form method="get" class="form-inline mb-3">
+    <input type="date" name="start_date" class="form-control mr-2" value="<?php echo html_escape($start_date); ?>">
+    <input type="date" name="end_date" class="form-control mr-2" value="<?php echo html_escape($end_date); ?>">
+    <button type="submit" class="btn btn-secondary">Filter</button>
+</form>
+
+<input type="text" id="productSearch" class="form-control mb-3 w-auto d-inline-block" style="max-width: 250px;" placeholder="Cari produk...">
+<small id="searchFeedback" class="form-text text-danger d-none">Produk tidak ditemukan</small>
+
+<table id="productsTable" class="table table-bordered">
     <thead>
         <tr>
             <th>ID</th>
@@ -31,4 +40,61 @@
     <?php endforeach; ?>
     </tbody>
 </table>
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="form-inline">
+        <label for="perPageSelect" class="mr-2 mb-0">Per halaman</label>
+        <select id="perPageSelect" class="form-control">
+            <?php foreach ([10,25,50,100] as $size): ?>
+                <option value="<?php echo $size; ?>" <?php echo ($per_page == $size) ? 'selected' : ''; ?>><?php echo $size; ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+    <div>
+        <?php echo $this->pagination->create_links(); ?>
+    </div>
+</div>
+
+<?php $params = http_build_query(['start_date' => $start_date, 'end_date' => $end_date]); ?>
+<a href="<?php echo site_url('products/export_excel?' . $params); ?>" class="btn btn-success mt-2">Export Excel</a>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('productSearch');
+    const table = document.getElementById('productsTable');
+    const feedback = document.getElementById('searchFeedback');
+    const perPageSelect = document.getElementById('perPageSelect');
+
+    searchInput.addEventListener('keyup', function () {
+        const filter = searchInput.value.toLowerCase();
+        let visibleCount = 0;
+
+        const rows = table.getElementsByTagName('tr');
+        for (let i = 1; i < rows.length; i++) {
+            const text = rows[i].textContent.toLowerCase();
+            const match = text.indexOf(filter) > -1;
+            rows[i].style.display = match ? '' : 'none';
+            if (match) {
+                visibleCount++;
+            }
+        }
+
+        if (filter && visibleCount === 0) {
+            feedback.classList.remove('d-none');
+        } else {
+            feedback.classList.add('d-none');
+        }
+    });
+
+    if (perPageSelect) {
+        perPageSelect.addEventListener('change', function () {
+            const params = new URLSearchParams(window.location.search);
+            params.set('per_page', this.value);
+            params.delete('page');
+            window.location.search = params.toString();
+        });
+    }
+});
+</script>
+
 <?php $this->load->view('templates/footer'); ?>
