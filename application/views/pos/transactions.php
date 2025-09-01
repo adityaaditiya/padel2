@@ -27,7 +27,7 @@
                     <td><?php echo htmlspecialchars($s->customer_name ?: 'non member'); ?></td>
                     <td>Rp <?php echo number_format($s->total_belanja, 0, ',', '.'); ?></td>
                     <td><?php echo htmlspecialchars($s->tanggal_transaksi); ?></td>
-                    <td><a href="<?php echo site_url('pos/reprint/'.$s->id); ?>" class="btn btn-sm btn-secondary">Reprint</a></td>
+                    <td><a href="<?php echo site_url('pos/reprint/'.$s->id); ?>" class="btn btn-sm btn-secondary" title="Print nota" aria-label="Print nota"><i class="fas fa-print"></i></a></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
