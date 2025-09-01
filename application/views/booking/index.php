@@ -41,8 +41,9 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_booking', $date, $status, $sort, $order)); ?>">Status</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('keterangan', $date, $status, $sort, $order)); ?>">Keterangan</a></th>
                 <?php if ($role === 'kasir'): ?>
+                    
+                    <th style="width:280px;">Aksi</th>
                     <th>Nota</th>
-                    <th>Aksi</th>
                 <?php endif; ?>
             </tr>
         </thead>
@@ -57,10 +58,8 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                 <td><?php echo htmlspecialchars($b->status_booking); ?></td>
                 <td><?php echo htmlspecialchars($b->keterangan); ?></td>
                 <?php if ($role === 'kasir'): ?>
-                    <td>
-                        <a href="<?php echo site_url('booking/print_receipt/' . $b->id); ?>" class="btn btn-sm btn-secondary">Reprint</a>
-                    </td>
-                    <td>
+                    
+                    <td style="width:280px;">
                         <?php if ($b->status_booking === 'pending'): ?>
                             <form method="post" action="<?php echo site_url('booking/update_status/' . $b->id); ?>" style="display:inline-block">
                                 <input type="hidden" name="status" value="confirmed">
@@ -80,6 +79,9 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                         <?php endif; ?>
                     </td>
                 <?php endif; ?>
+                <td>
+                        <a href="<?php echo site_url('booking/print_receipt/' . $b->id); ?>" class="btn btn-sm btn-secondary">Reprint</a>
+                    </td>
             </tr>
         <?php endforeach; ?>
         </tbody>
