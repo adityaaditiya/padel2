@@ -9,7 +9,6 @@
     <input type="date" name="end_date" class="form-control mr-2" value="<?php echo html_escape($end_date); ?>">
     <button type="submit" class="btn btn-secondary">Filter</button>
 </form>
-
 <input type="text" id="productSearch" class="form-control mb-3 w-auto d-inline-block" style="max-width: 250px;" placeholder="Cari produk...">
 <small id="searchFeedback" class="form-text text-danger d-none">Produk tidak ditemukan</small>
 
@@ -43,7 +42,6 @@
 
 <?php $params = http_build_query(['start_date' => $start_date, 'end_date' => $end_date]); ?>
 <a href="<?php echo site_url('products/export_excel?' . $params); ?>" class="btn btn-success mt-2">Export Excel</a>
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('productSearch');
