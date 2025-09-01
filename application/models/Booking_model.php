@@ -72,7 +72,21 @@ class Booking_model extends CI_Model
 
     public function insert($data)
     {
-        return $this->db->insert($this->table, $data);
+        $this->db->insert($this->table, $data);
+        return $this->db->insert_id();
+    }
+
+    /**
+     * Ambil satu booking beserta nama lapangan.
+     */
+    public function find_with_court($id)
+    {
+        return $this->db->select('b.*, c.nama_lapangan')
+                        ->from($this->table . ' b')
+                        ->join('courts c', 'c.id = b.id_court', 'left')
+                        ->where('b.id', $id)
+                        ->get()
+                        ->row();
     }
 
     /**
@@ -94,12 +108,15 @@ class Booking_model extends CI_Model
      */
     public function get_cancelled($date = null)
     {
-        $this->db->where('status_booking', 'batal');
+        $this->db->select('bookings.*, m.kode_member');
+        $this->db->from($this->table);
+        $this->db->join('member_data m', 'm.user_id = bookings.id_user', 'left');
+        $this->db->where('bookings.status_booking', 'batal');
         if (!empty($date)) {
-            $this->db->where('tanggal_booking', $date);
+            $this->db->where('bookings.tanggal_booking', $date);
         }
-        return $this->db->order_by('tanggal_booking', 'desc')
-                        ->get($this->table)
+        return $this->db->order_by('bookings.tanggal_booking', 'desc')
+                        ->get()
                         ->result();
     }
 
