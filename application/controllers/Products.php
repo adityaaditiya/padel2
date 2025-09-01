@@ -6,7 +6,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class Products extends CI_Controller
 {
-    private $categories = ['makanan','snack','cofee','non cofee','tea'];
+    private $categories = ['makanan','snack','cofee','non cofee','tea','perlengkapan padel'];
     public function __construct()
     {
         parent::__construct();
