@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('productSearch');
     const table = document.getElementById('productsTable');
     const feedback = document.getElementById('searchFeedback');
-    const perPageSelect = document.getElementById('perPageSelect');
+
 
     searchInput.addEventListener('keyup', function () {
         const filter = searchInput.value.toLowerCase();
@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.search = params.toString();
         });
     }
+
 });
 </script>
 
