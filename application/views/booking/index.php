@@ -45,9 +45,9 @@ function booking_sort_url($field, $start, $end, $status, $sort, $order)
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_booking', $start_date, $end_date, $status, $sort, $order)); ?>">Status</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('keterangan', $start_date, $end_date, $status, $sort, $order)); ?>">Keterangan</a></th>
                 <?php if ($role === 'kasir'): ?>
-                    <th>Bukti Pembayaran</th>
                     <th style="width:280px;">Aksi</th>
                     <th>Nota</th>
+                    <th>Bukti Pembayaran</th>
                 <?php endif; ?>
             </tr>
         </thead>
@@ -62,13 +62,6 @@ function booking_sort_url($field, $start, $end, $status, $sort, $order)
                 <td><?php echo htmlspecialchars($b->status_booking); ?></td>
                 <td><?php echo htmlspecialchars($b->keterangan); ?></td>
                 <?php if ($role === 'kasir'): ?>
-                    <td>
-                        <?php if (!empty($b->bukti_pembayaran)): ?>
-                            <a href="#" class="preview-bukti" data-image="<?php echo base_url('uploads/payment_proofs/' . $b->bukti_pembayaran); ?>" title="Lihat bukti" aria-label="Lihat bukti"><i class="fas fa-eye"></i></a>
-                        <?php else: ?>
-                            -
-                        <?php endif; ?>
-                    </td>
                     <td style="width:280px;">
                         <?php if ($b->status_booking === 'pending'): ?>
                             <form method="post" action="<?php echo site_url('booking/update_status/' . $b->id); ?>" style="display:inline-block">
@@ -90,6 +83,13 @@ function booking_sort_url($field, $start, $end, $status, $sort, $order)
                     </td>
                     <td>
                         <a href="<?php echo site_url('booking/print_receipt/' . $b->id); ?>" class="btn btn-sm btn-secondary" title="Print nota" aria-label="Print nota"><i class="fas fa-print"></i></a>
+                    </td>
+                    <td>
+                        <?php if (!empty($b->bukti_pembayaran)): ?>
+                            <a href="#" class="preview-bukti" data-image="<?php echo base_url('uploads/payment_proofs/' . $b->bukti_pembayaran); ?>" title="Lihat bukti" aria-label="Lihat bukti"><i class="fas fa-eye"></i></a>
+                        <?php else: ?>
+                            -
+                        <?php endif; ?>
                     </td>
                 <?php endif; ?>
             </tr>
