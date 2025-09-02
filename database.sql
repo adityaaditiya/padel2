@@ -30,6 +30,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `bookings` (
   `id` int(11) NOT NULL,
+  `booking_code` varchar(20) NOT NULL,
   `id_user` int(11) NOT NULL,
   `id_court` int(11) NOT NULL,
   `tanggal_booking` date NOT NULL,
@@ -50,13 +51,13 @@ CREATE TABLE `bookings` (
 -- Dumping data for table `bookings`
 --
 
-INSERT INTO `bookings` (`id`, `id_user`, `id_court`, `tanggal_booking`, `jam_mulai`, `jam_selesai`, `durasi`, `harga_booking`, `diskon`, `total_harga`, `status_booking`, `keterangan`, `bukti_pembayaran`, `status_pembayaran`, `created_at`) VALUES
-(1, 1, 1, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 01:59:44'),
-(2, 1, 1, '2025-08-27', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:00:29'),
-(3, 3, 2, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, NULL, 'belum_bayar', '2025-08-25 02:27:04'),
-(4, 3, 3, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'batal', '', NULL, 'belum_bayar', '2025-08-25 02:33:16'),
-(5, 1, 1, '2025-08-25', '14:00:00', '15:00:00', 60, '300000.00', '0.00', '300000.00', 'batal', '', NULL, 'belum_bayar', '2025-08-26 02:38:42'),
-(6, 1, 2, '2025-08-24', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:39:50');
+INSERT INTO `bookings` (`id`, `booking_code`, `id_user`, `id_court`, `tanggal_booking`, `jam_mulai`, `jam_selesai`, `durasi`, `harga_booking`, `diskon`, `total_harga`, `status_booking`, `keterangan`, `bukti_pembayaran`, `status_pembayaran`, `created_at`) VALUES
+(1, '250826-0001', 1, 1, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 01:59:44'),
+(2, '250826-0002', 1, 1, '2025-08-27', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:00:29'),
+(3, '250825-0001', 3, 2, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, NULL, 'belum_bayar', '2025-08-25 02:27:04'),
+(4, '250825-0002', 3, 3, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'batal', '', NULL, 'belum_bayar', '2025-08-25 02:33:16'),
+(5, '250826-0003', 1, 1, '2025-08-25', '14:00:00', '15:00:00', 60, '300000.00', '0.00', '300000.00', 'batal', '', NULL, 'belum_bayar', '2025-08-26 02:38:42'),
+(6, '250826-0004', 1, 2, '2025-08-24', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:39:50');
 
 -- --------------------------------------------------------
 
@@ -270,6 +271,7 @@ INSERT INTO `users` (`id`, `nama_lengkap`, `email`, `password`, `no_telepon`, `r
 --
 ALTER TABLE `bookings`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `booking_code` (`booking_code`),
   ADD KEY `id_user` (`id_user`),
   ADD KEY `id_court` (`id_court`);
 
