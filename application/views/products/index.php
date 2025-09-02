@@ -43,19 +43,38 @@
 
 <div class="d-flex align-items-center mt-3">
     <?php if ($total_pages > 1): ?>
+    <?php
+        $base_params = [
+            'start_date' => $start_date,
+            'end_date'   => $end_date,
+            'per_page'   => $per_page
+        ];
+        $max_links  = 5;
+        $start_page = max(1, $page - intdiv($max_links, 2));
+        $end_page   = min($total_pages, $start_page + $max_links - 1);
+        $start_page = max(1, $end_page - $max_links + 1);
+    ?>
     <nav>
         <ul class="pagination mb-0">
-            <?php for ($p = 1; $p <= $total_pages; $p++): ?>
-                <?php $query = http_build_query([
-                    'start_date' => $start_date,
-                    'end_date'   => $end_date,
-                    'per_page'   => $per_page,
-                    'page'       => $p
-                ]); ?>
+            <?php if ($page > 1): ?>
+                <li class="page-item"><a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>1]); ?>">First</a></li>
+                <li class="page-item"><a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>$page-1]); ?>">Prev</a></li>
+            <?php else: ?>
+                <li class="page-item disabled"><span class="page-link">First</span></li>
+                <li class="page-item disabled"><span class="page-link">Prev</span></li>
+            <?php endif; ?>
+            <?php for ($p = $start_page; $p <= $end_page; $p++): ?>
                 <li class="page-item <?php echo $p === $page ? 'active' : ''; ?>">
-                    <a class="page-link" href="?<?php echo $query; ?>"><?php echo $p; ?></a>
+                    <a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>$p]); ?>"><?php echo $p; ?></a>
                 </li>
             <?php endfor; ?>
+            <?php if ($page < $total_pages): ?>
+                <li class="page-item"><a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>$page+1]); ?>">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>$total_pages]); ?>">Last</a></li>
+            <?php else: ?>
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+                <li class="page-item disabled"><span class="page-link">Last</span></li>
+            <?php endif; ?>
         </ul>
     </nav>
     <?php endif; ?>
