@@ -1,30 +1,34 @@
 <?php $this->load->view('templates/header'); ?>
 <?php $role  = $this->session->userdata('role'); ?>
-<?php $sort   = isset($sort) ? $sort : 'jam_mulai'; ?>
-<?php $order  = isset($order) ? $order : 'asc'; ?>
-<?php $status = isset($status) ? $status : ''; ?>
+<?php $sort        = isset($sort) ? $sort : 'jam_mulai'; ?>
+<?php $order       = isset($order) ? $order : 'asc'; ?>
+<?php $status      = isset($status) ? $status : ''; ?>
+<?php $start_date  = isset($start_date) ? $start_date : date('Y-m-d'); ?>
+<?php $end_date    = isset($end_date) ? $end_date : $start_date; ?>
 <?php
-function booking_sort_url($field, $date, $status, $sort, $order)
+function booking_sort_url($field, $start, $end, $status, $sort, $order)
 {
     $next = ($sort === $field && $order === 'asc') ? 'desc' : 'asc';
     if ($status === 'pending') {
         return site_url('booking') . '?status=pending&sort=' . $field . '&order=' . $next;
     }
-    return site_url('booking') . '?date=' . urlencode($date) . '&sort=' . $field . '&order=' . $next;
+    return site_url('booking') . '?start_date=' . urlencode($start) . '&end_date=' . urlencode($end) . '&sort=' . $field . '&order=' . $next;
 }
 ?>
 <h2>Jadwal Booking Lapangan</h2>
 <form method="get" class="form-inline mb-3">
-    <label for="date" class="mr-2">Tanggal:</label>
-    <input type="date" id="date" name="date" class="form-control mr-2" value="<?php echo htmlspecialchars($date); ?>">
+    <label for="start_date" class="mr-2">Dari:</label>
+    <input type="date" id="start_date" name="start_date" class="form-control mr-2" value="<?php echo htmlspecialchars($start_date); ?>">
+    <label for="end_date" class="mr-2">Sampai:</label>
+    <input type="date" id="end_date" name="end_date" class="form-control mr-2" value="<?php echo htmlspecialchars($end_date); ?>">
     <?php if ($role !== 'pelanggan'): ?>
         <label for="status" class="mr-2">Status:</label>
         <select id="status" name="status" class="form-control mr-2">
             <option value="">Semua</option>
-            <option value="pending" <?php echo isset($status) && $status === 'pending' ? 'selected' : ''; ?>>Pending</option>
+            <option value="pending" <?php echo $status === 'pending' ? 'selected' : ''; ?>>Pending</option>
         </select>
-        <button type="submit" class="btn btn-primary">Lihat</button>
     <?php endif; ?>
+    <button type="submit" class="btn btn-primary">Lihat</button>
     <a href="<?php echo site_url('booking/create'); ?>" class="btn btn-success ml-2">Booking Baru</a>
 </form>
 <input type="text" id="search" class="form-control mb-3" placeholder="Cari booking..." style="width:250px;">
@@ -33,17 +37,17 @@ function booking_sort_url($field, $date, $status, $sort, $order)
     <table class="table table-bordered" id="booking-table">
         <thead>
             <tr>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('tanggal_booking', $date, $status, $sort, $order)); ?>">Tanggal</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('id_court', $date, $status, $sort, $order)); ?>">Lapangan</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_mulai', $date, $status, $sort, $order)); ?>">Jam Mulai</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_selesai', $date, $status, $sort, $order)); ?>">Jam Selesai</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('kode_member', $date, $status, $sort, $order)); ?>">Kode Member</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_booking', $date, $status, $sort, $order)); ?>">Status</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('keterangan', $date, $status, $sort, $order)); ?>">Keterangan</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('tanggal_booking', $start_date, $end_date, $status, $sort, $order)); ?>">Tanggal</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('id_court', $start_date, $end_date, $status, $sort, $order)); ?>">Lapangan</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_mulai', $start_date, $end_date, $status, $sort, $order)); ?>">Jam Mulai</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_selesai', $start_date, $end_date, $status, $sort, $order)); ?>">Jam Selesai</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('kode_member', $start_date, $end_date, $status, $sort, $order)); ?>">Kode Member</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_booking', $start_date, $end_date, $status, $sort, $order)); ?>">Status</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('keterangan', $start_date, $end_date, $status, $sort, $order)); ?>">Keterangan</a></th>
                 <?php if ($role === 'kasir'): ?>
-                    
                     <th style="width:280px;">Aksi</th>
                     <th>Nota</th>
+                    <th>Bukti Pembayaran</th>
                 <?php endif; ?>
             </tr>
         </thead>
@@ -58,7 +62,6 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                 <td><?php echo htmlspecialchars($b->status_booking); ?></td>
                 <td><?php echo htmlspecialchars($b->keterangan); ?></td>
                 <?php if ($role === 'kasir'): ?>
-                    
                     <td style="width:280px;">
                         <?php if ($b->status_booking === 'pending'): ?>
                             <form method="post" action="<?php echo site_url('booking/update_status/' . $b->id); ?>" style="display:inline-block">
@@ -81,6 +84,13 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                     <td>
                         <a href="<?php echo site_url('booking/print_receipt/' . $b->id); ?>" class="btn btn-sm btn-secondary" title="Print nota" aria-label="Print nota"><i class="fas fa-print"></i></a>
                     </td>
+                    <td>
+                        <?php if (!empty($b->bukti_pembayaran)): ?>
+                            <a href="#" class="preview-bukti" data-image="<?php echo base_url('uploads/payment_proofs/' . $b->bukti_pembayaran); ?>" title="Lihat bukti" aria-label="Lihat bukti"><i class="fas fa-eye"></i></a>
+                        <?php else: ?>
+                            -
+                        <?php endif; ?>
+                    </td>
                 <?php endif; ?>
             </tr>
         <?php endforeach; ?>
@@ -101,13 +111,15 @@ function booking_sort_url($field, $date, $status, $sort, $order)
         </nav>
     </div>
 <?php else: ?>
-    <p>Tidak ada booking pada tanggal ini.</p>
+    <p>Tidak ada booking pada rentang tanggal ini.</p>
 <?php endif; ?>
 <script>
 var statusEl = document.getElementById('status');
 if (statusEl) {
     statusEl.addEventListener('change', function() {
-        document.getElementById('date').disabled = this.value === 'pending';
+        var disabled = this.value === 'pending';
+        document.getElementById('start_date').disabled = disabled;
+        document.getElementById('end_date').disabled = disabled;
     });
     statusEl.dispatchEvent(new Event('change'));
 }
@@ -197,5 +209,28 @@ if (table) {
 
     renderTable();
 }
+</script>
+<div class="modal fade" id="buktiModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img src="" alt="Bukti Pembayaran" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var links = document.querySelectorAll('.preview-bukti');
+    links.forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            var imgSrc = this.getAttribute('data-image');
+            var modalImg = document.querySelector('#buktiModal img');
+            modalImg.src = imgSrc;
+            $('#buktiModal').modal('show');
+        });
+    });
+});
 </script>
 <?php $this->load->view('templates/footer'); ?>
