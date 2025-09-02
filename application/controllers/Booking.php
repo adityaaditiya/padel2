@@ -319,7 +319,7 @@ class Booking extends CI_Controller
         }
         $printer->text(str_repeat('-', 32) . "\n");
         $printer->setJustification(Printer::JUSTIFY_LEFT);
-        $printer->text('ID Booking : ' . $booking->id . "\n");
+        $printer->text('ID Booking : ' . $booking->booking_code . "\n");
         $printer->text('Tanggal    : ' . $booking->tanggal_booking . "\n");
         $printer->text('Lapangan   : ' . $booking->nama_lapangan . "\n");
         $printer->text('Mulai      : ' . $booking->jam_mulai . "\n");

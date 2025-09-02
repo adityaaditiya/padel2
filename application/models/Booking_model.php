@@ -8,6 +8,22 @@ class Booking_model extends CI_Model
 {
     protected $table = 'bookings';
 
+    /**
+     * Generate a booking code with format YYMMDD-XXXX where XXXX
+     * is the incremental number of bookings for the current day.
+     */
+    private function generate_booking_code()
+    {
+        $prefix = date('ymd') . '-';
+        $this->db->like('booking_code', $prefix, 'after');
+        $this->db->select('booking_code');
+        $this->db->order_by('booking_code', 'desc');
+        $this->db->limit(1);
+        $last = $this->db->get($this->table)->row();
+        $num  = $last ? (int) substr($last->booking_code, 7) : 0;
+        return $prefix . sprintf('%04d', $num + 1);
+    }
+
     public function get_by_date($date, $sort = 'jam_mulai', $order = 'asc')
     {
         $allowed = [
@@ -98,6 +114,7 @@ class Booking_model extends CI_Model
 
     public function insert($data)
     {
+        $data['booking_code'] = $this->generate_booking_code();
         $this->db->insert($this->table, $data);
         return $this->db->insert_id();
     }
