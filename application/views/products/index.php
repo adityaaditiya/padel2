@@ -41,18 +41,36 @@
     </tbody>
 </table>
 
-<div class="d-flex justify-content-between align-items-center mt-3">
-    <div class="form-inline">
-        <label for="perPageSelect" class="mr-2 mb-0">Per halaman</label>
-        <select id="perPageSelect" class="form-control">
-            <?php foreach ([10,25,50,100] as $size): ?>
-                <option value="<?php echo $size; ?>" <?php echo ($per_page == $size) ? 'selected' : ''; ?>><?php echo $size; ?></option>
-            <?php endforeach; ?>
+<div class="d-flex align-items-center mt-3">
+    <?php if ($total_pages > 1): ?>
+    <nav>
+        <ul class="pagination mb-0">
+            <?php for ($p = 1; $p <= $total_pages; $p++): ?>
+                <?php $query = http_build_query([
+                    'start_date' => $start_date,
+                    'end_date'   => $end_date,
+                    'per_page'   => $per_page,
+                    'page'       => $p
+                ]); ?>
+                <li class="page-item <?php echo $p === $page ? 'active' : ''; ?>">
+                    <a class="page-link" href="?<?php echo $query; ?>"><?php echo $p; ?></a>
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
+    <?php endif; ?>
+    <form method="get" class="form-inline ml-3">
+        <label for="per_page" class="mr-2">Per Halaman:</label>
+        <select name="per_page" id="per_page" class="form-control mr-2" onchange="this.form.submit()">
+            <option value="10" <?php echo $per_page == 10 ? 'selected' : ''; ?>>10</option>
+            <option value="25" <?php echo $per_page == 25 ? 'selected' : ''; ?>>25</option>
+            <option value="50" <?php echo $per_page == 50 ? 'selected' : ''; ?>>50</option>
+            <option value="100" <?php echo $per_page == 100 ? 'selected' : ''; ?>>100</option>
         </select>
-    </div>
-    <div>
-        <?php echo $this->pagination->create_links(); ?>
-    </div>
+        <input type="hidden" name="start_date" value="<?php echo html_escape($start_date); ?>">
+        <input type="hidden" name="end_date" value="<?php echo html_escape($end_date); ?>">
+        <input type="hidden" name="page" value="1">
+    </form>
 </div>
 
 <?php $params = http_build_query(['start_date' => $start_date, 'end_date' => $end_date]); ?>
@@ -63,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('productSearch');
     const table = document.getElementById('productsTable');
     const feedback = document.getElementById('searchFeedback');
-
 
     searchInput.addEventListener('keyup', function () {
         const filter = searchInput.value.toLowerCase();
@@ -85,16 +102,6 @@ document.addEventListener('DOMContentLoaded', function () {
             feedback.classList.add('d-none');
         }
     });
-
-    if (perPageSelect) {
-        perPageSelect.addEventListener('change', function () {
-            const params = new URLSearchParams(window.location.search);
-            params.set('per_page', this.value);
-            params.delete('page');
-            window.location.search = params.toString();
-        });
-    }
-
 });
 </script>
 
