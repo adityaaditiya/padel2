@@ -21,29 +21,34 @@ class Booking extends CI_Controller
     }
 
     /**
-     * Tampilkan jadwal ketersediaan lapangan untuk tanggal tertentu.
+     * Tampilkan jadwal ketersediaan lapangan untuk rentang tanggal tertentu.
      */
     public function index()
     {
         if (!$this->session->userdata('logged_in')) {
             redirect('auth/login');
         }
-        $date   = $this->input->get('date');
-        if (!$date) {
-            $date = date('Y-m-d');
+        $start  = $this->input->get('start_date');
+        $end    = $this->input->get('end_date');
+        if (!$start) {
+            $start = date('Y-m-d');
+        }
+        if (!$end) {
+            $end = $start;
         }
         $status = $this->input->get('status');
         $sort   = $this->input->get('sort') ?: 'jam_mulai';
         $order  = $this->input->get('order') ?: 'asc';
-        $data['date']   = $date;
-        $data['sort']   = $sort;
-        $data['order']  = $order;
-        $data['status'] = $status;
-        $data['courts'] = $this->Court_model->get_all();
+        $data['start_date'] = $start;
+        $data['end_date']   = $end;
+        $data['sort']       = $sort;
+        $data['order']      = $order;
+        $data['status']     = $status;
+        $data['courts']     = $this->Court_model->get_all();
         if ($status === 'pending') {
             $data['bookings'] = $this->Booking_model->get_pending($sort, $order);
         } else {
-            $data['bookings'] = $this->Booking_model->get_by_date($date, $sort, $order);
+            $data['bookings'] = $this->Booking_model->get_by_date_range($start, $end, $sort, $order);
         }
         $this->load->view('booking/index', $data);
     }
