@@ -15,7 +15,7 @@
             <select name="kategori" id="category-filter" class="form-control mr-2">
                 <option value="">Semua Kategori</option>
                 <?php foreach ($categories as $c): ?>
-                    <option value="<?php echo $c->kategori; ?>" <?php echo ($selected_category == $c->kategori) ? 'selected' : ''; ?>><?php echo htmlspecialchars($c->kategori); ?></option>
+                    <option value="<?php echo $c; ?>" <?php echo ($selected_category == $c) ? 'selected' : ''; ?>><?php echo htmlspecialchars($c); ?></option>
                 <?php endforeach; ?>
             </select>
             <input type="text" name="q" id="product-search" value="<?php echo htmlspecialchars($search_query); ?>" class="form-control mr-2" placeholder="Cari produk">

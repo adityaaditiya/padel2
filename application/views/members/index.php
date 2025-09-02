@@ -34,4 +34,49 @@
         <?php endforeach; ?>
     </tbody>
 </table>
+<div class="d-flex align-items-center">
+    <?php if ($total_pages > 1): ?>
+    <?php
+        $base_params = ['per_page' => $per_page];
+        $max_links  = 5;
+        $start_page = max(1, $page - intdiv($max_links, 2));
+        $end_page   = min($total_pages, $start_page + $max_links - 1);
+        $start_page = max(1, $end_page - $max_links + 1);
+    ?>
+    <nav>
+        <ul class="pagination mb-0">
+            <?php if ($page > 1): ?>
+                <li class="page-item"><a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>1]); ?>">First</a></li>
+                <li class="page-item"><a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>$page-1]); ?>">Prev</a></li>
+            <?php else: ?>
+                <li class="page-item disabled"><span class="page-link">First</span></li>
+                <li class="page-item disabled"><span class="page-link">Prev</span></li>
+            <?php endif; ?>
+            <?php for ($p = $start_page; $p <= $end_page; $p++): ?>
+                <li class="page-item <?php echo $p === $page ? 'active' : ''; ?>">
+                    <a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>$p]); ?>"><?php echo $p; ?></a>
+                </li>
+            <?php endfor; ?>
+            <?php if ($page < $total_pages): ?>
+                <li class="page-item"><a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>$page+1]); ?>">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>$total_pages]); ?>">Last</a></li>
+            <?php else: ?>
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+                <li class="page-item disabled"><span class="page-link">Last</span></li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+    <?php endif; ?>
+    <form method="get" class="form-inline ml-3" id="perPageForm">
+        <label for="per_page" class="mr-2">Per Halaman:</label>
+        <select name="per_page" id="per_page" class="form-control mr-2" onchange="this.form.submit()">
+            <option value="10" <?php echo $per_page == 10 ? 'selected' : ''; ?>>10</option>
+            <option value="25" <?php echo $per_page == 25 ? 'selected' : ''; ?>>25</option>
+            <option value="50" <?php echo $per_page == 50 ? 'selected' : ''; ?>>50</option>
+            <option value="100" <?php echo $per_page == 100 ? 'selected' : ''; ?>>100</option>
+        </select>
+        <input type="hidden" name="page" value="1">
+    </form>
+</div>
+
 <?php $this->load->view('templates/footer'); ?>

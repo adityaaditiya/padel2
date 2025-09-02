@@ -9,15 +9,29 @@ class Member_model extends CI_Model
     protected $table = 'member_data';
 
     /**
-     * Ambil semua data member beserta info user pelanggan.
+     * Ambil data member beserta info user pelanggan dengan opsi pagination.
      */
-    public function get_all()
+    public function get_all($limit = null, $offset = null)
     {
         $this->db->select('u.id, u.nama_lengkap, u.email, u.no_telepon, m.kode_member, m.alamat, m.kecamatan, m.kota, m.provinsi');
         $this->db->from('users u');
         $this->db->join('member_data m', 'm.user_id = u.id', 'left');
         $this->db->where('u.role', 'pelanggan');
+        if ($limit !== null) {
+            $this->db->limit($limit, $offset);
+        }
         return $this->db->get()->result();
+    }
+
+    /**
+     * Hitung total member pelanggan.
+     */
+    public function count_all()
+    {
+        $this->db->from('users u');
+        $this->db->join('member_data m', 'm.user_id = u.id', 'left');
+        $this->db->where('u.role', 'pelanggan');
+        return $this->db->count_all_results();
     }
 
     /**
