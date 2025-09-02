@@ -18,7 +18,7 @@
 <div class="receipt">
     <h2>Nota Booking</h2>
     <table>
-        <tr><td>ID Booking</td><td>: <?= $booking->id ?></td></tr>
+        <tr><td>ID Booking</td><td>: <?= $booking->booking_code ?></td></tr>
         <tr><td>Tanggal</td><td>: <?= $booking->tanggal_booking ?></td></tr>
         <tr><td>Lapangan</td><td>: <?= $booking->nama_lapangan ?></td></tr>
         <tr><td>Mulai</td><td>: <?= $booking->jam_mulai ?></td></tr>
