@@ -3,8 +3,10 @@
 <?php if ($this->session->flashdata('success')): ?>
     <div class="alert alert-success"><?php echo $this->session->flashdata('success'); ?></div>
 <?php endif; ?>
-<a href="<?php echo site_url('members/create'); ?>" class="btn btn-primary mb-3">Tambah Member</a>
-<table class="table table-bordered">
+<a href="<?php echo site_url('members/create'); ?>" class="btn btn-primary mb-2">Tambah Member</a>
+<input type="text" id="memberSearch" class="form-control mb-3 w-auto d-inline-block" style="max-width: 250px;" placeholder="Cari member...">
+<small id="searchFeedback" class="form-text text-danger d-none">Member tidak ditemukan</small>
+<table id="membersTable" class="table table-bordered">
     <thead>
         <tr>
             <th>Kode Member</th>
@@ -78,5 +80,34 @@
         <input type="hidden" name="page" value="1">
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('memberSearch');
+    const table = document.getElementById('membersTable');
+    const feedback = document.getElementById('searchFeedback');
+
+    searchInput.addEventListener('keyup', function () {
+        const filter = searchInput.value.toLowerCase();
+        let visibleCount = 0;
+
+        const rows = table.getElementsByTagName('tr');
+        for (let i = 1; i < rows.length; i++) {
+            const text = rows[i].textContent.toLowerCase();
+            const match = text.indexOf(filter) > -1;
+            rows[i].style.display = match ? '' : 'none';
+            if (match) {
+                visibleCount++;
+            }
+        }
+
+        if (filter && visibleCount === 0) {
+            feedback.classList.remove('d-none');
+        } else {
+            feedback.classList.add('d-none');
+        }
+    });
+});
+</script>
 
 <?php $this->load->view('templates/footer'); ?>
