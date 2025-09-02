@@ -165,7 +165,8 @@ INSERT INTO `products` (`id`, `nama_produk`, `harga_jual`, `stok`, `kategori`, `
 (1, 'Hydro Coco', '10000.00', 999, 'minuman', '2025-08-26 01:45:49'),
 (2, 'Pocari Sweet', '10000.00', 999, 'minuman', '2025-08-26 01:46:01'),
 (3, 'Biskuit Imperial Creme', '5000.00', 99, 'makanan', '2025-08-26 01:47:17'),
-(4, 'Hydro Coco', '10000.00', 100, 'minuman', '2025-08-26 06:20:32');
+(4, 'Hydro Coco', '10000.00', 100, 'minuman', '2025-08-26 06:20:32'),
+(5, 'Raket Padel', '500000.00', 50, 'perlengkapan padel', '2025-08-26 06:30:00');
 
 -- --------------------------------------------------------
 

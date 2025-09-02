@@ -80,7 +80,7 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                     </td>
                 <?php endif; ?>
                 <td>
-                        <a href="<?php echo site_url('booking/print_receipt/' . $b->id); ?>" class="btn btn-sm btn-secondary">Reprint</a>
+                        <a href="<?php echo site_url('booking/print_receipt/' . $b->id); ?>" class="btn btn-sm btn-secondary" title="Print nota" aria-label="Print nota"><i class="fas fa-print"></i></a>
                     </td>
             </tr>
         <?php endforeach; ?>
