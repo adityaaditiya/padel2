@@ -30,9 +30,7 @@ class Member_model extends CI_Model
         return $this->db->get()->result();
     }
 
-    /**
-     * Hitung total member pelanggan dengan opsi pencarian.
-     */
+
     public function count_all($keyword = null)
     {
         $this->db->from('users u');
