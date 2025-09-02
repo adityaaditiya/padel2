@@ -5,7 +5,7 @@
     <div class="alert alert-danger"><?php echo $this->session->flashdata('error'); ?></div>
 <?php endif; ?>
 <?php echo validation_errors('<div class="alert alert-danger">', '</div>'); ?>
-<form method="post" action="<?php echo site_url('booking/store'); ?>">
+<form method="post" action="<?php echo site_url('booking/store'); ?>" enctype="multipart/form-data">
     <input type="hidden" name="device_date" id="device_date">
     <?php if ($this->session->userdata('role') === 'kasir'): ?>
     <input type="hidden" name="customer_id" id="customer-id">
@@ -54,6 +54,12 @@
         <label for="jam_selesai">Jam Selesai</label>
         <input type="time" name="jam_selesai" id="jam_selesai" class="form-control" value="<?php echo set_value('jam_selesai', isset($selected_end) ? $selected_end : ''); ?>" required>
     </div>
+    <?php if ($this->session->userdata('role') === 'pelanggan'): ?>
+    <div class="form-group">
+        <label for="bukti_pembayaran">Bukti Pembayaran</label>
+        <input type="file" name="bukti_pembayaran" id="bukti_pembayaran" class="form-control" accept="image/*" required>
+    </div>
+    <?php endif; ?>
     <?php if ($this->session->userdata('role') === 'kasir'): ?>
     <div class="form-group">
         <label for="harga-booking">Harga Booking</label>
