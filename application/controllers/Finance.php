@@ -49,9 +49,19 @@ class Finance extends CI_Controller
             $per_page = 10;
         }
         $page     = max(1, (int) $this->input->get('page'));
+        $keyword  = $this->input->get('q');
 
         $report = $this->Report_model->get_financial_report($start, $end, $category);
         $all_details = $report['details'];
+        if ($keyword) {
+            $all_details = array_filter($all_details, function($row) use ($keyword) {
+                return stripos($row['keterangan'], $keyword) !== false || stripos($row['tanggal'], $keyword) !== false;
+            });
+        }
+        $all_details = array_values($all_details);
+        $report['total_masuk']  = array_sum(array_column($all_details, 'uang_masuk'));
+        $report['total_keluar'] = array_sum(array_column($all_details, 'uang_keluar'));
+        $report['saldo']        = $report['total_masuk'] - $report['total_keluar'];
         $total_rows = count($all_details);
         $start_index = ($page - 1) * $per_page;
         $report['details'] = array_slice($all_details, $start_index, $per_page);
@@ -64,6 +74,7 @@ class Finance extends CI_Controller
         $data['total_pages']  = (int) ceil($total_rows / $per_page);
         $data['per_page']     = $per_page;
         $data['all_details']  = $all_details;
+        $data['search']       = $keyword;
         $this->load->view('finance/index', $data);
     }
 }

@@ -80,8 +80,9 @@ class Pos extends CI_Controller
     public function transactions()
     {
         $this->authorize();
-        $start = $this->input->get('start');
-        $end   = $this->input->get('end');
+        $start   = $this->input->get('start');
+        $end     = $this->input->get('end');
+        $keyword = $this->input->get('q');
 
         $per_page = (int) $this->input->get('per_page');
         $allowed_per_page = [10, 25, 50, 100];
@@ -92,8 +93,8 @@ class Pos extends CI_Controller
 
         $start_index = ($page - 1) * $per_page;
         if ($start && $end) {
-            $total_rows = $this->Sale_model->count_filtered($start, $end);
-            $sales = $this->Sale_model->get_paginated($start, $end, $per_page, $start_index);
+            $total_rows = $this->Sale_model->count_filtered($start, $end, $keyword);
+            $sales      = $this->Sale_model->get_paginated($start, $end, $per_page, $start_index, $keyword);
         } else {
             $total_rows = 0;
             $sales = [];
@@ -111,6 +112,7 @@ class Pos extends CI_Controller
         $data['page']         = $page;
         $data['total_pages']  = (int) ceil($total_rows / $per_page);
         $data['per_page']     = $per_page;
+        $data['search_query'] = $keyword;
         $this->load->view('pos/transactions', $data);
     }
 

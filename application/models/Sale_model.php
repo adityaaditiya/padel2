@@ -44,14 +44,21 @@ class Sale_model extends CI_Model
     /**
      * Hitung total baris untuk filter tertentu.
      */
-    public function count_filtered($start_date = null, $end_date = null)
+    public function count_filtered($start_date = null, $end_date = null, $keyword = null)
     {
         $this->db->from($this->table . ' s');
+        $this->db->join('users u', 'u.id = s.customer_id', 'left');
         if ($start_date) {
             $this->db->where('DATE(s.tanggal_transaksi) >=', $start_date);
         }
         if ($end_date) {
             $this->db->where('DATE(s.tanggal_transaksi) <=', $end_date);
+        }
+        if ($keyword) {
+            $this->db->group_start();
+            $this->db->like('s.nomor_nota', $keyword);
+            $this->db->or_like('u.nama_lengkap', $keyword);
+            $this->db->group_end();
         }
         return $this->db->count_all_results();
     }
@@ -59,7 +66,7 @@ class Sale_model extends CI_Model
     /**
      * Ambil data dengan batasan (pagination) untuk mencegah load seluruh dataset.
      */
-    public function get_paginated($start_date = null, $end_date = null, $limit = 10, $offset = 0)
+    public function get_paginated($start_date = null, $end_date = null, $limit = 10, $offset = 0, $keyword = null)
     {
         $this->db->select('s.*, u.nama_lengkap AS customer_name');
         $this->db->from($this->table . ' s');
@@ -69,6 +76,12 @@ class Sale_model extends CI_Model
         }
         if ($end_date) {
             $this->db->where('DATE(s.tanggal_transaksi) <=', $end_date);
+        }
+        if ($keyword) {
+            $this->db->group_start();
+            $this->db->like('s.nomor_nota', $keyword);
+            $this->db->or_like('u.nama_lengkap', $keyword);
+            $this->db->group_end();
         }
         $this->db->order_by('s.tanggal_transaksi', 'DESC');
         $this->db->limit($limit, $offset);

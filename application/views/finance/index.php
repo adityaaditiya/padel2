@@ -17,11 +17,17 @@
     <button type="submit" class="btn btn-primary">Tampilkan</button>
     <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
     <input type="hidden" name="page" value="1">
+    <input type="hidden" name="q" value="<?php echo htmlspecialchars($search); ?>">
 </form>
-<div class="form-group mb-3" style="max-width: 250px;">
-    <input type="text" id="search" class="form-control" placeholder="Cari...">
+<form method="get" class="mb-3" style="max-width:250px;">
+    <input type="text" name="q" class="form-control <?php echo ($search && empty($report['details'])) ? 'is-invalid' : ''; ?>" placeholder="Cari..." value="<?php echo htmlspecialchars($search); ?>">
     <div class="invalid-feedback">Tidak ada hasil ditemukan.</div>
-</div>
+    <input type="hidden" name="start_date" value="<?php echo htmlspecialchars($start_date); ?>">
+    <input type="hidden" name="end_date" value="<?php echo htmlspecialchars($end_date); ?>">
+    <input type="hidden" name="category" value="<?php echo htmlspecialchars($category); ?>">
+    <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
+    <input type="hidden" name="page" value="1">
+</form>
 <table class="table table-bordered" id="financeTable">
     <thead>
         <tr>
@@ -61,20 +67,40 @@
 </table>
 <div class="d-flex align-items-center">
     <?php if ($total_pages > 1): ?>
+    <?php
+        $base_params = [
+            'start_date' => $start_date,
+            'end_date'   => $end_date,
+            'category'   => $category,
+            'per_page'   => $per_page,
+            'q'          => $search
+        ];
+        $max_links  = 5;
+        $start_page = max(1, $page - intdiv($max_links, 2));
+        $end_page   = min($total_pages, $start_page + $max_links - 1);
+        $start_page = max(1, $end_page - $max_links + 1);
+    ?>
     <nav>
         <ul class="pagination mb-0">
-            <?php for ($p = 1; $p <= $total_pages; $p++): ?>
-                <?php $query = http_build_query([
-                    'start_date' => $start_date,
-                    'end_date'   => $end_date,
-                    'category'   => $category,
-                    'per_page'   => $per_page,
-                    'page'       => $p
-                ]); ?>
+            <?php if ($page > 1): ?>
+                <li class="page-item"><a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>1]); ?>">First</a></li>
+                <li class="page-item"><a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>$page-1]); ?>">Prev</a></li>
+            <?php else: ?>
+                <li class="page-item disabled"><span class="page-link">First</span></li>
+                <li class="page-item disabled"><span class="page-link">Prev</span></li>
+            <?php endif; ?>
+            <?php for ($p = $start_page; $p <= $end_page; $p++): ?>
                 <li class="page-item <?php echo $p === $page ? 'active' : ''; ?>">
-                    <a class="page-link" href="?<?php echo $query; ?>"><?php echo $p; ?></a>
+                    <a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>$p]); ?>"><?php echo $p; ?></a>
                 </li>
             <?php endfor; ?>
+            <?php if ($page < $total_pages): ?>
+                <li class="page-item"><a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>$page+1]); ?>">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?<?php echo http_build_query($base_params + ['page'=>$total_pages]); ?>">Last</a></li>
+            <?php else: ?>
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+                <li class="page-item disabled"><span class="page-link">Last</span></li>
+            <?php endif; ?>
         </ul>
     </nav>
     <?php endif; ?>
@@ -89,6 +115,7 @@
         <input type="hidden" name="start_date" value="<?php echo htmlspecialchars($start_date); ?>">
         <input type="hidden" name="end_date" value="<?php echo htmlspecialchars($end_date); ?>">
         <input type="hidden" name="category" value="<?php echo htmlspecialchars($category); ?>">
+        <input type="hidden" name="q" value="<?php echo htmlspecialchars($search); ?>">
         <input type="hidden" name="page" value="1">
     </form>
 </div>
@@ -128,43 +155,6 @@
         </tr>
     </tfoot>
 </table>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('search');
-    const tableBody = document.getElementById('financeTable').getElementsByTagName('tbody')[0];
-    const rows = tableBody.getElementsByTagName('tr');
-
-    const noSearchRow = document.createElement('tr');
-    noSearchRow.id = 'noSearchResults';
-    noSearchRow.innerHTML = '<td colspan="4" class="text-center">Tidak ada hasil</td>';
-    noSearchRow.style.display = 'none';
-    tableBody.appendChild(noSearchRow);
-
-    searchInput.addEventListener('input', function() {
-        const filter = this.value.toLowerCase();
-        let visible = 0;
-        for (let i = 0; i < rows.length; i++) {
-            const row = rows[i];
-            if (row.id === 'noSearchResults') continue;
-            const text = row.textContent.toLowerCase();
-            if (text.includes(filter)) {
-                row.style.display = '';
-                visible++;
-            } else {
-                row.style.display = 'none';
-            }
-        }
-        if (visible === 0 && filter !== '') {
-            noSearchRow.style.display = '';
-            searchInput.classList.add('is-invalid');
-        } else {
-            noSearchRow.style.display = 'none';
-            searchInput.classList.remove('is-invalid');
-        }
-    });
-});
-</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
