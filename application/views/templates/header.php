@@ -105,7 +105,11 @@ $formatted_store_date = $store_date ? date('d-m-Y', strtotime($store_date)) : da
                         Tanggal Toko: <?php echo htmlspecialchars($formatted_store_date); ?>
                     </span>
                 </li>
-                <li class="nav-item"><span class="navbar-text mr-3">Halo, <?php echo htmlspecialchars($this->session->userdata('nama_lengkap')); ?></span></li>
+                <?php if ($this->session->userdata('role') === 'pelanggan'): ?>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo site_url('members/card'); ?>">Halo, pelanggan</a></li>
+                <?php else: ?>
+                    <li class="nav-item"><span class="navbar-text mr-3">Halo, <?php echo htmlspecialchars($this->session->userdata('nama_lengkap')); ?></span></li>
+                <?php endif; ?>
                 <!-- <li class="nav-item"><a class="nav-link" href="<?php echo site_url('users/profile'); ?>">Profil</a></li> -->
                 <li class="nav-item"><a class="nav-link" href="<?php echo site_url('auth/logout'); ?>">Logout</a></li>
             <?php else: ?>

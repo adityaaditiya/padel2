@@ -134,6 +134,25 @@ class Members extends CI_Controller
     }
 
     /**
+     * Pelanggan: tampilkan kartu member sederhana.
+     */
+    public function card()
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('auth/login');
+        }
+        if ($this->session->userdata('role') !== 'pelanggan') {
+            show_error('Forbidden', 403);
+        }
+        $id = $this->session->userdata('id');
+        $data['member'] = $this->Member_model->get_by_id($id);
+        if (!$data['member']) {
+            show_404();
+        }
+        $this->load->view('members/card', $data);
+    }
+
+    /**
      * Pelanggan: tampilkan form untuk mengubah data member sendiri.
      */
     public function profile()

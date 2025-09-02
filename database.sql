@@ -41,6 +41,7 @@ CREATE TABLE `bookings` (
   `total_harga` decimal(10,2) NOT NULL,
   `status_booking` enum('pending','confirmed','batal','selesai') DEFAULT 'pending',
   `keterangan` text,
+  `bukti_pembayaran` varchar(255) DEFAULT NULL,
   `status_pembayaran` enum('belum_bayar','lunas') DEFAULT 'belum_bayar',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -49,13 +50,13 @@ CREATE TABLE `bookings` (
 -- Dumping data for table `bookings`
 --
 
-INSERT INTO `bookings` (`id`, `id_user`, `id_court`, `tanggal_booking`, `jam_mulai`, `jam_selesai`, `durasi`, `harga_booking`, `diskon`, `total_harga`, `status_booking`, `keterangan`, `status_pembayaran`, `created_at`) VALUES
-(1, 1, 1, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, 'belum_bayar', '2025-08-26 01:59:44'),
-(2, 1, 1, '2025-08-27', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, 'belum_bayar', '2025-08-26 02:00:29'),
-(3, 3, 2, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, 'belum_bayar', '2025-08-25 02:27:04'),
-(4, 3, 3, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'batal', '', 'belum_bayar', '2025-08-25 02:33:16'),
-(5, 1, 1, '2025-08-25', '14:00:00', '15:00:00', 60, '300000.00', '0.00', '300000.00', 'batal', '', 'belum_bayar', '2025-08-26 02:38:42'),
-(6, 1, 2, '2025-08-24', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, 'belum_bayar', '2025-08-26 02:39:50');
+INSERT INTO `bookings` (`id`, `id_user`, `id_court`, `tanggal_booking`, `jam_mulai`, `jam_selesai`, `durasi`, `harga_booking`, `diskon`, `total_harga`, `status_booking`, `keterangan`, `bukti_pembayaran`, `status_pembayaran`, `created_at`) VALUES
+(1, 1, 1, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 01:59:44'),
+(2, 1, 1, '2025-08-27', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:00:29'),
+(3, 3, 2, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, NULL, 'belum_bayar', '2025-08-25 02:27:04'),
+(4, 3, 3, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'batal', '', NULL, 'belum_bayar', '2025-08-25 02:33:16'),
+(5, 1, 1, '2025-08-25', '14:00:00', '15:00:00', 60, '300000.00', '0.00', '300000.00', 'batal', '', NULL, 'belum_bayar', '2025-08-26 02:38:42'),
+(6, 1, 2, '2025-08-24', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:39:50');
 
 -- --------------------------------------------------------
 

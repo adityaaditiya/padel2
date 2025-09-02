@@ -177,6 +177,30 @@ class Booking extends CI_Controller
                     $id_user = $cust;
                 }
             }
+
+            $bukti_file = null;
+            if ($this->session->userdata('role') === 'pelanggan') {
+                if (empty($_FILES['bukti_pembayaran']['name'])) {
+                    $this->session->set_flashdata('error', 'Bukti pembayaran wajib diunggah.');
+                    redirect('booking/create');
+                    return;
+                }
+                $config = [
+                    'upload_path'   => './uploads/payment_proofs/',
+                    'allowed_types' => 'jpg|jpeg|png',
+                    'max_size'      => 2048,
+                    'encrypt_name'  => TRUE,
+                ];
+                $this->load->library('upload', $config);
+                if (!$this->upload->do_upload('bukti_pembayaran')) {
+                    $this->session->set_flashdata('error', $this->upload->display_errors('', ''));
+                    redirect('booking/create');
+                    return;
+                }
+                $upload_data = $this->upload->data();
+                $bukti_file  = $upload_data['file_name'];
+            }
+
             $data = [
                 'id_user'          => $id_user,
                 'id_court'         => $id_court,
@@ -190,6 +214,9 @@ class Booking extends CI_Controller
                 'status_booking'   => 'pending',
                 'status_pembayaran'=> 'belum_bayar'
             ];
+            if ($bukti_file) {
+                $data['bukti_pembayaran'] = $bukti_file;
+            }
             $booking_id = $this->Booking_model->insert($data);
             $this->session->set_flashdata('success', 'Booking berhasil disimpan, silakan lakukan pembayaran.');
             if ($this->session->userdata('role') === 'kasir') {
