@@ -98,7 +98,7 @@ class Report_model extends CI_Model
                 ];
             }
         } elseif ($category === 'product') {
-            $this->db->select('id, total_belanja, tanggal_transaksi');
+            $this->db->select('nomor_nota, total_belanja, tanggal_transaksi');
             $this->db->from('sales');
             $this->db->where('tanggal_transaksi >=', $start);
             $this->db->where('tanggal_transaksi <=', $end . ' 23:59:59');
@@ -106,7 +106,7 @@ class Report_model extends CI_Model
             foreach ($rows as $s) {
                 $details[] = [
                     'tanggal'     => date('Y-m-d', strtotime($s->tanggal_transaksi)),
-                    'keterangan'  => 'Penjualan #' . $s->id,
+                    'keterangan'  => 'Penjualan #' . $s->nomor_nota,
                     'uang_masuk'  => (float) $s->total_belanja,
                     'uang_keluar' => 0,
                 ];
