@@ -27,7 +27,23 @@ class Members extends CI_Controller
     public function index()
     {
         $this->authorize();
-        $data['members'] = $this->Member_model->get_all();
+
+        $allowed_per_page = [10, 25, 50, 100];
+        $per_page = (int) $this->input->get('per_page');
+        if (!in_array($per_page, $allowed_per_page, true)) {
+            $per_page = 10;
+        }
+
+        $page = max(1, (int) $this->input->get('page'));
+        $offset = ($page - 1) * $per_page;
+
+        $total_rows = $this->Member_model->count_all();
+
+        $data['per_page'] = $per_page;
+        $data['page'] = $page;
+        $data['total_pages'] = (int) ceil($total_rows / $per_page);
+        $data['members'] = $this->Member_model->get_all($per_page, $offset);
+
         $this->load->view('members/index', $data);
     }
 

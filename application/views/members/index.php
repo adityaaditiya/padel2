@@ -34,4 +34,29 @@
         <?php endforeach; ?>
     </tbody>
 </table>
+<div class="d-flex align-items-center">
+    <?php if ($total_pages > 1): ?>
+    <nav>
+        <ul class="pagination mb-0">
+            <?php for ($p = 1; $p <= $total_pages; $p++): ?>
+                <?php $query = http_build_query(['per_page' => $per_page, 'page' => $p]); ?>
+                <li class="page-item <?php echo $p === $page ? 'active' : ''; ?>">
+                    <a class="page-link" href="?<?php echo $query; ?>"><?php echo $p; ?></a>
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
+    <?php endif; ?>
+    <form method="get" class="form-inline ml-3" id="perPageForm">
+        <label for="per_page" class="mr-2">Per Halaman:</label>
+        <select name="per_page" id="per_page" class="form-control mr-2" onchange="this.form.submit()">
+            <option value="10" <?php echo $per_page == 10 ? 'selected' : ''; ?>>10</option>
+            <option value="25" <?php echo $per_page == 25 ? 'selected' : ''; ?>>25</option>
+            <option value="50" <?php echo $per_page == 50 ? 'selected' : ''; ?>>50</option>
+            <option value="100" <?php echo $per_page == 100 ? 'selected' : ''; ?>>100</option>
+        </select>
+        <input type="hidden" name="page" value="1">
+    </form>
+</div>
+
 <?php $this->load->view('templates/footer'); ?>
