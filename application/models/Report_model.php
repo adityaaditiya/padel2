@@ -68,7 +68,7 @@ class Report_model extends CI_Model
             ];
         }
         if ($category === 'booking') {
-            $this->db->select('id, tanggal_booking, total_harga');
+            $this->db->select('id, booking_code, tanggal_booking, total_harga');
             $this->db->from('bookings');
             $this->db->where('tanggal_booking >=', $start);
             $this->db->where('tanggal_booking <=', $end);
@@ -77,13 +77,13 @@ class Report_model extends CI_Model
             foreach ($rows as $b) {
                 $details[] = [
                     'tanggal'     => $b->tanggal_booking,
-                    'keterangan'  => 'Booking #' . $b->id,
+                    'keterangan'  => 'Booking #' . $b->booking_code,
                     'uang_masuk'  => (float) $b->total_harga,
                     'uang_keluar' => 0,
                 ];
             }
         } elseif ($category === 'batal') {
-            $this->db->select('id, tanggal_booking, total_harga');
+            $this->db->select('id, booking_code, tanggal_booking, total_harga');
             $this->db->from('bookings');
             $this->db->where('tanggal_booking >=', $start);
             $this->db->where('tanggal_booking <=', $end);
@@ -92,7 +92,7 @@ class Report_model extends CI_Model
             foreach ($rows as $b) {
                 $details[] = [
                     'tanggal'     => $b->tanggal_booking,
-                    'keterangan'  => 'Booking batal #' . $b->id,
+                    'keterangan'  => 'Booking batal #' . $b->booking_code,
                     'uang_masuk'  => 0,
                     'uang_keluar' => (float) $b->total_harga,
                 ];
