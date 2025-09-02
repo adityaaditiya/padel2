@@ -30,7 +30,6 @@ class Products extends CI_Controller
         $this->authorize();
         $start_date = $this->input->get('start_date');
         $end_date   = $this->input->get('end_date');
-
         $allowed_per_page = [10, 25, 50, 100];
         $per_page = (int) $this->input->get('per_page');
         if (!in_array($per_page, $allowed_per_page, true)) {
