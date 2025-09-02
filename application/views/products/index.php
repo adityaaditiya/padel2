@@ -7,11 +7,18 @@
 <form method="get" class="form-inline mb-3">
     <input type="date" name="start_date" class="form-control mr-2" value="<?php echo html_escape($start_date); ?>">
     <input type="date" name="end_date" class="form-control mr-2" value="<?php echo html_escape($end_date); ?>">
+    <input type="hidden" name="q" value="<?php echo html_escape($search_query); ?>">
     <button type="submit" class="btn btn-secondary">Filter</button>
 </form>
 
-<input type="text" id="productSearch" class="form-control mb-3 w-auto d-inline-block" style="max-width: 250px;" placeholder="Cari produk...">
-<small id="searchFeedback" class="form-text text-danger d-none">Produk tidak ditemukan</small>
+<form method="get" class="mb-3" style="max-width:250px;">
+    <input type="text" name="q" class="form-control <?php echo ($search_query && empty($products)) ? 'is-invalid' : ''; ?>" placeholder="Cari produk..." value="<?php echo html_escape($search_query); ?>">
+    <div class="invalid-feedback">Produk tidak ditemukan</div>
+    <input type="hidden" name="start_date" value="<?php echo html_escape($start_date); ?>">
+    <input type="hidden" name="end_date" value="<?php echo html_escape($end_date); ?>">
+    <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
+    <input type="hidden" name="page" value="1">
+</form>
 
 <table id="productsTable" class="table table-bordered">
     <thead>
@@ -47,7 +54,8 @@
         $base_params = [
             'start_date' => $start_date,
             'end_date'   => $end_date,
-            'per_page'   => $per_page
+            'per_page'   => $per_page,
+            'q'          => $search_query
         ];
         $max_links  = 5;
         $start_page = max(1, $page - intdiv($max_links, 2));
@@ -88,40 +96,12 @@
         </select>
         <input type="hidden" name="start_date" value="<?php echo html_escape($start_date); ?>">
         <input type="hidden" name="end_date" value="<?php echo html_escape($end_date); ?>">
+        <input type="hidden" name="q" value="<?php echo html_escape($search_query); ?>">
         <input type="hidden" name="page" value="1">
     </form>
 </div>
 
-<?php $params = http_build_query(['start_date' => $start_date, 'end_date' => $end_date]); ?>
+<?php $params = http_build_query(['start_date' => $start_date, 'end_date' => $end_date, 'q' => $search_query]); ?>
 <a href="<?php echo site_url('products/export_excel?' . $params); ?>" class="btn btn-success mt-2">Export Excel</a>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('productSearch');
-    const table = document.getElementById('productsTable');
-    const feedback = document.getElementById('searchFeedback');
-
-    searchInput.addEventListener('keyup', function () {
-        const filter = searchInput.value.toLowerCase();
-        let visibleCount = 0;
-
-        const rows = table.getElementsByTagName('tr');
-        for (let i = 1; i < rows.length; i++) {
-            const text = rows[i].textContent.toLowerCase();
-            const match = text.indexOf(filter) > -1;
-            rows[i].style.display = match ? '' : 'none';
-            if (match) {
-                visibleCount++;
-            }
-        }
-
-        if (filter && visibleCount === 0) {
-            feedback.classList.remove('d-none');
-        } else {
-            feedback.classList.add('d-none');
-        }
-    });
-});
-</script>
 
 <?php $this->load->view('templates/footer'); ?>

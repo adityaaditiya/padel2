@@ -3,13 +3,20 @@
 <form method="get" class="mb-3">
     <input type="date" name="start" value="<?php echo set_value('', date('Y-m-d')); ?>">
     <input type="date" name="end" value="<?php echo set_value('', date('Y-m-d')); ?>">
+    <input type="hidden" name="q" value="<?php echo html_escape($search_query); ?>">
     <button type="submit" class="btn btn-primary btn-sm px-2">Cari</button>
 </form>
 
 <?php if ($filter_start && $filter_end): ?>
     <?php if (!empty($sales)): ?>
-        <input type="text" id="search" class="form-control form-control-sm mb-2" placeholder="Cari transaksi..." style="max-width:200px;display:inline-block;">
-        <div id="search-error" class="text-danger mb-2" style="display:none;">Data tidak ditemukan.</div>
+        <form method="get" class="form-inline mb-2" style="max-width:200px;">
+            <input type="text" name="q" class="form-control form-control-sm <?php echo ($search_query && empty($sales)) ? 'is-invalid' : ''; ?>" placeholder="Cari transaksi..." value="<?php echo html_escape($search_query); ?>">
+            <div class="invalid-feedback">Data tidak ditemukan.</div>
+            <input type="hidden" name="start" value="<?php echo htmlspecialchars($filter_start); ?>">
+            <input type="hidden" name="end" value="<?php echo htmlspecialchars($filter_end); ?>">
+            <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
+            <input type="hidden" name="page" value="1">
+        </form>
         <table class="table table-bordered table-sm" id="transaction-table">
             <thead>
                 <tr>
@@ -45,7 +52,8 @@
                 $base_params = [
                     'start'    => $filter_start,
                     'end'      => $filter_end,
-                    'per_page' => $per_page
+                    'per_page' => $per_page,
+                    'q'        => $search_query
                 ];
                 $max_links  = 5;
                 $start_page = max(1, $page - intdiv($max_links, 2));
@@ -86,6 +94,7 @@
                 </select>
                 <input type="hidden" name="start" value="<?php echo htmlspecialchars($filter_start); ?>">
                 <input type="hidden" name="end" value="<?php echo htmlspecialchars($filter_end); ?>">
+                <input type="hidden" name="q" value="<?php echo html_escape($search_query); ?>">
                 <input type="hidden" name="page" value="1">
             </form>
         </div>
@@ -96,46 +105,3 @@
     <p>Silakan pilih rentang tanggal untuk melihat transaksi.</p>
 <?php endif; ?>
 <?php $this->load->view('templates/footer'); ?>
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-    function updateTotal() {
-        var rows = document.querySelectorAll('#transaction-table tbody tr');
-        var total = 0;
-        rows.forEach(function(row){
-            if (row.style.display !== 'none') {
-                var text = row.cells[2].textContent.replace(/[^0-9]/g, '');
-                total += parseInt(text, 10) || 0;
-            }
-        });
-        var cell = document.getElementById('page-total');
-        if (cell) {
-            cell.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(total);
-        }
-    }
-
-    var searchInput = document.getElementById('search');
-    if (searchInput) {
-        searchInput.addEventListener('keyup', function(){
-            var filter = this.value.toLowerCase();
-            var rows = document.querySelectorAll('#transaction-table tbody tr');
-            var any = false;
-            rows.forEach(function(row){
-                if (row.textContent.toLowerCase().includes(filter)) {
-                    row.style.display = '';
-                    any = true;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-            var error = document.getElementById('search-error');
-            if (error) {
-                error.style.display = any || filter.length === 0 ? 'none' : 'block';
-            }
-            updateTotal();
-        });
-    }
-
-    updateTotal();
-});
-</script>
-

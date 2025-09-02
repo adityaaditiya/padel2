@@ -9,37 +9,11 @@ class Member_model extends CI_Model
     protected $table = 'member_data';
 
     /**
-     * Ambil data member beserta info user pelanggan dengan opsi pagination.
+     * Ambil data member beserta info user pelanggan dengan opsi pagination dan pencarian.
      */
-    public function get_all($limit = null, $offset = null)
+    public function get_all($limit = null, $offset = null, $keyword = null)
     {
         $this->db->select('u.id, u.nama_lengkap, u.email, u.no_telepon, m.kode_member, m.alamat, m.kecamatan, m.kota, m.provinsi');
-        $this->db->from('users u');
-        $this->db->join('member_data m', 'm.user_id = u.id', 'left');
-        $this->db->where('u.role', 'pelanggan');
-        if ($limit !== null) {
-            $this->db->limit($limit, $offset);
-        }
-        return $this->db->get()->result();
-    }
-
-    /**
-     * Hitung total member pelanggan.
-     */
-    public function count_all()
-    {
-        $this->db->from('users u');
-        $this->db->join('member_data m', 'm.user_id = u.id', 'left');
-        $this->db->where('u.role', 'pelanggan');
-        return $this->db->count_all_results();
-    }
-
-    /**
-     * Cari member berdasarkan keyword sederhana.
-     */
-    public function search($keyword)
-    {
-        $this->db->select('u.id, u.nama_lengkap, u.no_telepon, m.kode_member');
         $this->db->from('users u');
         $this->db->join('member_data m', 'm.user_id = u.id', 'left');
         $this->db->where('u.role', 'pelanggan');
@@ -50,7 +24,26 @@ class Member_model extends CI_Model
             $this->db->or_like('u.no_telepon', $keyword);
             $this->db->group_end();
         }
+        if ($limit !== null) {
+            $this->db->limit($limit, $offset);
+        }
         return $this->db->get()->result();
+    }
+
+
+    public function count_all($keyword = null)
+    {
+        $this->db->from('users u');
+        $this->db->join('member_data m', 'm.user_id = u.id', 'left');
+        $this->db->where('u.role', 'pelanggan');
+        if ($keyword) {
+            $this->db->group_start();
+            $this->db->like('u.nama_lengkap', $keyword);
+            $this->db->or_like('m.kode_member', $keyword);
+            $this->db->or_like('u.no_telepon', $keyword);
+            $this->db->group_end();
+        }
+        return $this->db->count_all_results();
     }
 
     /**

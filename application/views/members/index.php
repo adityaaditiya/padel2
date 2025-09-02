@@ -4,8 +4,12 @@
     <div class="alert alert-success"><?php echo $this->session->flashdata('success'); ?></div>
 <?php endif; ?>
 <a href="<?php echo site_url('members/create'); ?>" class="btn btn-primary mb-2">Tambah Member</a>
-<input type="text" id="memberSearch" class="form-control mb-3 w-auto d-inline-block" style="max-width: 250px;" placeholder="Cari member...">
-<small id="searchFeedback" class="form-text text-danger d-none">Member tidak ditemukan</small>
+<form method="get" class="mb-3" style="max-width:250px;">
+    <input type="text" name="q" class="form-control <?php echo ($search_query && empty($members)) ? 'is-invalid' : ''; ?>" placeholder="Cari member..." value="<?php echo html_escape($search_query); ?>">
+    <div class="invalid-feedback">Member tidak ditemukan</div>
+    <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
+    <input type="hidden" name="page" value="1">
+</form>
 <table id="membersTable" class="table table-bordered">
     <thead>
         <tr>
@@ -39,7 +43,7 @@
 <div class="d-flex align-items-center">
     <?php if ($total_pages > 1): ?>
     <?php
-        $base_params = ['per_page' => $per_page];
+        $base_params = ['per_page' => $per_page, 'q' => $search_query];
         $max_links  = 5;
         $start_page = max(1, $page - intdiv($max_links, 2));
         $end_page   = min($total_pages, $start_page + $max_links - 1);
@@ -77,37 +81,8 @@
             <option value="50" <?php echo $per_page == 50 ? 'selected' : ''; ?>>50</option>
             <option value="100" <?php echo $per_page == 100 ? 'selected' : ''; ?>>100</option>
         </select>
+        <input type="hidden" name="q" value="<?php echo html_escape($search_query); ?>">
         <input type="hidden" name="page" value="1">
     </form>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('memberSearch');
-    const table = document.getElementById('membersTable');
-    const feedback = document.getElementById('searchFeedback');
-
-    searchInput.addEventListener('keyup', function () {
-        const filter = searchInput.value.toLowerCase();
-        let visibleCount = 0;
-
-        const rows = table.getElementsByTagName('tr');
-        for (let i = 1; i < rows.length; i++) {
-            const text = rows[i].textContent.toLowerCase();
-            const match = text.indexOf(filter) > -1;
-            rows[i].style.display = match ? '' : 'none';
-            if (match) {
-                visibleCount++;
-            }
-        }
-
-        if (filter && visibleCount === 0) {
-            feedback.classList.remove('d-none');
-        } else {
-            feedback.classList.add('d-none');
-        }
-    });
-});
-</script>
-
 <?php $this->load->view('templates/footer'); ?>

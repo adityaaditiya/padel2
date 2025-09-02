@@ -37,12 +37,15 @@ class Members extends CI_Controller
         $page = max(1, (int) $this->input->get('page'));
         $offset = ($page - 1) * $per_page;
 
-        $total_rows = $this->Member_model->count_all();
+        $keyword = $this->input->get('q');
 
-        $data['per_page'] = $per_page;
-        $data['page'] = $page;
-        $data['total_pages'] = (int) ceil($total_rows / $per_page);
-        $data['members'] = $this->Member_model->get_all($per_page, $offset);
+        $total_rows = $this->Member_model->count_all($keyword);
+
+        $data['per_page']     = $per_page;
+        $data['page']         = $page;
+        $data['total_pages']  = (int) ceil($total_rows / $per_page);
+        $data['members']      = $this->Member_model->get_all($per_page, $offset, $keyword);
+        $data['search_query'] = $keyword;
 
         $this->load->view('members/index', $data);
     }
