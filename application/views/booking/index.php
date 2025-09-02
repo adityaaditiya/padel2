@@ -80,7 +80,7 @@ function booking_sort_url($field, $date, $status, $sort, $order)
                     </td>
                 <?php endif; ?>
                 <td>
-                        <a href="<?php echo site_url('booking/print_receipt/' . $b->id); ?>" class="btn btn-sm btn-secondary">Reprint</a>
+                        <a href="<?php echo site_url('booking/print_receipt/' . $b->id); ?>" class="btn btn-sm btn-secondary" title="Print nota" aria-label="Print nota"><i class="fas fa-print"></i></a>
                     </td>
             </tr>
         <?php endforeach; ?>
@@ -135,7 +135,33 @@ if (table) {
                 row.style.display = '';
             });
             pagination.innerHTML = '';
-            for (var i = 1; i <= pageCount; i++) {
+
+            var maxLinks = 5;
+            var startPage = Math.max(1, currentPage - Math.floor(maxLinks / 2));
+            var endPage = Math.min(pageCount, startPage + maxLinks - 1);
+            startPage = Math.max(1, endPage - maxLinks + 1);
+
+            function createItem(label, targetPage, disabled) {
+                var li = document.createElement('li');
+                li.className = 'page-item' + (disabled ? ' disabled' : '');
+                var a = document.createElement('a');
+                a.className = 'page-link';
+                a.href = '#';
+                a.textContent = label;
+                if (!disabled) {
+                    a.addEventListener('click', function(e){
+                        e.preventDefault();
+                        displayPage(targetPage);
+                    });
+                }
+                li.appendChild(a);
+                pagination.appendChild(li);
+            }
+
+            createItem('First', 1, currentPage === 1);
+            createItem('Prev', currentPage - 1, currentPage === 1);
+
+            for (var i = startPage; i <= endPage; i++) {
                 var li = document.createElement('li');
                 li.className = 'page-item' + (i === currentPage ? ' active' : '');
                 var a = document.createElement('a');
@@ -151,6 +177,9 @@ if (table) {
                 li.appendChild(a);
                 pagination.appendChild(li);
             }
+
+            createItem('Next', currentPage + 1, currentPage === pageCount);
+            createItem('Last', pageCount, currentPage === pageCount);
         }
 
         displayPage(1);
