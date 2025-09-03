@@ -67,7 +67,7 @@ class Auth extends CI_Controller
             $this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]', [
                 'is_unique' => 'Email sudah digunakan.'
             ]);
-            $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|is_unique[users.no_telepon]', [
+            $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|numeric|min_length[10]|is_unique[users.no_telepon]', [
                 'is_unique' => 'No telepon sudah digunakan.'
             ]);
             $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
