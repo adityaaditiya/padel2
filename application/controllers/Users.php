@@ -63,6 +63,7 @@ class Users extends CI_Controller
         if ($this->input->method() === 'post') {
             $this->form_validation->set_rules('nama_lengkap', 'Nama Lengkap', 'required');
             $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+            $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|numeric|min_length[10]');
             if ($this->input->post('password')) {
                 $this->form_validation->set_rules('password', 'Password', 'min_length[6]');
             }
