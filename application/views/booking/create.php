@@ -62,6 +62,7 @@
     <div class="form-group">
         <label for="bukti_pembayaran">Bukti Pembayaran</label>
         <input type="file" name="bukti_pembayaran" id="bukti_pembayaran" class="form-control" accept="image/*" required>
+        <small class="form-text text-muted">Pembayaran Sesuai Tagihan, Tanpa Biaya Tambahan</small>
     </div>
 <?php endif; ?>
     <?php if ($this->session->userdata('role') === 'kasir'): ?>
