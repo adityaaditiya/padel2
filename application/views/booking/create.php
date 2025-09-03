@@ -54,12 +54,17 @@
         <label for="jam_selesai">Jam Selesai</label>
         <input type="time" name="jam_selesai" id="jam_selesai" class="form-control" value="<?php echo set_value('jam_selesai', isset($selected_end) ? $selected_end : ''); ?>" required>
     </div>
-    <?php if ($this->session->userdata('role') === 'pelanggan'): ?>
+<?php if ($this->session->userdata('role') === 'pelanggan'): ?>
+    <div class="form-group">
+        <label for="harga-booking">Total Harga</label>
+        <input type="text" id="harga-booking" class="form-control" readonly>
+    </div>
     <div class="form-group">
         <label for="bukti_pembayaran">Bukti Pembayaran</label>
         <input type="file" name="bukti_pembayaran" id="bukti_pembayaran" class="form-control" accept="image/*" required>
+        <small class="form-text text-muted">Pembayaran Sesuai Tagihan, Tanpa Biaya Tambahan</small>
     </div>
-    <?php endif; ?>
+<?php endif; ?>
     <?php if ($this->session->userdata('role') === 'kasir'): ?>
     <div class="form-group">
         <label for="harga-booking">Harga Booking</label>
@@ -152,6 +157,7 @@ if (numberInput) {
         }
     });
 }
+<?php endif; ?>
 var courtSelect = document.getElementById('id_court');
 var startInput = document.getElementById('jam_mulai');
 var endInput = document.getElementById('jam_selesai');
@@ -175,21 +181,21 @@ if (start && end) {
 }
 var harga = pricePerHour * (durasi / 60);
     if (hargaBookingInput) hargaBookingInput.value = harga ? harga.toFixed(0) : '';
-    var discPercent = parseFloat(diskonPersenInput.value) || 0;
-    var discAmount = parseFloat(diskonRupiahInput.value) || 0;
-    if (e && e.target === diskonPersenInput) {
+    var discPercent = diskonPersenInput ? parseFloat(diskonPersenInput.value) || 0 : 0;
+    var discAmount = diskonRupiahInput ? parseFloat(diskonRupiahInput.value) || 0 : 0;
+    if (diskonPersenInput && e && e.target === diskonPersenInput) {
         discAmount = harga * (discPercent / 100);
-        diskonRupiahInput.value = discAmount ? discAmount.toFixed(0) : '';
-    } else if (e && e.target === diskonRupiahInput) {
+        if (diskonRupiahInput) diskonRupiahInput.value = discAmount ? discAmount.toFixed(0) : '';
+    } else if (diskonRupiahInput && e && e.target === diskonRupiahInput) {
         discPercent = harga ? (discAmount / harga) * 100 : 0;
-        diskonPersenInput.value = discPercent ? discPercent.toFixed(2) : '';
+        if (diskonPersenInput) diskonPersenInput.value = discPercent ? discPercent.toFixed(2) : '';
     } else {
-        if (discPercent) {
+        if (diskonPersenInput && discPercent) {
             discAmount = harga * (discPercent / 100);
-            diskonRupiahInput.value = discAmount ? discAmount.toFixed(0) : '';
-        } else if (discAmount) {
+            if (diskonRupiahInput) diskonRupiahInput.value = discAmount ? discAmount.toFixed(0) : '';
+        } else if (diskonRupiahInput && discAmount) {
             discPercent = harga ? (discAmount / harga) * 100 : 0;
-            diskonPersenInput.value = discPercent ? discPercent.toFixed(2) : '';
+            if (diskonPersenInput) diskonPersenInput.value = discPercent ? discPercent.toFixed(2) : '';
         }
     }
     var total = harga - discAmount;
@@ -198,8 +204,10 @@ var harga = pricePerHour * (durasi / 60);
 if (courtSelect) courtSelect.addEventListener('change', updatePayment);
 if (startInput) startInput.addEventListener('change', updatePayment);
 if (endInput) endInput.addEventListener('change', updatePayment);
+<?php if ($this->session->userdata('role') === 'kasir'): ?>
 if (diskonPersenInput) diskonPersenInput.addEventListener('input', updatePayment);
 if (diskonRupiahInput) diskonRupiahInput.addEventListener('input', updatePayment);
 <?php endif; ?>
+updatePayment();
 </script>
 <?php $this->load->view('templates/footer'); ?>
