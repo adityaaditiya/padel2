@@ -300,15 +300,16 @@ class Booking extends CI_Controller
         $member = $this->Member_model->get_by_id($booking->id_user);
 
         // Build receipt content
+        $lineWidth = 32;
         $lines = [];
-        $lines[] = 'Padel Store';
-        $lines[] = date('d-m-Y H:i');
+        $lines[] = str_pad('Padel Store', $lineWidth, ' ', STR_PAD_BOTH);
+        $lines[] = str_pad(date('d-m-Y H:i'), $lineWidth, ' ', STR_PAD_BOTH);
         if ($member && !empty($member->kode_member)) {
-            $lines[] = 'Nomor Member: ' . $member->kode_member;
+            $lines[] = str_pad('Nomor Member: ' . $member->kode_member, $lineWidth, ' ', STR_PAD_BOTH);
         } else {
-            $lines[] = '-Non Member-';
+            $lines[] = str_pad('-Non Member-', $lineWidth, ' ', STR_PAD_BOTH);
         }
-        $lines[] = str_repeat('-', 32);
+        $lines[] = str_repeat('-', $lineWidth);
         $lines[] = 'ID Booking : ' . $booking->booking_code;
         $lines[] = 'Tanggal    : ' . $booking->tanggal_booking;
         $lines[] = 'Lapangan   : ' . $booking->nama_lapangan;
