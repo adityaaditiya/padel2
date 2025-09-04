@@ -1,9 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-use Mike42\Escpos\Printer;
-use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
-use Mike42\Escpos\CapabilityProfile;
 
 /**
  * Controller untuk Point of Sale (kasir) penjualan F&B.
@@ -133,8 +130,6 @@ class Pos extends CI_Controller
             return;
         }
         $this->print_receipt($id);
-        $this->session->set_flashdata('success', 'Nota berhasil dicetak ulang.');
-        redirect('pos/transactions');
     }
     /**
      * Tambah produk ke keranjang.
@@ -274,79 +269,50 @@ class Pos extends CI_Controller
             'id_kasir'       => $this->session->userdata('id')
         ];
         $this->Payment_model->insert($payment);
-        $this->print_receipt($sale_id);
         // Kosongkan keranjang
         $this->session->unset_userdata('cart');
-        $this->session->set_flashdata('success', 'Transaksi berhasil disimpan.');
-        redirect('pos');
+        $this->print_receipt($sale_id);
     }
 
     private function print_receipt($sale_id)
     {
-        $sale = $this->Sale_model->get_by_id($sale_id);
-        $details = $this->Sale_detail_model->get_with_product($sale_id);
+        $sale     = $this->Sale_model->get_by_id($sale_id);
+        $details  = $this->Sale_detail_model->get_with_product($sale_id);
         $payments = $this->Payment_model->get_by_sale($sale_id);
-        try {
-            $profile = CapabilityProfile::load('T82');
-        } catch (Exception $e) {
-            $profile = CapabilityProfile::load('default');
-        }
-        $connector = new WindowsPrintConnector('T82');
-        $printer = new Printer($connector, $profile);
-        // Geser margin ke kanan agar cetakan sedikit lebih ke kanan
-        $printer->setPrintLeftMargin(80);
-        $printer->setJustification(Printer::JUSTIFY_CENTER);
-        $printer->text("Padel Store\n");
-        $printer->text(date("d-m-Y H:i") . "\n");
-        $printer->text("Nota: {$sale->nomor_nota}\n");
-        $member = null;
-        if (!empty($sale->customer_id)) {
-            $member = $this->Member_model->get_by_id($sale->customer_id);
-        }
+        $member   = !empty($sale->customer_id) ? $this->Member_model->get_by_id($sale->customer_id) : null;
+
+        $lineWidth = 32;
+        $lines   = [];
+        $lines[] = str_pad('Padel Store', $lineWidth, ' ', STR_PAD_BOTH);
+        $lines[] = str_pad(date('d-m-Y H:i'), $lineWidth, ' ', STR_PAD_BOTH);
+        $lines[] = str_pad('Nota: ' . $sale->nomor_nota, $lineWidth, ' ', STR_PAD_BOTH);
         if ($member) {
-            $printer->text("Nomor Member: {$member->kode_member}\n");
-            $printer->text("Nama: {$member->nama_lengkap}\n");
+            $lines[] = str_pad('Nomor Member: ' . $member->kode_member, $lineWidth, ' ', STR_PAD_BOTH);
+            $lines[] = str_pad('Nama: ' . $member->nama_lengkap, $lineWidth, ' ', STR_PAD_BOTH);
         } else {
-            $printer->text("-Non Member-\n");
+            $lines[] = str_pad('-Non Member-', $lineWidth, ' ', STR_PAD_BOTH);
         }
-        $printer->text(str_repeat('-', 32) . "\n");
-        $printer->setJustification(Printer::JUSTIFY_LEFT);
+        $lines[] = str_repeat('-', $lineWidth);
         foreach ($details as $d) {
-            $line = sprintf("%s\n%dx %s\n", $d->nama_produk, $d->jumlah, number_format($d->harga_jual,0,',','.'));
-            $printer->text($line);
+            $lines[] = $d->nama_produk;
+            $lines[] = $d->jumlah . 'x ' . number_format($d->harga_jual,0,',','.');
         }
-        $printer->text(str_repeat('-', 37) . "\n");
-        $printer->text('Total: Rp ' . number_format($sale->total_belanja,0,',','.') . "\n");
+        $lines[] = str_repeat('-', $lineWidth);
+        $lines[] = 'Total: Rp ' . number_format($sale->total_belanja,0,',','.');
         if (!empty($payments)) {
-            $bayar = $payments[0]->jumlah_bayar;
+            $bayar   = $payments[0]->jumlah_bayar;
             $kembali = $bayar - $sale->total_belanja;
-            $printer->text('Bayar: Rp ' . number_format($bayar,0,',','.') . "\n");
-            $printer->text('Kembali: Rp ' . number_format($kembali,0,',','.') . "\n");
-            $printer->setJustification(Printer::JUSTIFY_CENTER);
-            $printer->text(str_repeat('-', 32) . "\n");
-            $printer->text("Kritik & Saran\n");
-            $printer->text("WA 0877-3383-6235\n");
+            $lines[] = 'Bayar: Rp ' . number_format($bayar,0,',','.');
+            $lines[] = 'Kembali: Rp ' . number_format($kembali,0,',','.');
         }
-        $printer->feed(2);
-        $printer->cut();
-        $printer->close();
+        $lines[] = str_repeat('-', $lineWidth);
+        $lines[] = str_pad('Kritik & Saran', $lineWidth, ' ', STR_PAD_BOTH);
+        $lines[] = str_pad('WA 0877-3383-6235', $lineWidth, ' ', STR_PAD_BOTH);
+        $lines[] = '';
+
+        $content  = implode("\n", $lines);
+        $filename = 'nota_' . $sale->nomor_nota . '.txt';
+        $this->load->helper('download');
+        force_download($filename, $content);
     }
-
-//     public function print_receipt()
-// {
-//     // pastikan autoload composer sudah jalan (lihat langkah 2)
-//     $profile   = CapabilityProfile::load("simple"); // atau "default" / "SP2000"
-//     $connector = new WindowsPrintConnector("T82"); // nama printer di Windows
-//     $printer   = new Printer($connector, $profile);
-
-//     $printer->setJustification(Printer::JUSTIFY_CENTER);
-//     $printer->text("Nota PadelPro\n");
-//     $printer->feed();
-
-//     // ... isi struk kamu di sini ...
-
-//     $printer->cut();
-//     $printer->close();
-// }
-
 }

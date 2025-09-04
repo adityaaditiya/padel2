@@ -1,9 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-use Mike42\Escpos\Printer;
-use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
-use Mike42\Escpos\CapabilityProfile;
+// Printer libraries removed - receipts will be downloaded as text files
 
 /**
  * Controller untuk modul booking pelanggan.
@@ -222,11 +220,11 @@ class Booking extends CI_Controller
             if ($bukti_file) {
                 $data['bukti_pembayaran'] = $bukti_file;
             }
-            $booking_id = $this->Booking_model->insert($data);
-            $this->session->set_flashdata('success', 'Booking berhasil disimpan, silakan lakukan pembayaran.');
+            $this->Booking_model->insert($data);
             if ($this->session->userdata('role') === 'kasir') {
-                $this->print_receipt($booking_id);
-                return;
+                $this->session->set_flashdata('success', 'Booking berhasil disimpan.');
+            } else {
+                $this->session->set_flashdata('success', 'Booking berhasil disimpan, silakan lakukan pembayaran.');
             }
             redirect('booking');
             return;
@@ -298,52 +296,36 @@ class Booking extends CI_Controller
         if (!$booking) {
             show_404();
         }
+
         $member = $this->Member_model->get_by_id($booking->id_user);
 
-        try {
-            $profile = CapabilityProfile::load('T82');
-        } catch (\Exception $e) {
-            $profile = CapabilityProfile::load('default');
+        // Build receipt content
+        $lineWidth = 32;
+        $lines = [];
+        $lines[] = str_pad('Padel Store', $lineWidth, ' ', STR_PAD_BOTH);
+        $lines[] = str_pad(date('d-m-Y H:i'), $lineWidth, ' ', STR_PAD_BOTH);
+        if ($member && !empty($member->kode_member)) {
+            $lines[] = str_pad('Nomor Member: ' . $member->kode_member, $lineWidth, ' ', STR_PAD_BOTH);
+        } else {
+            $lines[] = str_pad('-Non Member-', $lineWidth, ' ', STR_PAD_BOTH);
         }
+        $lines[] = str_repeat('-', $lineWidth);
+        $lines[] = 'ID Booking : ' . $booking->booking_code;
+        $lines[] = 'Tanggal    : ' . $booking->tanggal_booking;
+        $lines[] = 'Lapangan   : ' . $booking->nama_lapangan;
+        $lines[] = 'Mulai      : ' . $booking->jam_mulai;
+        $lines[] = 'Selesai    : ' . $booking->jam_selesai;
+        $lines[] = 'Durasi     : ' . $booking->durasi . ' menit';
+        $lines[] = 'Harga      : Rp ' . number_format($booking->harga_booking,0,',','.');
+        $lines[] = 'Diskon     : Rp ' . number_format($booking->diskon,0,',','.');
+        $lines[] = 'Total      : Rp ' . number_format($booking->total_harga,0,',','.');
+        $lines[] = '';
 
-        try {
-            $connector = new WindowsPrintConnector('T82');
-            $printer   = new Printer($connector, $profile);
-            $printer->setPrintLeftMargin(80);
-            $printer->setJustification(Printer::JUSTIFY_CENTER);
-            $printer->text("Padel Store\n");
-            $printer->text(date('d-m-Y H:i') . "\n");
-            if ($member && !empty($member->kode_member)) {
-                $printer->text('Nomor Member: ' . $member->kode_member . "\n");
-            } else {
-                $printer->text("-Non Member-\n");
-            }
-            $printer->text(str_repeat('-', 32) . "\n");
-            $printer->setJustification(Printer::JUSTIFY_LEFT);
-            $printer->text('ID Booking : ' . $booking->booking_code . "\n");
-            $printer->text('Tanggal    : ' . $booking->tanggal_booking . "\n");
-            $printer->text('Lapangan   : ' . $booking->nama_lapangan . "\n");
-            $printer->text('Mulai      : ' . $booking->jam_mulai . "\n");
-            $printer->text('Selesai    : ' . $booking->jam_selesai . "\n");
-            $printer->text('Durasi     : ' . $booking->durasi . " menit\n");
-            $printer->text('Harga      : Rp ' . number_format($booking->harga_booking,0,',','.') . "\n");
-            $printer->text('Diskon     : Rp ' . number_format($booking->diskon,0,',','.') . "\n");
-            $printer->text('Total      : Rp ' . number_format($booking->total_harga,0,',','.') . "\n");
-            $printer->feed(2);
-            $printer->cut();
-            $printer->close();
-            $this->session->set_flashdata('success', 'Nota berhasil dicetak.');
-        } catch (\Exception $e) {
-            if (isset($printer) && $printer instanceof Printer) {
-                try {
-                    $printer->close();
-                } catch (\Exception $ex) {
-                    // ignore
-                }
-            }
-            $this->session->set_flashdata('error', 'Nota tidak tercetak. Alasan: ' . $e->getMessage());
-        }
-        redirect('booking');
+        $content  = implode("\n", $lines);
+        $filename = 'nota_' . $booking->booking_code . '.txt';
+
+        $this->load->helper('download');
+        force_download($filename, $content);
     }
 
     /**
