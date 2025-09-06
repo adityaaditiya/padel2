@@ -12,7 +12,11 @@ function booking_sort_url($field, $start, $end, $status, $sort, $order)
     if ($status === 'pending') {
         return site_url('booking') . '?status=pending&sort=' . $field . '&order=' . $next;
     }
-    return site_url('booking') . '?start_date=' . urlencode($start) . '&end_date=' . urlencode($end) . '&sort=' . $field . '&order=' . $next;
+    $base = site_url('booking') . '?start_date=' . urlencode($start) . '&end_date=' . urlencode($end);
+    if (!empty($status)) {
+        $base .= '&status=' . urlencode($status);
+    }
+    return $base . '&sort=' . $field . '&order=' . $next;
 }
 ?>
 <h2>Jadwal Booking Lapangan</h2>
@@ -29,6 +33,9 @@ function booking_sort_url($field, $start, $end, $status, $sort, $order)
         <select id="status" name="status" class="form-control mr-2">
             <option value="">Semua</option>
             <option value="pending" <?php echo $status === 'pending' ? 'selected' : ''; ?>>Pending</option>
+            <?php if ($role === 'kasir'): ?>
+                <option value="confirmed" <?php echo $status === 'confirmed' ? 'selected' : ''; ?>>Confirmed</option>
+            <?php endif; ?>
         </select>
     <?php endif; ?>
     <button type="submit" class="btn btn-primary">Lihat</button>

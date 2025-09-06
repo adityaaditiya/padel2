@@ -45,6 +45,8 @@ class Booking extends CI_Controller
         $data['courts']     = $this->Court_model->get_all();
         if ($status === 'pending') {
             $data['bookings'] = $this->Booking_model->get_pending($sort, $order);
+        } elseif ($status === 'confirmed') {
+            $data['bookings'] = $this->Booking_model->get_by_status_and_date_range('confirmed', $start, $end, $sort, $order);
         } else {
             $data['bookings'] = $this->Booking_model->get_by_date_range($start, $end, $sort, $order);
         }
