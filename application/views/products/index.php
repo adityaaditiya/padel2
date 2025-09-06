@@ -3,14 +3,13 @@
 <?php if ($this->session->flashdata('success')): ?>
     <div class="alert alert-success"><?php echo $this->session->flashdata('success'); ?></div>
 <?php endif; ?>
-<a href="<?php echo site_url('products/create'); ?>" class="btn btn-primary mb-2">Tambah Produk</a>
 <form method="get" class="form-inline mb-3">
     <input type="date" name="start_date" class="form-control mr-2" value="<?php echo html_escape($start_date); ?>">
     <input type="date" name="end_date" class="form-control mr-2" value="<?php echo html_escape($end_date); ?>">
     <input type="hidden" name="q" value="<?php echo html_escape($search_query); ?>">
     <button type="submit" class="btn btn-secondary">Filter</button>
+    <a href="<?php echo site_url('products/create'); ?>" class="btn btn-primary ml-2">Tambah Produk</a>
 </form>
-
 <form method="get" class="mb-3" style="max-width:250px;">
     <input type="text" name="q" class="form-control <?php echo ($search_query && empty($products)) ? 'is-invalid' : ''; ?>" placeholder="Cari produk..." value="<?php echo html_escape($search_query); ?>">
     <div class="invalid-feedback">Produk tidak ditemukan</div>

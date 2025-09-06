@@ -43,14 +43,14 @@
             </tbody>
         </table>
         <div class="d-flex justify-content-between align-items-center">
-            <div>Show
+            <div>
                 <select id="product-rows-per-page" class="custom-select w-auto d-inline-block">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
                     <option value="100">100</option>
                 </select>
-                entries
+                
             </div>
             <nav>
                 <ul id="product-pagination" class="pagination mb-0"></ul>
