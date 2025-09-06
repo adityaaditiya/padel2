@@ -115,6 +115,9 @@ class Booking_model extends CI_Model
     public function insert($data)
     {
         $data['booking_code'] = $this->generate_booking_code();
+        if (!isset($data['poin_member'])) {
+            $data['poin_member'] = 0;
+        }
         $this->db->insert($this->table, $data);
         return $this->db->insert_id();
     }
@@ -193,5 +196,10 @@ class Booking_model extends CI_Model
     public function update($id, $data)
     {
         return $this->db->where('id', $id)->update($this->table, $data);
+    }
+
+    public function get_by_id($id)
+    {
+        return $this->db->get_where($this->table, ['id' => $id])->row();
     }
 }
