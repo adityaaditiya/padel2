@@ -110,6 +110,8 @@ CREATE TABLE `member_data` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `kode_member` char(10) NOT NULL,
+  `tanggal_lahir` date DEFAULT NULL,
+  `nomor_ktp` varchar(20) DEFAULT NULL,
   `alamat` varchar(255) NOT NULL,
   `kecamatan` varchar(100) NOT NULL,
   `kota` varchar(100) NOT NULL,
@@ -121,8 +123,8 @@ CREATE TABLE `member_data` (
 -- Dumping data for table `member_data`
 --
 
-INSERT INTO `member_data` (`id`, `user_id`, `kode_member`, `alamat`, `kecamatan`, `kota`, `provinsi`, `poin`) VALUES
-(2, 9, '0000000009', 'kemiriamba rt 001 rw 001 no 22', 'Jatibarang', 'Kab. Brebes', 'Jawa Tengah', 0);
+INSERT INTO `member_data` (`id`, `user_id`, `kode_member`, `tanggal_lahir`, `nomor_ktp`, `alamat`, `kecamatan`, `kota`, `provinsi`, `poin`) VALUES
+(2, 9, '0000000009', NULL, NULL, 'kemiriamba rt 001 rw 001 no 22', 'Jatibarang', 'Kab. Brebes', 'Jawa Tengah', 0);
 
 -- --------------------------------------------------------
 
