@@ -19,6 +19,14 @@
         <input type="password" name="password" id="password" class="form-control" required>
     </div>
     <div class="form-group">
+        <label for="tanggal_lahir">Tanggal Lahir</label>
+        <input type="date" name="tanggal_lahir" id="tanggal_lahir" class="form-control" value="<?php echo set_value('tanggal_lahir'); ?>" required>
+    </div>
+    <div class="form-group">
+        <label for="nomor_ktp">Nomor KTP</label>
+        <input type="text" name="nomor_ktp" id="nomor_ktp" class="form-control" value="<?php echo set_value('nomor_ktp'); ?>" required>
+    </div>
+    <div class="form-group">
         <label for="alamat">Alamat / Jalan</label>
         <input type="text" name="alamat" id="alamat" class="form-control" value="<?php echo set_value('alamat'); ?>" required>
     </div>
