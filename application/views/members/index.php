@@ -3,13 +3,15 @@
 <?php if ($this->session->flashdata('success')): ?>
     <div class="alert alert-success"><?php echo $this->session->flashdata('success'); ?></div>
 <?php endif; ?>
-<a href="<?php echo site_url('members/create'); ?>" class="btn btn-primary mb-2">Tambah Member</a>
-<form method="get" class="mb-3" style="max-width:250px;">
-    <input type="text" name="q" class="form-control <?php echo ($search_query && empty($members)) ? 'is-invalid' : ''; ?>" placeholder="Cari member..." value="<?php echo html_escape($search_query); ?>">
-    <div class="invalid-feedback">Member tidak ditemukan</div>
-    <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
-    <input type="hidden" name="page" value="1">
-</form>
+<div class="d-flex align-items-center mb-3">
+    <a href="<?php echo site_url('members/create'); ?>" class="btn btn-primary mr-2">Tambah Member</a>
+    <form method="get" class="mb-0" style="max-width:250px;">
+        <input type="text" name="q" class="form-control <?php echo ($search_query && empty($members)) ? 'is-invalid' : ''; ?>" placeholder="Cari member..." value="<?php echo html_escape($search_query); ?>">
+        <div class="invalid-feedback">Member tidak ditemukan</div>
+        <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
+        <input type="hidden" name="page" value="1">
+    </form>
+</div>
 <table id="membersTable" class="table table-bordered">
     <thead>
         <tr>

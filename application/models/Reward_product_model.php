@@ -35,11 +35,13 @@ class Reward_product_model extends CI_Model
                  ->update($this->table);
     }
 
-    public function log_redemption($user_id, $reward_id)
+    public function log_redemption($user_id, $reward_id, $point_awal, $point_akhir)
     {
         $this->db->insert($this->log_table, [
-            'user_id'   => $user_id,
-            'reward_id' => $reward_id
+            'user_id'     => $user_id,
+            'reward_id'   => $reward_id,
+            'point_awal'  => (int) $point_awal,
+            'point_akhir' => (int) $point_akhir,
         ]);
     }
 }
