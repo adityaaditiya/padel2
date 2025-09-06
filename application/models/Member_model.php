@@ -13,7 +13,7 @@ class Member_model extends CI_Model
      */
     public function get_all($limit = null, $offset = null, $keyword = null)
     {
-        $this->db->select('u.id, u.nama_lengkap, u.email, u.no_telepon, m.kode_member, m.alamat, m.kecamatan, m.kota, m.provinsi, m.poin');
+        $this->db->select('u.id, u.nama_lengkap, u.email, u.no_telepon, m.kode_member, m.tanggal_lahir, m.nomor_ktp, m.alamat, m.kecamatan, m.kota, m.provinsi, m.poin');
         $this->db->from('users u');
         $this->db->join('member_data m', 'm.user_id = u.id', 'left');
         $this->db->where('u.role', 'pelanggan');
@@ -71,7 +71,7 @@ class Member_model extends CI_Model
      */
     public function get_by_id($id)
     {
-        $this->db->select('u.id, u.nama_lengkap, u.email, u.no_telepon, u.password, m.kode_member, m.alamat, m.kecamatan, m.kota, m.provinsi, m.poin');
+        $this->db->select('u.id, u.nama_lengkap, u.email, u.no_telepon, u.password, m.kode_member, m.tanggal_lahir, m.nomor_ktp, m.alamat, m.kecamatan, m.kota, m.provinsi, m.poin');
         $this->db->from('users u');
         $this->db->join('member_data m', 'm.user_id = u.id', 'left');
         $this->db->where(['u.id' => $id, 'u.role' => 'pelanggan']);
