@@ -14,7 +14,8 @@ class Sale_model extends CI_Model
             'id_kasir'      => $data['id_kasir'],
             'customer_id'   => isset($data['customer_id']) ? $data['customer_id'] : null,
             'nomor_nota'    => $data['nomor_nota'],
-            'total_belanja' => $data['total_belanja']
+            'total_belanja' => $data['total_belanja'],
+            'poin_member'   => isset($data['poin_member']) ? $data['poin_member'] : 0
         ];
 
         $this->db->insert($this->table, $insertData);
