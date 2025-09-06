@@ -12,10 +12,17 @@ function booking_sort_url($field, $start, $end, $status, $sort, $order)
     if ($status === 'pending') {
         return site_url('booking') . '?status=pending&sort=' . $field . '&order=' . $next;
     }
-    return site_url('booking') . '?start_date=' . urlencode($start) . '&end_date=' . urlencode($end) . '&sort=' . $field . '&order=' . $next;
+    $base = site_url('booking') . '?start_date=' . urlencode($start) . '&end_date=' . urlencode($end);
+    if (!empty($status)) {
+        $base .= '&status=' . urlencode($status);
+    }
+    return $base . '&sort=' . $field . '&order=' . $next;
 }
 ?>
 <h2>Jadwal Booking Lapangan</h2>
+<?php if ($this->session->flashdata('success')): ?>
+    <div class="alert alert-success"><?php echo $this->session->flashdata('success'); ?></div>
+<?php endif; ?>
 <form method="get" class="form-inline mb-3">
     <label for="start_date" class="mr-2">Dari:</label>
     <input type="date" id="start_date" name="start_date" class="form-control mr-2" value="<?php echo htmlspecialchars($start_date); ?>">
@@ -26,6 +33,9 @@ function booking_sort_url($field, $start, $end, $status, $sort, $order)
         <select id="status" name="status" class="form-control mr-2">
             <option value="">Semua</option>
             <option value="pending" <?php echo $status === 'pending' ? 'selected' : ''; ?>>Pending</option>
+            <?php if ($role === 'kasir'): ?>
+                <option value="confirmed" <?php echo $status === 'confirmed' ? 'selected' : ''; ?>>Confirmed</option>
+            <?php endif; ?>
         </select>
     <?php endif; ?>
     <button type="submit" class="btn btn-primary">Lihat</button>
