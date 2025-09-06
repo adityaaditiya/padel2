@@ -279,8 +279,16 @@ class Booking extends CI_Controller
         }
         $normalized = $allowed[$status];
         $data       = ['status_booking' => $normalized];
+        $booking    = $this->Booking_model->get_by_id($id);
         if ($normalized === 'confirmed') {
             $data['keterangan'] = 'pembayaran sudah di konfirmasi';
+            if ($booking) {
+                $earned = (int) floor($booking->total_harga / 100);
+                $data['poin_member'] = $earned;
+                if ($earned > 0) {
+                    $this->Member_model->add_points($booking->id_user, $earned);
+                }
+            }
         } elseif ($keterangan !== null) {
             $data['keterangan'] = $keterangan;
         }

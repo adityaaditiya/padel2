@@ -66,6 +66,7 @@ $formatted_store_date = $store_date ? date('d-m-Y', strtotime($store_date)) : da
                 <?php if ($role === 'kasir'): ?>
                     <li class="nav-item"><a class="nav-link" href="<?php echo site_url('members'); ?>">Data Member</a></li>
                 <?php endif; ?>
+                <li class="nav-item"><a class="nav-link" href="<?php echo site_url('rewards'); ?>">Penukaran Poin</a></li>
             <?php endif; ?>
 
             <?php if ($this->session->userdata('logged_in')): ?>
