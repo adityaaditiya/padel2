@@ -1,16 +1,16 @@
 <?php $this->load->view('templates/header'); ?>
 <h2>Daftar Transaksi POS</h2>
-<form method="get" class="mb-3">
-    <input type="date" name="start" value="<?php echo set_value('', date('Y-m-d')); ?>">
-    <input type="date" name="end" value="<?php echo set_value('', date('Y-m-d')); ?>">
+<form method="get" class="form-inline mb-3">
+    <input type="date" name="start" class="form-control mr-2" value="<?php echo set_value('', date('Y-m-d')); ?>">
+    <input type="date" name="end" class="form-control mr-2" value="<?php echo set_value('', date('Y-m-d')); ?>">
     <input type="hidden" name="q" value="<?php echo html_escape($search_query); ?>">
-    <button type="submit" class="btn btn-primary btn-sm px-2">Cari</button>
+    <button type="submit" class="btn btn-primary">Cari</button>
 </form>
 
 <?php if ($filter_start && $filter_end): ?>
     <?php if (!empty($sales)): ?>
         <form method="get" class="form-inline mb-2" style="max-width:200px;">
-            <input type="text" name="q" class="form-control form-control-sm <?php echo ($search_query && empty($sales)) ? 'is-invalid' : ''; ?>" placeholder="Cari transaksi..." value="<?php echo html_escape($search_query); ?>">
+            <input type="text" name="q" class="form-control <?php echo ($search_query && empty($sales)) ? 'is-invalid' : ''; ?>" placeholder="Cari transaksi..." value="<?php echo html_escape($search_query); ?>">
             <div class="invalid-feedback">Data tidak ditemukan.</div>
             <input type="hidden" name="start" value="<?php echo htmlspecialchars($filter_start); ?>">
             <input type="hidden" name="end" value="<?php echo htmlspecialchars($filter_end); ?>">
