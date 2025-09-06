@@ -50,7 +50,6 @@
                     <option value="50">50</option>
                     <option value="100">100</option>
                 </select>
-                
             </div>
             <nav>
                 <ul id="product-pagination" class="pagination mb-0"></ul>

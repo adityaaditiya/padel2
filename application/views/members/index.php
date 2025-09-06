@@ -19,6 +19,8 @@
             <th>Nama</th>
             <th>Email</th>
             <th>No Telepon</th>
+            <th>Tanggal Lahir</th>
+            <th>No KTP</th>
             <th>Alamat</th>
             <th>Kecamatan</th>
             <th>Kota</th>
@@ -33,6 +35,8 @@
                 <td><?php echo htmlspecialchars($m->nama_lengkap); ?></td>
                 <td><?php echo htmlspecialchars($m->email); ?></td>
                 <td><?php echo htmlspecialchars($m->no_telepon); ?></td>
+                <td><?php echo htmlspecialchars($m->tanggal_lahir); ?></td>
+                <td><?php echo htmlspecialchars($m->nomor_ktp); ?></td>
                 <td><?php echo htmlspecialchars($m->alamat); ?></td>
                 <td><?php echo htmlspecialchars($m->kecamatan); ?></td>
                 <td><?php echo htmlspecialchars($m->kota); ?></td>
@@ -87,4 +91,63 @@
         <input type="hidden" name="page" value="1">
     </form>
 </div>
+<div class="mt-3">
+    <button id="exportPdf" class="btn btn-secondary">Export PDF</button>
+    <button id="exportExcel" class="btn btn-success ml-2">Export Excel</button>
+</div>
+
+<table id="allMembersTable" style="display:none;">
+    <thead>
+        <tr>
+            <th>Kode Member</th>
+            <th>Nama</th>
+            <th>Email</th>
+            <th>No Telepon</th>
+            <th>Tanggal Lahir</th>
+            <th>No KTP</th>
+            <th>Alamat</th>
+            <th>Kecamatan</th>
+            <th>Kota</th>
+            <th>Provinsi</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($all_members as $m): ?>
+        <tr>
+            <td><?php echo htmlspecialchars($m->kode_member); ?></td>
+            <td><?php echo htmlspecialchars($m->nama_lengkap); ?></td>
+            <td><?php echo htmlspecialchars($m->email); ?></td>
+            <td><?php echo htmlspecialchars($m->no_telepon); ?></td>
+            <td><?php echo htmlspecialchars($m->tanggal_lahir); ?></td>
+            <td><?php echo htmlspecialchars($m->nomor_ktp); ?></td>
+            <td><?php echo htmlspecialchars($m->alamat); ?></td>
+            <td><?php echo htmlspecialchars($m->kecamatan); ?></td>
+            <td><?php echo htmlspecialchars($m->kota); ?></td>
+            <td><?php echo htmlspecialchars($m->provinsi); ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+document.getElementById('exportPdf').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text('Data Member', 14, 15);
+    doc.autoTable({ html: '#allMembersTable', startY: 20 });
+    doc.save('data_member.pdf');
+});
+
+document.getElementById('exportExcel').addEventListener('click', function () {
+    const table = document.getElementById('allMembersTable');
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.table_to_sheet(table);
+    XLSX.utils.book_append_sheet(wb, ws, 'Member');
+    XLSX.writeFile(wb, 'data_member.xlsx');
+});
+</script>
+
 <?php $this->load->view('templates/footer'); ?>

@@ -110,7 +110,8 @@ CREATE TABLE `member_data` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `kode_member` char(10) NOT NULL,
-  `nomor_ktp` varchar(20) NOT NULL,
+  `tanggal_lahir` date DEFAULT NULL,
+  `nomor_ktp` char(16) DEFAULT NULL,
   `alamat` varchar(255) NOT NULL,
   `kecamatan` varchar(100) NOT NULL,
   `kota` varchar(100) NOT NULL,
@@ -124,6 +125,7 @@ CREATE TABLE `member_data` (
 
 INSERT INTO `member_data` (`id`, `user_id`, `kode_member`, `nomor_ktp`, `alamat`, `kecamatan`, `kota`, `provinsi`, `poin`) VALUES
 (2, 9, '0000000009', '1234567890123456', 'kemiriamba rt 001 rw 001 no 22', 'Jatibarang', 'Kab. Brebes', 'Jawa Tengah', 0);
+
 
 -- --------------------------------------------------------
 

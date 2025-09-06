@@ -46,6 +46,7 @@ class Members extends CI_Controller
         $data['total_pages']  = (int) ceil($total_rows / $per_page);
         $data['members']      = $this->Member_model->get_all($per_page, $offset, $keyword);
         $data['search_query'] = $keyword;
+        $data['all_members']  = $this->Member_model->get_all();
 
         $this->load->view('members/index', $data);
     }
@@ -64,6 +65,8 @@ class Members extends CI_Controller
         $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|numeric|min_length[10]|callback_phone_check');
         $this->form_validation->set_rules('nomor_ktp', 'Nomor KTP', 'required|numeric|callback_ktp_check');
         $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
+        $this->form_validation->set_rules('tanggal_lahir', 'Tanggal Lahir', 'required');
+        $this->form_validation->set_rules('nomor_ktp', 'Nomor KTP', 'required|numeric|exact_length[16]');
         $this->form_validation->set_rules('alamat', 'Alamat', 'required');
         $this->form_validation->set_rules('kecamatan', 'Kecamatan', 'required');
         $this->form_validation->set_rules('kota', 'Kota', 'required');
@@ -195,6 +198,8 @@ class Members extends CI_Controller
         if ($this->input->post('password')) {
             $this->form_validation->set_rules('password', 'Password', 'min_length[6]');
         }
+        $this->form_validation->set_rules('tanggal_lahir', 'Tanggal Lahir', 'required');
+        $this->form_validation->set_rules('nomor_ktp', 'Nomor KTP', 'required|numeric|exact_length[16]');
         $this->form_validation->set_rules('alamat', 'Alamat', 'required');
         $this->form_validation->set_rules('kecamatan', 'Kecamatan', 'required');
         $this->form_validation->set_rules('kota', 'Kota', 'required');
