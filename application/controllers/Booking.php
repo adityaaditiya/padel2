@@ -228,11 +228,7 @@ class Booking extends CI_Controller
                 $data['bukti_pembayaran'] = $bukti_file;
             }
             $this->Booking_model->insert($data);
-            if ($this->session->userdata('role') === 'kasir') {
-                $this->session->set_flashdata('success', 'Booking berhasil disimpan.');
-            } else {
-                $this->session->set_flashdata('success', 'Booking berhasil disimpan, silakan lakukan pembayaran.');
-            }
+            $this->session->set_flashdata('success', 'booking telah ditambahkan');
             redirect('booking');
             return;
         }
