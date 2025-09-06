@@ -11,7 +11,7 @@
 <div class="row">
     <div class="col-md-6">
         <h4>Daftar Produk</h4>
-        <form class="form-inline mb-2" onsubmit="return false;">
+        <form class="form-inline mb-2" method="get" id="filter-form">
             <select name="kategori" id="category-filter" class="form-control mr-2">
                 <option value="">Semua Kategori</option>
                 <?php foreach ($categories as $c): ?>
@@ -19,29 +19,43 @@
                 <?php endforeach; ?>
             </select>
             <input type="text" name="q" id="product-search" value="<?php echo htmlspecialchars($search_query); ?>" class="form-control mr-2" placeholder="Cari produk">
+            <button type="submit" class="btn btn-primary btn-sm">Cari</button>
         </form>
-        <table id="products-table" class="table table-sm table-bordered">
-            <thead>
-                <tr>
-                    <th>Produk</th>
-                    <th>Harga</th>
-                    <th>Kategori</th>
-                    <th>Qty</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($products as $p): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($p->nama_produk); ?></td>
-                    <td>Rp <?php echo number_format($p->harga_jual, 0, ',', '.'); ?></td>
-                    <td><?php echo htmlspecialchars($p->kategori); ?></td>
-                    <td><input type="number" value="1" min="1" class="form-control form-control-sm product-qty" data-id="<?php echo $p->id; ?>" style="width:60px"></td>
-                    <td><button type="button" class="btn btn-sm btn-success add-to-cart" data-id="<?php echo $p->id; ?>">Tambah</button></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+        <div class="row" id="products-grid">
+        <?php foreach ($products as $p): ?>
+            <div class="col-6 col-md-4 col-lg-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title mb-1"><?php echo htmlspecialchars($p->nama_produk); ?></h6>
+                        <p class="mb-1">Harga: Rp <?php echo number_format($p->harga_jual, 0, ',', '.'); ?></p>
+                        <p class="mb-2">Kategori: <?php echo htmlspecialchars($p->kategori); ?></p>
+                        <div class="input-group input-group-sm mt-auto">
+                            <input type="number" value="1" min="1" class="form-control product-qty" data-id="<?php echo $p->id; ?>">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-success add-to-cart" data-id="<?php echo $p->id; ?>">Tambah</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+        </div>
+        <?php if ($total_pages > 1): ?>
+        <nav>
+            <ul class="pagination">
+                <?php $query = ''; if ($selected_category) $query .= '&kategori=' . urlencode($selected_category); if ($search_query) $query .= '&q=' . urlencode($search_query); ?>
+                <?php if ($page > 1): ?>
+                    <li class="page-item"><a class="page-link" href="<?php echo site_url('pos?page=' . ($page - 1) . $query); ?>">&laquo;</a></li>
+                <?php endif; ?>
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>"><a class="page-link" href="<?php echo site_url('pos?page=' . $i . $query); ?>"><?php echo $i; ?></a></li>
+                <?php endfor; ?>
+                <?php if ($page < $total_pages): ?>
+                    <li class="page-item"><a class="page-link" href="<?php echo site_url('pos?page=' . ($page + 1) . $query); ?>">&raquo;</a></li>
+                <?php endif; ?>
+            </ul>
+        </nav>
+        <?php endif; ?>
     </div>
     <div class="col-md-6">
         <h4>Keranjang</h4>
@@ -158,38 +172,11 @@ if (deviceInput) {
     deviceInput.value = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
 }
 
-var searchInput = document.getElementById('product-search');
-var categorySelect = document.getElementById('category-filter');
-var productsBody = document.querySelector('#products-table tbody');
-var searchUrl = '<?php echo site_url('pos/search'); ?>';
 var addUrl = '<?php echo site_url('pos/add/'); ?>';
-
-function renderProducts(items) {
-    productsBody.innerHTML = '';
-    for (var i = 0; i < items.length; i++) {
-        var p = items[i];
-        var tr = document.createElement('tr');
-        tr.innerHTML = '<td>' + p.nama_produk + '</td>' +
-                       '<td>Rp ' + Number(p.harga_jual).toLocaleString('id-ID') + '</td>' +
-                       '<td>' + p.kategori + '</td>' +
-                       '<td><input type="number" value="1" min="1" class="form-control form-control-sm product-qty" style="width:60px" data-id="' + p.id + '"></td>' +
-                       '<td><button type="button" class="btn btn-sm btn-success add-to-cart" data-id="' + p.id + '">Tambah</button></td>';
-        productsBody.appendChild(tr);
-    }
-}
-
-function updateProducts() {
-    var params = new URLSearchParams();
-    if (categorySelect.value) params.append('kategori', categorySelect.value);
-    if (searchInput.value) params.append('q', searchInput.value);
-    fetch(searchUrl + '?' + params.toString())
-        .then(function(r){ return r.json(); })
-        .then(renderProducts);
-}
-
-if (searchInput && categorySelect) {
-    searchInput.addEventListener('input', updateProducts);
-    categorySelect.addEventListener('change', updateProducts);
+var filterForm = document.getElementById('filter-form');
+var categorySelect = document.getElementById('category-filter');
+if (categorySelect && filterForm) {
+    categorySelect.addEventListener('change', function(){ filterForm.submit(); });
 }
 
 var qtyCells = document.querySelectorAll('.cart-qty');
