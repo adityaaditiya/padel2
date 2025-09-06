@@ -28,7 +28,7 @@
     </div>
     <div class="form-group">
         <label for="nomor_ktp">Nomor KTP</label>
-        <input type="text" name="nomor_ktp" id="nomor_ktp" class="form-control" value="<?php echo set_value('nomor_ktp', $member->nomor_ktp); ?>" required>
+        <input type="text" name="nomor_ktp" id="nomor_ktp" class="form-control" value="<?php echo set_value('nomor_ktp', $member->nomor_ktp); ?>" required pattern="[0-9]{16}" minlength="16" maxlength="16" title="Nomor KTP harus 16 digit">
     </div>
     <div class="form-group">
         <label for="alamat">Alamat / Jalan</label>

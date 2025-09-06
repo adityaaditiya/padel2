@@ -111,7 +111,7 @@ CREATE TABLE `member_data` (
   `user_id` int(11) NOT NULL,
   `kode_member` char(10) NOT NULL,
   `tanggal_lahir` date DEFAULT NULL,
-  `nomor_ktp` varchar(20) DEFAULT NULL,
+  `nomor_ktp` char(16) DEFAULT NULL,
   `alamat` varchar(255) NOT NULL,
   `kecamatan` varchar(100) NOT NULL,
   `kota` varchar(100) NOT NULL,

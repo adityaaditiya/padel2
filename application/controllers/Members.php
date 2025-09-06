@@ -65,7 +65,7 @@ class Members extends CI_Controller
         $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|numeric|min_length[10]|callback_phone_check');
         $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
         $this->form_validation->set_rules('tanggal_lahir', 'Tanggal Lahir', 'required');
-        $this->form_validation->set_rules('nomor_ktp', 'Nomor KTP', 'required|numeric|min_length[16]|max_length[16]');
+        $this->form_validation->set_rules('nomor_ktp', 'Nomor KTP', 'required|numeric|exact_length[16]');
         $this->form_validation->set_rules('alamat', 'Alamat', 'required');
         $this->form_validation->set_rules('kecamatan', 'Kecamatan', 'required');
         $this->form_validation->set_rules('kota', 'Kota', 'required');
@@ -111,7 +111,7 @@ class Members extends CI_Controller
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|callback_email_check['.$id.']');
         $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|numeric|min_length[10]|callback_phone_check['.$id.']');
         $this->form_validation->set_rules('tanggal_lahir', 'Tanggal Lahir', 'required');
-        $this->form_validation->set_rules('nomor_ktp', 'Nomor KTP', 'required|numeric|min_length[16]|max_length[16]');
+        $this->form_validation->set_rules('nomor_ktp', 'Nomor KTP', 'required|numeric|exact_length[16]');
         $this->form_validation->set_rules('alamat', 'Alamat', 'required');
         $this->form_validation->set_rules('kecamatan', 'Kecamatan', 'required');
         $this->form_validation->set_rules('kota', 'Kota', 'required');
@@ -200,7 +200,7 @@ class Members extends CI_Controller
             $this->form_validation->set_rules('password', 'Password', 'min_length[6]');
         }
         $this->form_validation->set_rules('tanggal_lahir', 'Tanggal Lahir', 'required');
-        $this->form_validation->set_rules('nomor_ktp', 'Nomor KTP', 'required|numeric|min_length[16]|max_length[16]');
+        $this->form_validation->set_rules('nomor_ktp', 'Nomor KTP', 'required|numeric|exact_length[16]');
         $this->form_validation->set_rules('alamat', 'Alamat', 'required');
         $this->form_validation->set_rules('kecamatan', 'Kecamatan', 'required');
         $this->form_validation->set_rules('kota', 'Kota', 'required');
