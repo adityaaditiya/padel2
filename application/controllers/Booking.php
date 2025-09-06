@@ -144,6 +144,13 @@ class Booking extends CI_Controller
             }
             $start  = $this->input->post('jam_mulai');
             $end    = $this->input->post('jam_selesai');
+            $open   = '08:00';
+            $close  = '22:00';
+            if (strtotime($start) < strtotime($open) || strtotime($end) > strtotime($close)) {
+                $this->session->set_flashdata('error', 'Jam booking harus antara 08:00 dan 22:00.');
+                redirect('booking/create');
+                return;
+            }
             $durasi = (strtotime($end) - strtotime($start)) / 60; // minutes
             if ($durasi <= 0) {
                 $this->session->set_flashdata('error', 'Jam selesai harus lebih besar dari jam mulai.');

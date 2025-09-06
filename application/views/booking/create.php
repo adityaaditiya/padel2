@@ -48,11 +48,11 @@
     </div>
     <div class="form-group">
         <label for="jam_mulai">Jam Mulai</label>
-        <input type="time" name="jam_mulai" id="jam_mulai" class="form-control" value="<?php echo set_value('jam_mulai', isset($selected_start) ? $selected_start : ''); ?>" required>
+        <input type="time" name="jam_mulai" id="jam_mulai" class="form-control" min="08:00" max="22:00" value="<?php echo set_value('jam_mulai', isset($selected_start) ? $selected_start : ''); ?>" required>
     </div>
     <div class="form-group">
         <label for="jam_selesai">Jam Selesai</label>
-        <input type="time" name="jam_selesai" id="jam_selesai" class="form-control" value="<?php echo set_value('jam_selesai', isset($selected_end) ? $selected_end : ''); ?>" required>
+        <input type="time" name="jam_selesai" id="jam_selesai" class="form-control" min="08:00" max="22:00" value="<?php echo set_value('jam_selesai', isset($selected_end) ? $selected_end : ''); ?>" required>
     </div>
 <?php if ($this->session->userdata('role') === 'pelanggan'): ?>
     <div class="form-group">

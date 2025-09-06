@@ -1,6 +1,6 @@
 <?php $this->load->view('templates/header'); ?>
 <h2>Dashboard Pelanggan</h2>
-<p>Hey Padel Lovers! 🎾 Mau pesan lapangan di jam custom? Tekan saja Booking Sekarang tanpa pilih jadwal—lebih fleksibel dan gampang!</p>
+<p>Hey Padel Lovers! 🎾 Mau pesan lapangan di jam custom? Pilih opsi <strong>Custom</strong> lalu tekan Booking Sekarang—lebih fleksibel dan gampang!</p>
 <div class="row">
     <?php if (!empty($courts)): ?>
         <?php foreach ($courts as $court): ?>
@@ -24,9 +24,19 @@
                                             </div>
                                         </li>
                                     <?php endforeach; ?>
+                                    <li class="col-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="slot" id="slot_<?php echo $court->id; ?>_custom" value="custom">
+                                            <label class="form-check-label" for="slot_<?php echo $court->id; ?>_custom">Custom</label>
+                                        </div>
+                                    </li>
                                 </ul>
                             <?php else: ?>
                                 <p class="card-text mb-3">Tidak ada jadwal kosong hari ini.</p>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="slot" id="slot_<?php echo $court->id; ?>_custom" value="custom">
+                                    <label class="form-check-label" for="slot_<?php echo $court->id; ?>_custom">Custom</label>
+                                </div>
                             <?php endif; ?>
                             <button type="submit" class="btn btn-primary mt-auto">Booking Sekarang</button>
                         </form>
