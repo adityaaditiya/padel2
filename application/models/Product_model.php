@@ -57,35 +57,16 @@ class Product_model extends CI_Model
 
     /**
      * Ambil produk dengan filter kategori dan pencarian nama.
-     *
-     * Opsional menerima parameter limit dan offset untuk pagination.
      */
-    public function get_filtered($kategori = null, $keyword = null, $limit = null, $offset = null)
+    public function get_filtered($kategori = null, $keyword = null)
     {
         if ($kategori) {
             $this->db->where('kategori', $kategori);
         }
         if ($keyword) {
             $this->db->like('nama_produk', $keyword);
-        }
-        if ($limit !== null) {
-            $this->db->limit($limit, $offset);
         }
         return $this->db->get($this->table)->result();
-    }
-
-    /**
-     * Hitung total produk untuk filter tertentu.
-     */
-    public function count_filtered($kategori = null, $keyword = null)
-    {
-        if ($kategori) {
-            $this->db->where('kategori', $kategori);
-        }
-        if ($keyword) {
-            $this->db->like('nama_produk', $keyword);
-        }
-        return $this->db->count_all_results($this->table);
     }
 
     public function get_by_id($id)
