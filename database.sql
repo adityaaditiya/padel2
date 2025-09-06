@@ -123,9 +123,8 @@ CREATE TABLE `member_data` (
 -- Dumping data for table `member_data`
 --
 
-INSERT INTO `member_data` (`id`, `user_id`, `kode_member`, `nomor_ktp`, `alamat`, `kecamatan`, `kota`, `provinsi`, `poin`) VALUES
-(2, 9, '0000000009', '1234567890123456', 'kemiriamba rt 001 rw 001 no 22', 'Jatibarang', 'Kab. Brebes', 'Jawa Tengah', 0);
-
+INSERT INTO `member_data` (`id`, `user_id`, `kode_member`, `tanggal_lahir`, `nomor_ktp`, `alamat`, `kecamatan`, `kota`, `provinsi`, `poin`) VALUES
+(2, 9, '0000000009', NULL, NULL, 'kemiriamba rt 001 rw 001 no 22', 'Jatibarang', 'Kab. Brebes', 'Jawa Tengah', 0);
 
 -- --------------------------------------------------------
 
@@ -347,7 +346,6 @@ ALTER TABLE `courts`
 --
 ALTER TABLE `member_data`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `nomor_ktp` (`nomor_ktp`),
   ADD KEY `user_id` (`user_id`);
 
 -- Indexes for table `reward_products`

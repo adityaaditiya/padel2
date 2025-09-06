@@ -17,7 +17,6 @@ class User_model extends CI_Model
             $this->db->insert('member_data', [
                 'user_id'   => $user_id,
                 'kode_member' => $kode_member,
-                'nomor_ktp' => '',
                 'alamat'    => '',
                 'kecamatan' => '',
                 'kota'      => '',
