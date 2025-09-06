@@ -15,6 +15,10 @@
         <input type="text" name="no_telepon" id="no_telepon" class="form-control" value="<?php echo set_value('no_telepon'); ?>" required>
     </div>
     <div class="form-group">
+        <label for="nomor_ktp">Nomor KTP</label>
+        <input type="text" name="nomor_ktp" id="nomor_ktp" class="form-control" value="<?php echo set_value('nomor_ktp'); ?>" required>
+    </div>
+    <div class="form-group">
         <label for="password">Password</label>
         <input type="password" name="password" id="password" class="form-control" required>
     </div>
