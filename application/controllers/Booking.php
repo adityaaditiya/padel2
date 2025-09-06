@@ -45,6 +45,8 @@ class Booking extends CI_Controller
         $data['courts']     = $this->Court_model->get_all();
         if ($status === 'pending') {
             $data['bookings'] = $this->Booking_model->get_pending($sort, $order);
+        } elseif ($status === 'confirmed') {
+            $data['bookings'] = $this->Booking_model->get_by_status_and_date_range('confirmed', $start, $end, $sort, $order);
         } else {
             $data['bookings'] = $this->Booking_model->get_by_date_range($start, $end, $sort, $order);
         }
@@ -228,11 +230,7 @@ class Booking extends CI_Controller
                 $data['bukti_pembayaran'] = $bukti_file;
             }
             $this->Booking_model->insert($data);
-            if ($this->session->userdata('role') === 'kasir') {
-                $this->session->set_flashdata('success', 'Booking berhasil disimpan.');
-            } else {
-                $this->session->set_flashdata('success', 'Booking berhasil disimpan, silakan lakukan pembayaran.');
-            }
+            $this->session->set_flashdata('success', 'booking telah ditambahkan');
             redirect('booking');
             return;
         }

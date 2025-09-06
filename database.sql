@@ -241,6 +241,8 @@ CREATE TABLE `reward_redemptions` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `reward_id` int(11) NOT NULL,
+  `point_awal` int(11) NOT NULL,
+  `point_akhir` int(11) NOT NULL,
   `tanggal` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
