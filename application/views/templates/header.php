@@ -50,9 +50,6 @@ $formatted_store_date = $store_date ? date('d-m-Y', strtotime($store_date)) : da
                         </div>
                     </li>
                 <?php endif; ?>
-                <?php if ($role === 'owner'): ?>
-                    <li class="nav-item"><a class="nav-link" href="<?php echo site_url('reports'); ?>">Laporan</a></li>
-                <?php endif; ?>
                 <?php if (in_array($role, ['kasir','admin_keuangan','owner'])): ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="cashDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Uang Kas</a>
@@ -61,7 +58,16 @@ $formatted_store_date = $store_date ? date('d-m-Y', strtotime($store_date)) : da
                             <a class="dropdown-item" href="<?php echo site_url('cash/withdraw'); ?>">Ambil Uang Kas</a>
                         </div>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="<?php echo site_url('finance'); ?>">Keuangan</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="reportDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Laporan</a>
+                        <div class="dropdown-menu" aria-labelledby="reportDropdown">
+                            <a class="dropdown-item" href="<?php echo site_url('finance'); ?>">Laporan Keuangan</a>
+                            <a class="dropdown-item" href="<?php echo site_url('point_report'); ?>">Laporan Tukar Poin</a>
+                            <?php if ($role === 'owner'): ?>
+                                <a class="dropdown-item" href="<?php echo site_url('reports'); ?>">Laporan Bisnis</a>
+                            <?php endif; ?>
+                        </div>
+                    </li>
                 <?php endif; ?>
                 <?php if ($role === 'kasir'): ?>
                     <li class="nav-item"><a class="nav-link" href="<?php echo site_url('members'); ?>">Data Member</a></li>
