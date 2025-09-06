@@ -7,7 +7,9 @@ class Points extends CI_Controller
     {
         parent::__construct();
         $this->load->library('session');
-        $this->load->helper('url');
+        $this->load->helper(['url','form']);
+        $this->load->model('Point_rule_model');
+
     }
 
     private function authorize()
@@ -20,7 +22,18 @@ class Points extends CI_Controller
     public function index()
     {
         $this->authorize();
-        $this->load->view('points/rules');
+        if ($this->input->method() === 'post') {
+            $product = (int) $this->input->post('product_rate');
+            $booking = (int) $this->input->post('booking_rate');
+            if ($product > 0 && $booking > 0) {
+                $this->Point_rule_model->update($product, $booking);
+                $this->session->set_flashdata('success', 'Ketentuan poin diperbarui.');
+            }
+            redirect('points');
+            return;
+        }
+        $data['rules'] = $this->Point_rule_model->get();
+        $this->load->view('points/rules', $data);
     }
 }
 ?>

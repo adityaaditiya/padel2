@@ -13,7 +13,7 @@ class Booking extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model(['Court_model','Booking_model','Store_model','Member_model']);
+        $this->load->model(['Court_model','Booking_model','Store_model','Member_model','Point_rule_model']);
         $this->load->library(['session','form_validation']);
         $this->load->helper(['url','form']);
     }
@@ -283,7 +283,9 @@ class Booking extends CI_Controller
         if ($normalized === 'confirmed') {
             $data['keterangan'] = 'pembayaran sudah di konfirmasi';
             if ($booking && (int) $booking->poin_member === 0) {
-                $earned = (int) floor($booking->total_harga / 100);
+                $rules = $this->Point_rule_model->get();
+                $rate = $rules && (int)$rules->booking_rate > 0 ? (int)$rules->booking_rate : 100;
+                $earned = (int) floor($booking->total_harga / $rate);
                 $data['poin_member'] = $earned;
                 if ($earned > 0) {
                     $this->Member_model->add_points($booking->id_user, $earned);

@@ -247,6 +247,26 @@ CREATE TABLE `reward_redemptions` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `point_rules`
+--
+
+CREATE TABLE `point_rules` (
+  `id` int(11) NOT NULL,
+  `product_rate` int(11) NOT NULL DEFAULT 200,
+  `booking_rate` int(11) NOT NULL DEFAULT 100
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `point_rules`
+--
+
+INSERT INTO `point_rules` (`id`, `product_rate`, `booking_rate`) VALUES
+(1, 200, 100);
+
+-- --------------------------------------------------------
+
+--
+
 -- Table structure for table `store_status`
 --
 
@@ -335,6 +355,12 @@ ALTER TABLE `reward_redemptions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `reward_id` (`reward_id`);
+
+--
+-- Indexes for table `point_rules`
+--
+ALTER TABLE `point_rules`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `payments`
@@ -443,6 +469,12 @@ ALTER TABLE `reward_products`
 --
 ALTER TABLE `reward_redemptions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `point_rules`
+--
+ALTER TABLE `point_rules`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `store_status`
