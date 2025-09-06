@@ -158,5 +158,42 @@ class Rewards extends CI_Controller
         $data['products'] = $this->Reward_product_model->get_all();
         $this->load->view('rewards/manage', $data);
     }
+
+    public function edit($id)
+    {
+        $this->authorize();
+        if ($this->session->userdata('role') !== 'owner') {
+            show_error('Forbidden', 403);
+        }
+        $product = $this->Reward_product_model->get_by_id($id);
+        if (!$product) {
+            show_404();
+        }
+        $data['product'] = $product;
+        $this->load->view('rewards/edit', $data);
+    }
+
+    public function update($id)
+    {
+        $this->authorize();
+        if ($this->session->userdata('role') !== 'owner') {
+            show_error('Forbidden', 403);
+        }
+        $this->form_validation->set_rules('nama_produk', 'Nama Produk', 'required');
+        $this->form_validation->set_rules('poin', 'Poin', 'required|integer');
+        $this->form_validation->set_rules('stok', 'Stok', 'required|integer');
+        if ($this->form_validation->run() === TRUE) {
+            $data = [
+                'nama_produk' => $this->input->post('nama_produk', TRUE),
+                'poin'        => $this->input->post('poin', TRUE),
+                'stok'        => $this->input->post('stok', TRUE)
+            ];
+            $this->Reward_product_model->update($id, $data);
+            $this->session->set_flashdata('success', 'Produk diperbarui.');
+            redirect('rewards/manage');
+            return;
+        }
+        $this->edit($id);
+    }
 }
 ?>

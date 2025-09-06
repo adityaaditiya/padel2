@@ -27,6 +27,11 @@ class Reward_product_model extends CI_Model
         $this->db->where('id', $id)->delete($this->table);
     }
 
+    public function update($id, $data)
+    {
+        $this->db->where('id', $id)->update($this->table, $data);
+    }
+
     public function reduce_stock($id, $qty = 1)
     {
         $this->db->set('stok', 'stok - ' . (int)$qty, false)
