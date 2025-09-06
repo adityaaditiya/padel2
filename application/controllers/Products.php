@@ -23,6 +23,7 @@ class Products extends CI_Controller
         if (!in_array($role, ['kasir','admin_keuangan','owner'])) {
             redirect('dashboard');
         }
+        return $role;
     }
 
     public function index()
@@ -107,7 +108,10 @@ class Products extends CI_Controller
 
     public function edit($id)
     {
-        $this->authorize();
+        $role = $this->authorize();
+        if ($role === 'kasir') {
+            redirect('products');
+        }
         $data['product'] = $this->Product_model->get_by_id($id);
         $data['categories'] = $this->Product_model->get_categories();
         $this->load->view('products/edit', $data);
@@ -115,7 +119,10 @@ class Products extends CI_Controller
 
     public function update($id)
     {
-        $this->authorize();
+        $role = $this->authorize();
+        if ($role === 'kasir') {
+            redirect('products');
+        }
         $this->form_validation->set_rules('nama_produk', 'Nama Produk', 'required');
         $this->form_validation->set_rules('harga_jual', 'Harga Jual', 'required|numeric');
         $this->form_validation->set_rules('stok', 'Stok', 'required|integer');
@@ -138,7 +145,10 @@ class Products extends CI_Controller
 
     public function delete($id)
     {
-        $this->authorize();
+        $role = $this->authorize();
+        if ($role === 'kasir') {
+            redirect('products');
+        }
         $this->Product_model->delete($id);
         $this->session->set_flashdata('success', 'Produk berhasil dihapus.');
         redirect('products');
