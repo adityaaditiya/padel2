@@ -34,19 +34,10 @@ class Pos extends CI_Controller
         $this->authorize();
         $kategori = $this->input->get('kategori');
         $keyword  = $this->input->get('q');
-
-        $per_page = 20;
-        $page = max(1, (int) $this->input->get('page'));
-        $offset = ($page - 1) * $per_page;
-
-        $data['products'] = $this->Product_model->get_filtered($kategori, $keyword, $per_page, $offset);
-        $total_products = $this->Product_model->count_filtered($kategori, $keyword);
-
+        $data['products'] = $this->Product_model->get_filtered($kategori, $keyword);
         $data['categories'] = $this->Product_model->get_categories();
         $data['selected_category'] = $kategori;
         $data['search_query'] = $keyword;
-        $data['page'] = $page;
-        $data['total_pages'] = (int) ceil($total_products / $per_page);
         $data['cart'] = $this->session->userdata('cart') ?: [];
         $data['total'] = 0;
         foreach ($data['cart'] as $item) {
