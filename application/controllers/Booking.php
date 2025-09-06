@@ -279,7 +279,8 @@ class Booking extends CI_Controller
         $data       = ['status_booking' => $normalized];
         $booking    = $this->Booking_model->get_by_id($id);
         if ($normalized === 'confirmed') {
-            $data['keterangan'] = 'pembayaran sudah di konfirmasi';
+            $data['keterangan']  = 'pembayaran sudah di konfirmasi';
+            $data['confirmed_at'] = date('Y-m-d H:i:s');
             if ($booking && (int) $booking->poin_member === 0) {
                 $rules = $this->Point_rule_model->get();
                 $rate = $rules && (int)$rules->booking_rate > 0 ? (int)$rules->booking_rate : 100;
@@ -297,6 +298,7 @@ class Booking extends CI_Controller
                 $this->Member_model->deduct_points($booking->id_user, (int) $booking->poin_member);
                 $data['poin_member'] = 0;
             }
+            $data['confirmed_at'] = null;
         } elseif ($keterangan !== null) {
             $data['keterangan'] = $keterangan;
         }

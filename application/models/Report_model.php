@@ -68,15 +68,15 @@ class Report_model extends CI_Model
             ];
         }
         if ($category === 'booking') {
-            $this->db->select('id, booking_code, tanggal_booking, total_harga');
+            $this->db->select('id, booking_code, confirmed_at, total_harga');
             $this->db->from('bookings');
-            $this->db->where('tanggal_booking >=', $start);
-            $this->db->where('tanggal_booking <=', $end);
+            $this->db->where('confirmed_at >=', $start . ' 00:00:00');
+            $this->db->where('confirmed_at <=', $end . ' 23:59:59');
             $this->db->where_in('status_booking', ['confirmed', 'selesai']);
             $rows = $this->db->get()->result();
             foreach ($rows as $b) {
                 $details[] = [
-                    'tanggal'     => $b->tanggal_booking,
+                    'tanggal'     => date('Y-m-d', strtotime($b->confirmed_at)),
                     'keterangan'  => 'Booking #' . $b->booking_code,
                     'uang_masuk'  => (float) $b->total_harga,
                     'uang_keluar' => 0,
