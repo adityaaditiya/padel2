@@ -22,6 +22,10 @@ class Member_model extends CI_Model
             $this->db->like('u.nama_lengkap', $keyword);
             $this->db->or_like('m.kode_member', $keyword);
             $this->db->or_like('u.no_telepon', $keyword);
+            $this->db->or_like('m.alamat', $keyword);
+            $this->db->or_like('m.kecamatan', $keyword);
+            $this->db->or_like('m.kota', $keyword);
+            $this->db->or_like('m.provinsi', $keyword);
             $this->db->group_end();
         }
         if ($limit !== null) {
@@ -41,6 +45,10 @@ class Member_model extends CI_Model
             $this->db->like('u.nama_lengkap', $keyword);
             $this->db->or_like('m.kode_member', $keyword);
             $this->db->or_like('u.no_telepon', $keyword);
+            $this->db->or_like('m.alamat', $keyword);
+            $this->db->or_like('m.kecamatan', $keyword);
+            $this->db->or_like('m.kota', $keyword);
+            $this->db->or_like('m.provinsi', $keyword);
             $this->db->group_end();
         }
         return $this->db->count_all_results();

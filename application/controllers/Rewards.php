@@ -28,6 +28,16 @@ class Rewards extends CI_Controller
         $this->load->view('rewards/index', $data);
     }
 
+    public function catalog()
+    {
+        $this->authorize();
+        if ($this->session->userdata('role') !== 'pelanggan') {
+            show_error('Forbidden', 403);
+        }
+        $data['products'] = $this->Reward_product_model->get_all();
+        $this->load->view('rewards/catalog', $data);
+    }
+
     public function member_lookup()
     {
         $this->authorize();
@@ -80,10 +90,12 @@ class Rewards extends CI_Controller
                 ->set_output(json_encode(['status' => 'error', 'message' => 'Maaf, poin member tidak mencukupi untuk menukar hadiah ini.']));
             return;
         }
+        $point_awal = $member->poin;
         $this->Member_model->deduct_points($member->id, $product->poin);
         $this->Reward_product_model->reduce_stock($id, 1);
-        $this->Reward_product_model->log_redemption($member->id, $id);
         $updated_member = $this->Member_model->get_by_kode($kode);
+        $point_akhir = $updated_member ? $updated_member->poin : max($point_awal - $product->poin, 0);
+        $this->Reward_product_model->log_redemption($member->id, $id, $point_awal, $point_akhir);
         $updated_product = $this->Reward_product_model->get_by_id($id);
         $this->output
             ->set_content_type('application/json')
