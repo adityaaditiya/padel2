@@ -27,6 +27,7 @@ $formatted_store_date = $store_date ? date('d-m-Y', strtotime($store_date)) : da
                 <?php $role = $this->session->userdata('role'); ?>
                 <?php if ($role === 'pelanggan'): ?>
                     <li class="nav-item"><a class="nav-link" href="<?php echo site_url('dashboard'); ?>">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo site_url('rewards/catalog'); ?>">Hadiah Poin</a></li>
                 <?php endif; ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="bookingDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Booking</a>

@@ -28,6 +28,16 @@ class Rewards extends CI_Controller
         $this->load->view('rewards/index', $data);
     }
 
+    public function catalog()
+    {
+        $this->authorize();
+        if ($this->session->userdata('role') !== 'pelanggan') {
+            show_error('Forbidden', 403);
+        }
+        $data['products'] = $this->Reward_product_model->get_all();
+        $this->load->view('rewards/catalog', $data);
+    }
+
     public function member_lookup()
     {
         $this->authorize();
