@@ -42,6 +42,20 @@
             <?php endforeach; ?>
             </tbody>
         </table>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>Show
+                <select id="product-rows-per-page" class="custom-select w-auto d-inline-block">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                entries
+            </div>
+            <nav>
+                <ul id="product-pagination" class="pagination mb-0"></ul>
+            </nav>
+        </div>
     </div>
     <div class="col-md-6">
         <h4>Keranjang</h4>
@@ -163,6 +177,8 @@ var categorySelect = document.getElementById('category-filter');
 var productsBody = document.querySelector('#products-table tbody');
 var searchUrl = '<?php echo site_url('pos/search'); ?>';
 var addUrl = '<?php echo site_url('pos/add/'); ?>';
+var rowsPerPageSelect = document.getElementById('product-rows-per-page');
+var pagination = document.getElementById('product-pagination');
 
 function renderProducts(items) {
     productsBody.innerHTML = '';
@@ -176,6 +192,72 @@ function renderProducts(items) {
                        '<td><button type="button" class="btn btn-sm btn-success add-to-cart" data-id="' + p.id + '">Tambah</button></td>';
         productsBody.appendChild(tr);
     }
+    setupProductPagination();
+}
+
+function setupProductPagination() {
+    if (!productsBody || !rowsPerPageSelect || !pagination) return;
+    var allRows = Array.from(productsBody.querySelectorAll('tr'));
+    var rows = allRows.slice();
+    var rowsPerPage = parseInt(rowsPerPageSelect.value, 10);
+    var pageCount = Math.ceil(rows.length / rowsPerPage) || 1;
+    var currentPage = 1;
+
+    function displayPage(page) {
+        currentPage = page;
+        var start = (page - 1) * rowsPerPage;
+        var end = start + rowsPerPage;
+        allRows.forEach(function(row){ row.style.display = 'none'; });
+        rows.slice(start, end).forEach(function(row){ row.style.display = ''; });
+        pagination.innerHTML = '';
+
+        var maxLinks = 5;
+        var startPage = Math.max(1, currentPage - Math.floor(maxLinks / 2));
+        var endPage = Math.min(pageCount, startPage + maxLinks - 1);
+        startPage = Math.max(1, endPage - maxLinks + 1);
+
+        function createItem(label, targetPage, disabled) {
+            var li = document.createElement('li');
+            li.className = 'page-item' + (disabled ? ' disabled' : '');
+            var a = document.createElement('a');
+            a.className = 'page-link';
+            a.href = '#';
+            a.textContent = label;
+            if (!disabled) {
+                a.addEventListener('click', function(e){
+                    e.preventDefault();
+                    displayPage(targetPage);
+                });
+            }
+            li.appendChild(a);
+            pagination.appendChild(li);
+        }
+
+        createItem('First', 1, currentPage === 1);
+        createItem('Prev', currentPage - 1, currentPage === 1);
+
+        for (var i = startPage; i <= endPage; i++) {
+            var li = document.createElement('li');
+            li.className = 'page-item' + (i === currentPage ? ' active' : '');
+            var a = document.createElement('a');
+            a.className = 'page-link';
+            a.href = '#';
+            a.textContent = i;
+            (function(i){
+                a.addEventListener('click', function(e){
+                    e.preventDefault();
+                    displayPage(i);
+                });
+            })(i);
+            li.appendChild(a);
+            pagination.appendChild(li);
+        }
+
+        createItem('Next', currentPage + 1, currentPage === pageCount);
+        createItem('Last', pageCount, currentPage === pageCount);
+    }
+
+    displayPage(1);
 }
 
 function updateProducts() {
@@ -190,6 +272,11 @@ function updateProducts() {
 if (searchInput && categorySelect) {
     searchInput.addEventListener('input', updateProducts);
     categorySelect.addEventListener('change', updateProducts);
+}
+
+if (rowsPerPageSelect && pagination && productsBody) {
+    rowsPerPageSelect.addEventListener('change', setupProductPagination);
+    setupProductPagination();
 }
 
 var qtyCells = document.querySelectorAll('.cart-qty');
