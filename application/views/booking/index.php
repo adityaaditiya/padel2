@@ -5,14 +5,24 @@
 <?php $status      = isset($status) ? $status : ''; ?>
 <?php $start_date  = isset($start_date) ? $start_date : date('Y-m-d'); ?>
 <?php $end_date    = isset($end_date) ? $end_date : $start_date; ?>
+<?php $start_time  = isset($start_time) ? $start_time : ''; ?>
+<?php $end_time    = isset($end_time) ? $end_time : ''; ?>
 <?php
-function booking_sort_url($field, $start, $end, $status, $sort, $order)
+function booking_sort_url($field, $start, $end, $start_time, $end_time, $status, $sort, $order)
 {
     $next = ($sort === $field && $order === 'asc') ? 'desc' : 'asc';
     if ($status === 'pending') {
         return site_url('booking') . '?status=pending&sort=' . $field . '&order=' . $next;
     }
-    return site_url('booking') . '?start_date=' . urlencode($start) . '&end_date=' . urlencode($end) . '&sort=' . $field . '&order=' . $next;
+    $url = site_url('booking') . '?start_date=' . urlencode($start) . '&end_date=' . urlencode($end);
+    if (!empty($start_time)) {
+        $url .= '&jam_mulai=' . urlencode($start_time);
+    }
+    if (!empty($end_time)) {
+        $url .= '&jam_selesai=' . urlencode($end_time);
+    }
+    $url .= '&sort=' . $field . '&order=' . $next;
+    return $url;
 }
 ?>
 <h2>Jadwal Booking Lapangan</h2>
@@ -21,6 +31,10 @@ function booking_sort_url($field, $start, $end, $status, $sort, $order)
     <input type="date" id="start_date" name="start_date" class="form-control mr-2" value="<?php echo htmlspecialchars($start_date); ?>">
     <label for="end_date" class="mr-2">Sampai:</label>
     <input type="date" id="end_date" name="end_date" class="form-control mr-2" value="<?php echo htmlspecialchars($end_date); ?>">
+    <label for="jam_mulai" class="mr-2">Jam Mulai:</label>
+    <input type="time" id="jam_mulai" name="jam_mulai" class="form-control mr-2" min="08:00" max="22:00" value="<?php echo htmlspecialchars($start_time); ?>">
+    <label for="jam_selesai" class="mr-2">Jam Selesai:</label>
+    <input type="time" id="jam_selesai" name="jam_selesai" class="form-control mr-2" min="08:00" max="22:00" value="<?php echo htmlspecialchars($end_time); ?>">
     <?php if ($role !== 'pelanggan'): ?>
         <label for="status" class="mr-2">Status:</label>
         <select id="status" name="status" class="form-control mr-2">
@@ -37,13 +51,13 @@ function booking_sort_url($field, $start, $end, $status, $sort, $order)
     <table class="table table-bordered" id="booking-table">
         <thead>
             <tr>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('tanggal_booking', $start_date, $end_date, $status, $sort, $order)); ?>">Tanggal</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('id_court', $start_date, $end_date, $status, $sort, $order)); ?>">Lapangan</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_mulai', $start_date, $end_date, $status, $sort, $order)); ?>">Jam Mulai</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_selesai', $start_date, $end_date, $status, $sort, $order)); ?>">Jam Selesai</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('kode_member', $start_date, $end_date, $status, $sort, $order)); ?>">Kode Member</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_booking', $start_date, $end_date, $status, $sort, $order)); ?>">Status</a></th>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('keterangan', $start_date, $end_date, $status, $sort, $order)); ?>">Keterangan</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('tanggal_booking', $start_date, $end_date, $start_time, $end_time, $status, $sort, $order)); ?>">Tanggal</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('id_court', $start_date, $end_date, $start_time, $end_time, $status, $sort, $order)); ?>">Lapangan</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_mulai', $start_date, $end_date, $start_time, $end_time, $status, $sort, $order)); ?>">Jam Mulai</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_selesai', $start_date, $end_date, $start_time, $end_time, $status, $sort, $order)); ?>">Jam Selesai</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('kode_member', $start_date, $end_date, $start_time, $end_time, $status, $sort, $order)); ?>">Kode Member</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('status_booking', $start_date, $end_date, $start_time, $end_time, $status, $sort, $order)); ?>">Status</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('keterangan', $start_date, $end_date, $start_time, $end_time, $status, $sort, $order)); ?>">Keterangan</a></th>
                 <?php if ($role === 'kasir'): ?>
                     <th style="width:280px;">Aksi</th>
                     <th>Nota</th>
@@ -120,6 +134,10 @@ if (statusEl) {
         var disabled = this.value === 'pending';
         document.getElementById('start_date').disabled = disabled;
         document.getElementById('end_date').disabled = disabled;
+        var startTimeEl = document.getElementById('jam_mulai');
+        var endTimeEl   = document.getElementById('jam_selesai');
+        if (startTimeEl) startTimeEl.disabled = disabled;
+        if (endTimeEl) endTimeEl.disabled = disabled;
     });
     statusEl.dispatchEvent(new Event('change'));
 }

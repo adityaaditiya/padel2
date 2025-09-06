@@ -28,6 +28,16 @@ class Booking extends CI_Controller
         }
         $start  = $this->input->get('start_date');
         $end    = $this->input->get('end_date');
+        $start_time = $this->input->get('jam_mulai');
+        $end_time   = $this->input->get('jam_selesai');
+        $open  = strtotime('08:00');
+        $close = strtotime('22:00');
+        if ($start_time && (strtotime($start_time) < $open || strtotime($start_time) > $close)) {
+            $start_time = null;
+        }
+        if ($end_time && (strtotime($end_time) < $open || strtotime($end_time) > $close)) {
+            $end_time = null;
+        }
         if (!$start) {
             $start = date('Y-m-d');
         }
@@ -42,11 +52,13 @@ class Booking extends CI_Controller
         $data['sort']       = $sort;
         $data['order']      = $order;
         $data['status']     = $status;
+        $data['start_time'] = $start_time;
+        $data['end_time']   = $end_time;
         $data['courts']     = $this->Court_model->get_all();
         if ($status === 'pending') {
             $data['bookings'] = $this->Booking_model->get_pending($sort, $order);
         } else {
-            $data['bookings'] = $this->Booking_model->get_by_date_range($start, $end, $sort, $order);
+            $data['bookings'] = $this->Booking_model->get_by_date_range($start, $end, $start_time, $end_time, $sort, $order);
         }
         $this->load->view('booking/index', $data);
     }

@@ -49,7 +49,7 @@ class Booking_model extends CI_Model
                         ->result();
     }
 
-    public function get_by_date_range($start, $end, $sort = 'jam_mulai', $order = 'asc')
+    public function get_by_date_range($start, $end, $start_time = null, $end_time = null, $sort = 'jam_mulai', $order = 'asc')
     {
         $allowed = [
             'id_court'       => 'courts.nama_lapangan',
@@ -63,13 +63,19 @@ class Booking_model extends CI_Model
         ];
         $sort_field = isset($allowed[$sort]) ? $allowed[$sort] : $allowed['jam_mulai'];
         $order      = strtolower($order) === 'desc' ? 'desc' : 'asc';
-        return $this->db->select('bookings.*, m.kode_member, courts.nama_lapangan')
-                        ->from($this->table)
-                        ->join('member_data m', 'm.user_id = bookings.id_user', 'left')
-                        ->join('courts', 'courts.id = bookings.id_court', 'left')
-                        ->where('bookings.tanggal_booking >=', $start)
-                        ->where('bookings.tanggal_booking <=', $end)
-                        ->where('bookings.status_booking !=', 'batal')
+        $this->db->select('bookings.*, m.kode_member, courts.nama_lapangan')
+                 ->from($this->table)
+                 ->join('member_data m', 'm.user_id = bookings.id_user', 'left')
+                 ->join('courts', 'courts.id = bookings.id_court', 'left')
+                 ->where('bookings.tanggal_booking >=', $start)
+                 ->where('bookings.tanggal_booking <=', $end);
+        if ($start_time) {
+            $this->db->where('bookings.jam_mulai >=', $start_time);
+        }
+        if ($end_time) {
+            $this->db->where('bookings.jam_selesai <=', $end_time);
+        }
+        return $this->db->where('bookings.status_booking !=', 'batal')
                         ->order_by($sort_field, $order)
                         ->get()
                         ->result();
