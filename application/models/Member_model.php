@@ -13,7 +13,7 @@ class Member_model extends CI_Model
      */
     public function get_all($limit = null, $offset = null, $keyword = null)
     {
-        $this->db->select('u.id, u.nama_lengkap, u.email, u.no_telepon, m.kode_member, m.alamat, m.kecamatan, m.kota, m.provinsi');
+        $this->db->select('u.id, u.nama_lengkap, u.email, u.no_telepon, m.kode_member, m.alamat, m.kecamatan, m.kota, m.provinsi, m.poin');
         $this->db->from('users u');
         $this->db->join('member_data m', 'm.user_id = u.id', 'left');
         $this->db->where('u.role', 'pelanggan');
@@ -51,7 +51,7 @@ class Member_model extends CI_Model
      */
     public function get_by_kode($kode)
     {
-        $this->db->select('u.id, u.nama_lengkap, u.no_telepon, m.alamat');
+        $this->db->select('u.id, u.nama_lengkap, u.no_telepon, m.alamat, m.poin');
         $this->db->from('users u');
         $this->db->join('member_data m', 'm.user_id = u.id', 'left');
         $this->db->where(['m.kode_member' => $kode, 'u.role' => 'pelanggan']);
@@ -63,7 +63,7 @@ class Member_model extends CI_Model
      */
     public function get_by_id($id)
     {
-        $this->db->select('u.id, u.nama_lengkap, u.email, u.no_telepon, u.password, m.kode_member, m.alamat, m.kecamatan, m.kota, m.provinsi');
+        $this->db->select('u.id, u.nama_lengkap, u.email, u.no_telepon, u.password, m.kode_member, m.alamat, m.kecamatan, m.kota, m.provinsi, m.poin');
         $this->db->from('users u');
         $this->db->join('member_data m', 'm.user_id = u.id', 'left');
         $this->db->where(['u.id' => $id, 'u.role' => 'pelanggan']);
@@ -80,6 +80,9 @@ class Member_model extends CI_Model
         $member_data['user_id'] = $this->db->insert_id();
         unset($member_data['kode_member']);
         $member_data['kode_member'] = str_pad($member_data['user_id'], 10, '0', STR_PAD_LEFT);
+        if (!isset($member_data['poin'])) {
+            $member_data['poin'] = 0;
+        }
         $this->db->insert($this->table, $member_data);
         $this->db->trans_complete();
         return $this->db->trans_status();
@@ -99,10 +102,33 @@ class Member_model extends CI_Model
         } else {
             $member_data['user_id'] = $id;
             $member_data['kode_member'] = str_pad($id, 10, '0', STR_PAD_LEFT);
+            if (!isset($member_data['poin'])) {
+                $member_data['poin'] = 0;
+            }
             $this->db->insert($this->table, $member_data);
         }
         $this->db->trans_complete();
         return $this->db->trans_status();
+    }
+
+    public function add_points($user_id, $points)
+    {
+        if ($points <= 0) {
+            return;
+        }
+        $this->db->set('poin', 'poin + '.(int)$points, false)
+                 ->where('user_id', $user_id)
+                 ->update($this->table);
+    }
+
+    public function deduct_points($user_id, $points)
+    {
+        if ($points <= 0) {
+            return;
+        }
+        $this->db->set('poin', 'GREATEST(poin - '.(int)$points.',0)', false)
+                 ->where('user_id', $user_id)
+                 ->update($this->table);
     }
 }
 ?>
