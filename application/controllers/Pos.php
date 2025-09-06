@@ -242,13 +242,21 @@ class Pos extends CI_Controller
         }
         // Buat nomor nota sederhana
         $nomor_nota = 'INV-' . time();
+        $earnedPoints = 0;
+        if ($customerId) {
+            $earnedPoints = (int) floor($total / 200);
+        }
         $saleData = [
             'id_kasir'      => $this->session->userdata('id'),
             'nomor_nota'    => $nomor_nota,
             'total_belanja' => $total,
-            'customer_id'   => $customerId
+            'customer_id'   => $customerId,
+            'poin_member'   => $earnedPoints
         ];
         $sale_id = $this->Sale_model->insert($saleData);
+        if ($earnedPoints > 0) {
+            $this->Member_model->add_points($customerId, $earnedPoints);
+        }
         // Simpan detail dan update stok
         foreach ($cart as $item) {
             $detail = [
