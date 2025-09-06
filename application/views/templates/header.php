@@ -95,7 +95,6 @@ $formatted_store_date = $store_date ? date('d-m-Y', strtotime($store_date)) : da
                     <a class="dropdown-item" href="<?php echo site_url('courts'); ?>">Lapangan</a>
                     <a class="dropdown-item" href="<?php echo site_url('points'); ?>">Perhitungan Poin</a>
                     <a class="dropdown-item" href="<?php echo site_url('rewards/manage'); ?>">Kelola Hadiah Poin</a>
-
                 <?php endif; ?>
 
             </div>

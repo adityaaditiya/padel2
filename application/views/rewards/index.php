@@ -4,19 +4,21 @@
 <div class="row mb-4">
     <div class="col-md-8">
         <div class="form-row">
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-4">
                 <label for="kode_member">Kode Member</label>
                 <input type="text" id="kode_member" class="form-control" placeholder="0000000001">
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-8">
                 <label for="nama_member">Nama Member</label>
                 <input type="text" id="nama_member" class="form-control" readonly>
             </div>
-            <div class="form-group col-md-3">
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-8">
                 <label for="alamat">Alamat</label>
                 <input type="text" id="alamat" class="form-control" readonly>
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-4">
                 <label for="no_hp">No Hp</label>
                 <input type="text" id="no_hp" class="form-control" readonly>
             </div>
@@ -27,8 +29,10 @@
         <div id="sisaPoin" class="display-4 text-success">0</div>
     </div>
 </div>
-<div class="mb-3">
-    <input type="text" id="search" class="form-control" placeholder="Cari hadiah...">
+<div class="row mb-3">
+    <div class="col-md-6">
+        <input type="text" id="search" class="form-control" placeholder="Cari hadiah...">
+    </div>
 </div>
 <table class="table table-bordered" id="rewardTable">
     <thead>
