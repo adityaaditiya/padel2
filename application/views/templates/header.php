@@ -62,6 +62,7 @@ $formatted_store_date = $store_date ? date('d-m-Y', strtotime($store_date)) : da
                         <a class="nav-link dropdown-toggle" href="#" id="reportDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Laporan</a>
                         <div class="dropdown-menu" aria-labelledby="reportDropdown">
                             <a class="dropdown-item" href="<?php echo site_url('finance'); ?>">Laporan Keuangan</a>
+                            <a class="dropdown-item" href="<?php echo site_url('point_report'); ?>">Laporan Tukar Poin</a>
                             <?php if ($role === 'owner'): ?>
                                 <a class="dropdown-item" href="<?php echo site_url('reports'); ?>">Laporan Bisnis</a>
                             <?php endif; ?>

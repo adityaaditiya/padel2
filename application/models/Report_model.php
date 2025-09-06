@@ -160,6 +160,40 @@ class Report_model extends CI_Model
     }
 
     /**
+     * Mengambil riwayat penukaran poin pada rentang tanggal.
+     *
+     * @param string $start Tanggal awal (YYYY-MM-DD)
+     * @param string $end   Tanggal akhir (YYYY-MM-DD)
+     * @return array        Daftar penukaran poin
+     */
+    public function get_point_exchange_report($start, $end)
+    {
+        $this->db->select('m.kode_member, r.tanggal, p.nama_produk, m.poin AS point_akhir, p.poin AS harga_point');
+        $this->db->from('reward_redemptions r');
+        $this->db->join('member_data m', 'm.user_id = r.user_id');
+        $this->db->join('reward_products p', 'p.id = r.reward_id');
+        $this->db->where('r.tanggal >=', $start . ' 00:00:00');
+        $this->db->where('r.tanggal <=', $end . ' 23:59:59');
+        $rows = $this->db->get()->result();
+
+        $details = [];
+        foreach ($rows as $row) {
+            $point_akhir = (int) $row->point_akhir;
+            $harga_point = (int) $row->harga_point;
+            $details[] = [
+                'kode_member'  => $row->kode_member,
+                'tanggal'      => date('Y-m-d', strtotime($row->tanggal)),
+                'barang_tukar' => $row->nama_produk,
+                'point_awal'   => $point_akhir + $harga_point,
+                'harga_point'  => $harga_point,
+                'point_akhir'  => $point_akhir,
+            ];
+        }
+
+        return $details;
+    }
+
+    /**
      * Ringkasan bisnis untuk owner: jumlah booking, jumlah pelanggan, dan produk terlaris.
      */
     public function get_business_summary($start, $end)
