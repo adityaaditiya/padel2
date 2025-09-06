@@ -23,6 +23,7 @@
                 <td><?= (int) $p->poin; ?></td>
                 <td><?= (int) $p->stok; ?></td>
                 <td>
+                    <a href="<?= site_url('rewards/edit/'.$p->id); ?>" class="btn btn-warning btn-sm">Edit</a>
                     <a href="<?= site_url('rewards/delete/'.$p->id); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus produk?');">Hapus</a>
                 </td>
             </tr>

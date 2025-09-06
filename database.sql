@@ -45,20 +45,21 @@ CREATE TABLE `bookings` (
   `keterangan` text,
   `bukti_pembayaran` varchar(255) DEFAULT NULL,
   `status_pembayaran` enum('belum_bayar','lunas') DEFAULT 'belum_bayar',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `confirmed_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `bookings`
 --
 
-INSERT INTO `bookings` (`id`, `booking_code`, `id_user`, `id_court`, `tanggal_booking`, `jam_mulai`, `jam_selesai`, `durasi`, `harga_booking`, `diskon`, `total_harga`, `poin_member`, `status_booking`, `keterangan`, `bukti_pembayaran`, `status_pembayaran`, `created_at`) VALUES
-(1, '250826-0001', 1, 1, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 01:59:44'),
-(2, '250826-0002', 1, 1, '2025-08-27', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:00:29'),
-(3, '250825-0001', 3, 2, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-25 02:27:04'),
-(4, '250825-0002', 3, 3, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'batal', '', NULL, 'belum_bayar', '2025-08-25 02:33:16'),
-(5, '250826-0003', 1, 1, '2025-08-25', '14:00:00', '15:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'batal', '', NULL, 'belum_bayar', '2025-08-26 02:38:42'),
-(6, '250826-0004', 1, 2, '2025-08-24', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:39:50');
+INSERT INTO `bookings` (`id`, `booking_code`, `id_user`, `id_court`, `tanggal_booking`, `jam_mulai`, `jam_selesai`, `durasi`, `harga_booking`, `diskon`, `total_harga`, `poin_member`, `status_booking`, `keterangan`, `bukti_pembayaran`, `status_pembayaran`, `created_at`, `confirmed_at`) VALUES
+(1, '250826-0001', 1, 1, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 01:59:44', NULL),
+(2, '250826-0002', 1, 1, '2025-08-27', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:00:29', NULL),
+(3, '250825-0001', 3, 2, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-25 02:27:04', NULL),
+(4, '250825-0002', 3, 3, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'batal', '', NULL, 'belum_bayar', '2025-08-25 02:33:16', NULL),
+(5, '250826-0003', 1, 1, '2025-08-25', '14:00:00', '15:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'batal', '', NULL, 'belum_bayar', '2025-08-26 02:38:42', NULL),
+(6, '250826-0004', 1, 2, '2025-08-24', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:39:50', NULL);
 
 -- --------------------------------------------------------
 
@@ -109,6 +110,7 @@ CREATE TABLE `member_data` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `kode_member` char(10) NOT NULL,
+  `nomor_ktp` varchar(20) NOT NULL,
   `alamat` varchar(255) NOT NULL,
   `kecamatan` varchar(100) NOT NULL,
   `kota` varchar(100) NOT NULL,
@@ -120,8 +122,8 @@ CREATE TABLE `member_data` (
 -- Dumping data for table `member_data`
 --
 
-INSERT INTO `member_data` (`id`, `user_id`, `kode_member`, `alamat`, `kecamatan`, `kota`, `provinsi`, `poin`) VALUES
-(2, 9, '0000000009', 'kemiriamba rt 001 rw 001 no 22', 'Jatibarang', 'Kab. Brebes', 'Jawa Tengah', 0);
+INSERT INTO `member_data` (`id`, `user_id`, `kode_member`, `nomor_ktp`, `alamat`, `kecamatan`, `kota`, `provinsi`, `poin`) VALUES
+(2, 9, '0000000009', '1234567890123456', 'kemiriamba rt 001 rw 001 no 22', 'Jatibarang', 'Kab. Brebes', 'Jawa Tengah', 0);
 
 -- --------------------------------------------------------
 
@@ -241,6 +243,8 @@ CREATE TABLE `reward_redemptions` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `reward_id` int(11) NOT NULL,
+  `point_awal` int(11) NOT NULL,
+  `point_akhir` int(11) NOT NULL,
   `tanggal` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -341,6 +345,7 @@ ALTER TABLE `courts`
 --
 ALTER TABLE `member_data`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `nomor_ktp` (`nomor_ktp`),
   ADD KEY `user_id` (`user_id`);
 
 -- Indexes for table `reward_products`

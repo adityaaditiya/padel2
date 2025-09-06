@@ -62,6 +62,7 @@ class Members extends CI_Controller
         $this->form_validation->set_rules('nama_lengkap', 'Nama Lengkap', 'required');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|callback_email_check');
         $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|numeric|min_length[10]|callback_phone_check');
+        $this->form_validation->set_rules('nomor_ktp', 'Nomor KTP', 'required|numeric|callback_ktp_check');
         $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
         $this->form_validation->set_rules('alamat', 'Alamat', 'required');
         $this->form_validation->set_rules('kecamatan', 'Kecamatan', 'required');
@@ -76,6 +77,7 @@ class Members extends CI_Controller
                 'role'         => 'pelanggan'
             ];
             $member_data = [
+                'nomor_ktp' => $this->input->post('nomor_ktp', TRUE),
                 'alamat'    => $this->input->post('alamat', TRUE),
                 'kecamatan' => $this->input->post('kecamatan', TRUE),
                 'kota'      => $this->input->post('kota', TRUE),
@@ -105,6 +107,7 @@ class Members extends CI_Controller
         $this->form_validation->set_rules('nama_lengkap', 'Nama Lengkap', 'required');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|callback_email_check['.$id.']');
         $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|numeric|min_length[10]|callback_phone_check['.$id.']');
+        $this->form_validation->set_rules('nomor_ktp', 'Nomor KTP', 'required|numeric|callback_ktp_check['.$id.']');
         $this->form_validation->set_rules('alamat', 'Alamat', 'required');
         $this->form_validation->set_rules('kecamatan', 'Kecamatan', 'required');
         $this->form_validation->set_rules('kota', 'Kota', 'required');
@@ -120,6 +123,7 @@ class Members extends CI_Controller
                 $user_data['password'] = password_hash($this->input->post('password'), PASSWORD_DEFAULT);
             }
             $member_data = [
+                'nomor_ktp' => $this->input->post('nomor_ktp', TRUE),
                 'alamat'    => $this->input->post('alamat', TRUE),
                 'kecamatan' => $this->input->post('kecamatan', TRUE),
                 'kota'      => $this->input->post('kota', TRUE),
@@ -187,6 +191,7 @@ class Members extends CI_Controller
         $this->form_validation->set_rules('nama_lengkap', 'Nama Lengkap', 'required');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|callback_email_check['.$id.']');
         $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|numeric|min_length[10]|callback_phone_check['.$id.']');
+        $this->form_validation->set_rules('nomor_ktp', 'Nomor KTP', 'required|numeric|callback_ktp_check['.$id.']');
         if ($this->input->post('password')) {
             $this->form_validation->set_rules('password', 'Password', 'min_length[6]');
         }
@@ -205,6 +210,7 @@ class Members extends CI_Controller
                 $user_data['password'] = password_hash($this->input->post('password'), PASSWORD_DEFAULT);
             }
             $member_data = [
+                'nomor_ktp' => $this->input->post('nomor_ktp', TRUE),
                 'alamat'    => $this->input->post('alamat', TRUE),
                 'kecamatan' => $this->input->post('kecamatan', TRUE),
                 'kota'      => $this->input->post('kota', TRUE),
@@ -238,6 +244,15 @@ class Members extends CI_Controller
     {
         if ($this->User_model->phone_exists($no_telepon, $id)) {
             $this->form_validation->set_message('phone_check', 'No telepon sudah digunakan.');
+            return FALSE;
+        }
+        return TRUE;
+    }
+
+    public function ktp_check($nomor_ktp, $id = NULL)
+    {
+        if ($this->Member_model->ktp_exists($nomor_ktp, $id)) {
+            $this->form_validation->set_message('ktp_check', 'nomor ktp sudah digunakan');
             return FALSE;
         }
         return TRUE;
