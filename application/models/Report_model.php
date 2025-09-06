@@ -168,7 +168,7 @@ class Report_model extends CI_Model
      */
     public function get_point_exchange_report($start, $end)
     {
-        $this->db->select('m.kode_member, r.tanggal, p.nama_produk, m.poin AS point_akhir, p.poin AS harga_point');
+        $this->db->select('m.kode_member, r.tanggal, p.nama_produk, r.point_awal, r.point_akhir, p.poin AS harga_point');
         $this->db->from('reward_redemptions r');
         $this->db->join('member_data m', 'm.user_id = r.user_id');
         $this->db->join('reward_products p', 'p.id = r.reward_id');
@@ -178,15 +178,13 @@ class Report_model extends CI_Model
 
         $details = [];
         foreach ($rows as $row) {
-            $point_akhir = (int) $row->point_akhir;
-            $harga_point = (int) $row->harga_point;
             $details[] = [
                 'kode_member'  => $row->kode_member,
                 'tanggal'      => date('Y-m-d', strtotime($row->tanggal)),
                 'barang_tukar' => $row->nama_produk,
-                'point_awal'   => $point_akhir + $harga_point,
-                'harga_point'  => $harga_point,
-                'point_akhir'  => $point_akhir,
+                'point_awal'   => (int) $row->point_awal,
+                'harga_point'  => (int) $row->harga_point,
+                'point_akhir'  => (int) $row->point_akhir,
             ];
         }
 
