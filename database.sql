@@ -266,7 +266,6 @@ INSERT INTO `point_rules` (`id`, `product_rate`, `booking_rate`) VALUES
 -- --------------------------------------------------------
 
 --
-
 -- Table structure for table `store_status`
 --
 

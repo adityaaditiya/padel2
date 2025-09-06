@@ -9,7 +9,6 @@ class Points extends CI_Controller
         $this->load->library('session');
         $this->load->helper(['url','form']);
         $this->load->model('Point_rule_model');
-
     }
 
     private function authorize()
