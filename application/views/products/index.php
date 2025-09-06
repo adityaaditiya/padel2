@@ -3,6 +3,7 @@
 <?php if ($this->session->flashdata('success')): ?>
     <div class="alert alert-success"><?php echo $this->session->flashdata('success'); ?></div>
 <?php endif; ?>
+
 <form method="get" class="form-inline mb-3">
     <input type="date" name="start_date" class="form-control mr-2" value="<?php echo html_escape($start_date); ?>">
     <input type="date" name="end_date" class="form-control mr-2" value="<?php echo html_escape($end_date); ?>">
