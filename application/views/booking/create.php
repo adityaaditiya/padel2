@@ -48,21 +48,11 @@
     </div>
     <div class="form-group">
         <label for="jam_mulai">Jam Mulai</label>
-        <select name="jam_mulai" id="jam_mulai" class="form-control" required>
-            <option value="">-- Pilih Jam Mulai --</option>
-            <?php for ($h = 8; $h < 22; $h++): $time = sprintf('%02d:00', $h); ?>
-                <option value="<?php echo $time; ?>" <?php echo set_select('jam_mulai', $time, isset($selected_start) && $selected_start === $time); ?>><?php echo $time; ?></option>
-            <?php endfor; ?>
-        </select>
+        <input type="time" name="jam_mulai" id="jam_mulai" class="form-control" min="08:00" max="22:00" value="<?php echo set_value('jam_mulai', isset($selected_start) ? $selected_start : ''); ?>" required>
     </div>
     <div class="form-group">
         <label for="jam_selesai">Jam Selesai</label>
-        <select name="jam_selesai" id="jam_selesai" class="form-control" required>
-            <option value="">-- Pilih Jam Selesai --</option>
-            <?php for ($h = 9; $h <= 22; $h++): $time = sprintf('%02d:00', $h); ?>
-                <option value="<?php echo $time; ?>" <?php echo set_select('jam_selesai', $time, isset($selected_end) && $selected_end === $time); ?>><?php echo $time; ?></option>
-            <?php endfor; ?>
-        </select>
+        <input type="time" name="jam_selesai" id="jam_selesai" class="form-control" min="08:00" max="22:00" value="<?php echo set_value('jam_selesai', isset($selected_end) ? $selected_end : ''); ?>" required>
     </div>
 <?php if ($this->session->userdata('role') === 'pelanggan'): ?>
     <div class="form-group">
@@ -211,26 +201,8 @@ var harga = pricePerHour * (durasi / 60);
     var total = harga - discAmount;
     if (totalBayarInput) totalBayarInput.value = total > 0 ? total.toFixed(0) : '0';
 }
-function populateEndOptions(){
-    if (!endInput) return;
-    var start = startInput ? startInput.value : '';
-    var startHour = start ? parseInt(start.split(':')[0],10) : 8;
-    var html = '<option value="">-- Pilih Jam Selesai --</option>';
-    for (var h = startHour + 1; h <= 22; h++) {
-        var t = ('0'+h).slice(-2)+':00';
-        var sel = endInput.value === t ? ' selected' : '';
-        html += '<option value="'+t+'"'+sel+'>'+t+'</option>';
-    }
-    endInput.innerHTML = html;
-}
 if (courtSelect) courtSelect.addEventListener('change', updatePayment);
-if (startInput){
-    startInput.addEventListener('change', function(){
-        populateEndOptions();
-        updatePayment();
-    });
-    populateEndOptions();
-}
+if (startInput) startInput.addEventListener('change', updatePayment);
 if (endInput) endInput.addEventListener('change', updatePayment);
 <?php if ($this->session->userdata('role') === 'kasir'): ?>
 if (diskonPersenInput) diskonPersenInput.addEventListener('input', updatePayment);
