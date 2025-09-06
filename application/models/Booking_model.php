@@ -49,6 +49,32 @@ class Booking_model extends CI_Model
                         ->result();
     }
 
+    public function get_by_status_and_date_range($status, $start, $end, $sort = 'jam_mulai', $order = 'asc')
+    {
+        $allowed = [
+            'id_court'       => 'courts.nama_lapangan',
+            'kode_member'    => 'm.kode_member',
+            'tanggal_booking'=> 'bookings.tanggal_booking',
+            'jam_mulai'      => 'bookings.jam_mulai',
+            'jam_selesai'    => 'bookings.jam_selesai',
+            'status_pembayaran' => 'bookings.status_pembayaran',
+            'status_booking' => 'bookings.status_booking',
+            'keterangan'     => 'bookings.keterangan'
+        ];
+        $sort_field = isset($allowed[$sort]) ? $allowed[$sort] : $allowed['jam_mulai'];
+        $order      = strtolower($order) === 'desc' ? 'desc' : 'asc';
+        return $this->db->select('bookings.*, m.kode_member, courts.nama_lapangan')
+                        ->from($this->table)
+                        ->join('member_data m', 'm.user_id = bookings.id_user', 'left')
+                        ->join('courts', 'courts.id = bookings.id_court', 'left')
+                        ->where('bookings.tanggal_booking >=', $start)
+                        ->where('bookings.tanggal_booking <=', $end)
+                        ->where('bookings.status_booking', $status)
+                        ->order_by($sort_field, $order)
+                        ->get()
+                        ->result();
+    }
+
     public function get_by_date_range($start, $end, $sort = 'jam_mulai', $order = 'asc')
     {
         $allowed = [

@@ -3,6 +3,7 @@
 <?php if ($this->session->flashdata('success')): ?>
     <div class="alert alert-success"><?php echo $this->session->flashdata('success'); ?></div>
 <?php endif; ?>
+<?php $role = $this->session->userdata('role'); ?>
 <form method="get" class="form-inline mb-3">
     <input type="date" name="start_date" class="form-control mr-2" value="<?php echo html_escape($start_date); ?>">
     <input type="date" name="end_date" class="form-control mr-2" value="<?php echo html_escape($end_date); ?>">
@@ -27,7 +28,9 @@
             <th>Harga Jual</th>
             <th>Stok</th>
             <th>Kategori</th>
-            <th>Aksi</th>
+            <?php if ($role !== 'kasir'): ?>
+                <th>Aksi</th>
+            <?php endif; ?>
         </tr>
     </thead>
     <tbody>
@@ -38,10 +41,12 @@
             <td><?php echo number_format($product->harga_jual, 0, ',', '.'); ?></td>
             <td><?php echo $product->stok; ?></td>
             <td><?php echo htmlspecialchars($product->kategori); ?></td>
+            <?php if ($role !== 'kasir'): ?>
             <td>
                 <a href="<?php echo site_url('products/edit/'.$product->id); ?>" class="btn btn-sm btn-warning">Edit</a>
                 <a href="<?php echo site_url('products/delete/'.$product->id); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin?');">Hapus</a>
             </td>
+            <?php endif; ?>
         </tr>
     <?php endforeach; ?>
     </tbody>
