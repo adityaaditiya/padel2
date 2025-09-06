@@ -10,7 +10,7 @@ class Pos extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model(['Product_model','Sale_model','Sale_detail_model','Payment_model','Store_model','Member_model']);
+        $this->load->model(['Product_model','Sale_model','Sale_detail_model','Payment_model','Store_model','Member_model','Point_rule_model']);
         $this->load->library('session');
         $this->load->helper(['url']);
     }
@@ -242,13 +242,23 @@ class Pos extends CI_Controller
         }
         // Buat nomor nota sederhana
         $nomor_nota = 'INV-' . time();
+        $earnedPoints = 0;
+        if ($customerId) {
+            $rules = $this->Point_rule_model->get();
+            $rate = $rules && (int)$rules->product_rate > 0 ? (int)$rules->product_rate : 200;
+            $earnedPoints = (int) floor($total / $rate);
+        }
         $saleData = [
             'id_kasir'      => $this->session->userdata('id'),
             'nomor_nota'    => $nomor_nota,
             'total_belanja' => $total,
-            'customer_id'   => $customerId
+            'customer_id'   => $customerId,
+            'poin_member'   => $earnedPoints
         ];
         $sale_id = $this->Sale_model->insert($saleData);
+        if ($earnedPoints > 0) {
+            $this->Member_model->add_points($customerId, $earnedPoints);
+        }
         // Simpan detail dan update stok
         foreach ($cart as $item) {
             $detail = [
