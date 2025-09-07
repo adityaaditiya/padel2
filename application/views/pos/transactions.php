@@ -44,9 +44,9 @@
                         <a href="<?php echo site_url('pos/reprint/'.$s->id); ?>" class="btn btn-sm btn-secondary" title="Print nota" aria-label="Print nota"><i class="fas fa-print"></i></a>
                         <?php $can_cancel = date('Y-m-d', strtotime($s->tanggal_transaksi)) === date('Y-m-d'); ?>
                         <?php if ($can_cancel): ?>
-                            <a href="<?php echo site_url('pos/cancel/'.$s->id); ?>" class="btn btn-sm btn-secondary" title="Batal" aria-label="Batal" onclick="return confirm('Apakah Anda yakin ingin membatalkan transaksi ini? Tindakan ini tidak dapat dibatalkan.');"><i class="fas fa-times text-danger"></i></a>
+                            <a href="<?php echo site_url('pos/cancel/'.$s->id); ?>" class="btn btn-sm btn-secondary" title="Batal" aria-label="Batal" onclick="return confirm('Apakah Anda yakin ingin membatalkan transaksi ini? Tindakan ini tidak dapat dibatalkan.');"><i class="fas fa-times text-white"></i></a>
                         <?php else: ?>
-                            <button class="btn btn-sm btn-secondary" title="Tidak dapat dibatalkan" disabled><i class="fas fa-times text-danger"></i></button>
+                            <button class="btn btn-sm btn-secondary" title="Tidak dapat dibatalkan" disabled><i class="fas fa-times text-white"></i></button>
                         <?php endif; ?>
                     </td>
                 </tr>
