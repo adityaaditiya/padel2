@@ -59,7 +59,6 @@
     </tbody>
 </table>
 
-
 <?php if ($start_date && $end_date): ?>
     <?php if (!empty($products)): ?>
     <form method="get" class="mb-3" style="max-width:250px;">
@@ -99,7 +98,6 @@
         <?php endforeach; ?>
         </tbody>
     </table>
-
     <div class="d-flex align-items-center mt-3">
         <?php if ($total_pages > 1): ?>
         <?php
@@ -163,5 +161,6 @@
 <?php else: ?>
     <p>Silahkan pilih tanggal tambah produk.</p>
 <?php endif; ?>
+
 
 <?php $this->load->view('templates/footer'); ?>
