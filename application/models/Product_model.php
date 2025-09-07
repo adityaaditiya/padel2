@@ -28,7 +28,7 @@ class Product_model extends CI_Model
         return $categories;
     }
 
-    public function get_all($start_date = null, $end_date = null, $limit = null, $offset = null, $keyword = null)
+    public function get_all($start_date = null, $end_date = null, $limit = null, $offset = null, $keyword = null, $kategori = null)
     {
         if ($start_date) {
             $this->db->where('DATE(created_at) >=', $start_date);
@@ -38,6 +38,9 @@ class Product_model extends CI_Model
         }
         if ($keyword) {
             $this->db->like('nama_produk', $keyword);
+        }
+        if ($kategori) {
+            $this->db->where('kategori', $kategori);
         }
         if ($limit !== null) {
             $this->db->limit($limit, $offset);
@@ -45,7 +48,7 @@ class Product_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
-    public function count_all($start_date = null, $end_date = null, $keyword = null)
+    public function count_all($start_date = null, $end_date = null, $keyword = null, $kategori = null)
     {
         if ($start_date) {
             $this->db->where('DATE(created_at) >=', $start_date);
@@ -55,6 +58,9 @@ class Product_model extends CI_Model
         }
         if ($keyword) {
             $this->db->like('nama_produk', $keyword);
+        }
+        if ($kategori) {
+            $this->db->where('kategori', $kategori);
         }
         return $this->db->count_all_results($this->table);
     }
