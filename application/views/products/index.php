@@ -114,5 +114,53 @@
         </form>
     </div>
 
+<div class="mt-3">
+    <button id="exportPdf" class="btn btn-secondary">Export PDF</button>
+    <button id="exportExcel" class="btn btn-success ml-2">Export Excel</button>
+</div>
+
+<table id="allProductsTable" style="display:none;">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nama Produk</th>
+            <th>Harga Jual</th>
+            <th>Stok</th>
+            <th>Kategori</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($all_products as $product): ?>
+        <tr>
+            <td><?php echo $product->id; ?></td>
+            <td><?php echo htmlspecialchars($product->nama_produk); ?></td>
+            <td><?php echo number_format($product->harga_jual, 0, ',', '.'); ?></td>
+            <td><?php echo $product->stok; ?></td>
+            <td><?php echo htmlspecialchars($product->kategori); ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+document.getElementById('exportPdf').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text('Daftar Produk', 14, 15);
+    doc.autoTable({ html: '#allProductsTable', startY: 20 });
+    doc.save('daftar_produk.pdf');
+});
+
+document.getElementById('exportExcel').addEventListener('click', function () {
+    const table = document.getElementById('allProductsTable');
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.table_to_sheet(table);
+    XLSX.utils.book_append_sheet(wb, ws, 'Produk');
+    XLSX.writeFile(wb, 'daftar_produk.xlsx');
+});
+</script>
 
 <?php $this->load->view('templates/footer'); ?>
