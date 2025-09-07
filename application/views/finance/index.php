@@ -59,10 +59,10 @@
                 <td><?php echo htmlspecialchars($row['nama_member']); ?></td>
                 <td><?php echo htmlspecialchars($row['nomor_member']); ?></td>
                 <td><?php echo htmlspecialchars($row['nama_produk']); ?></td>
-                <td>Rp <?php echo number_format($row['harga_jual'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['total_harga'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['harga_jual'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['total_harga'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
             </tr>
             <?php endforeach; ?>
         <?php else: ?>
@@ -107,10 +107,10 @@
                 <td><?php echo htmlspecialchars($row['nama_member']); ?></td>
                 <td><?php echo htmlspecialchars($row['nomor_member']); ?></td>
                 <td><?php echo (int) $row['poin_dipakai']; ?></td>
-                <td>Rp <?php echo number_format($row['diskon'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['total_harga'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['diskon'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['total_harga'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
             </tr>
             <?php endforeach; ?>
         <?php else: ?>
@@ -148,8 +148,8 @@
             <tr>
                 <td><?php echo htmlspecialchars($row['tanggal']); ?></td>
                 <td><?php echo htmlspecialchars($row['keterangan']); ?></td>
-                <td>Rp <?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
             </tr>
             <?php endforeach; ?>
         <?php else: ?>
@@ -256,10 +256,10 @@
                 <td><?php echo htmlspecialchars($row['nama_member']); ?></td>
                 <td><?php echo htmlspecialchars($row['nomor_member']); ?></td>
                 <td><?php echo htmlspecialchars($row['nama_produk']); ?></td>
-                <td>Rp <?php echo number_format($row['harga_jual'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['total_harga'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['harga_jual'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['total_harga'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>
@@ -298,10 +298,10 @@
                 <td><?php echo htmlspecialchars($row['nama_member']); ?></td>
                 <td><?php echo htmlspecialchars($row['nomor_member']); ?></td>
                 <td><?php echo (int) $row['poin_dipakai']; ?></td>
-                <td>Rp <?php echo number_format($row['diskon'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['total_harga'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['diskon'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['total_harga'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>
@@ -333,8 +333,8 @@
             <tr>
                 <td><?php echo htmlspecialchars($row['tanggal']); ?></td>
                 <td><?php echo htmlspecialchars($row['keterangan']); ?></td>
-                <td>Rp <?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
-                <td>Rp <?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>
