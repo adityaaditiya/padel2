@@ -32,6 +32,10 @@
         <label for="customer-address">Alamat</label>
         <textarea name="customer_address" id="customer-address" class="form-control" readonly></textarea>
     </div>
+    <div class="form-group">
+        <label for="member-point">Poin</label>
+        <input type="text" id="member-point" class="form-control" readonly>
+    </div>
     <?php endif; ?>
     <div class="form-group">
         <label for="id_court">Lapangan</label>
@@ -79,6 +83,11 @@
         <input type="number" name="diskon_rupiah" id="diskon-rupiah" class="form-control" min="0" step="100">
     </div>
     <div class="form-group">
+        <label for="pakai-poin">Pakai Poin</label>
+        <input type="number" name="pakai_poin" id="pakai-poin" class="form-control" min="0" step="1">
+        <div class="invalid-feedback" id="pakai-poin-error"></div>
+    </div>
+    <div class="form-group">
         <label for="total-bayar">Total Harga</label>
         <input type="text" id="total-bayar" class="form-control" readonly>
     </div>
@@ -97,12 +106,17 @@ var phoneInput = document.getElementById('customer-phone');
 var addressInput = document.getElementById('customer-address');
 var customerIdInput = document.getElementById('customer-id');
 var lookupUrl = '<?php echo site_url('pos/member_lookup'); ?>';
+var memberPointInput = document.getElementById('member-point');
+var pakaiPoinInput = document.getElementById('pakai-poin');
+var pakaiPoinError = document.getElementById('pakai-poin-error');
+var memberPoints = 0;
 if (typeSelect && typeSelect.value === 'non') {
     numberInput.value = 'non member';
     numberInput.disabled = true;
     nameInput.readOnly = false;
     phoneInput.readOnly = false;
     addressInput.readOnly = false;
+    if (pakaiPoinInput) { pakaiPoinInput.disabled = true; pakaiPoinInput.value = ''; }
 }
 if (typeSelect) {
     typeSelect.addEventListener('change', function() {
@@ -116,6 +130,9 @@ if (typeSelect) {
             phoneInput.value = '';
             addressInput.value = '';
             if (customerIdInput) customerIdInput.value = '';
+            if (memberPointInput) memberPointInput.value = '';
+            memberPoints = 0;
+            if (pakaiPoinInput) { pakaiPoinInput.disabled = false; pakaiPoinInput.value=''; }
             numberInput.focus();
         } else {
             numberInput.value = 'non member';
@@ -127,6 +144,9 @@ if (typeSelect) {
             phoneInput.value = '';
             addressInput.value = '';
             if (customerIdInput) customerIdInput.value = '';
+            if (memberPointInput) memberPointInput.value = '';
+            memberPoints = 0;
+            if (pakaiPoinInput) { pakaiPoinInput.disabled = true; pakaiPoinInput.value=''; pakaiPoinInput.classList.remove('is-invalid'); if (pakaiPoinError) pakaiPoinError.textContent=''; }
         }
     });
 }
@@ -142,18 +162,29 @@ if (numberInput) {
                         nameInput.value = m.nama_lengkap;
                         phoneInput.value = m.no_telepon || '';
                         addressInput.value = m.alamat || '';
+                        memberPoints = m.poin ? parseInt(m.poin) : 0;
+                        if (memberPointInput) memberPointInput.value = memberPoints.toLocaleString('id-ID') + ' pts';
+                        if (pakaiPoinInput) { pakaiPoinInput.disabled = false; pakaiPoinInput.max = memberPoints; }
                     } else {
                         if (customerIdInput) customerIdInput.value = '';
                         nameInput.value = '';
                         phoneInput.value = '';
                         addressInput.value = '';
+                        memberPoints = 0;
+                        if (memberPointInput) memberPointInput.value = '';
+                        if (pakaiPoinInput) { pakaiPoinInput.value=''; pakaiPoinInput.disabled=true; pakaiPoinInput.classList.remove('is-invalid'); if (pakaiPoinError) pakaiPoinError.textContent=''; }
                     }
+                    updatePayment();
                 });
         } else {
             if (customerIdInput) customerIdInput.value = '';
             nameInput.value = '';
             phoneInput.value = '';
             addressInput.value = '';
+            memberPoints = 0;
+            if (memberPointInput) memberPointInput.value = '';
+            if (pakaiPoinInput) { pakaiPoinInput.value=''; pakaiPoinInput.disabled=true; pakaiPoinInput.classList.remove('is-invalid'); if (pakaiPoinError) pakaiPoinError.textContent=''; }
+            updatePayment();
         }
     });
 }
@@ -198,7 +229,20 @@ var harga = pricePerHour * (durasi / 60);
             if (diskonPersenInput) diskonPersenInput.value = discPercent ? discPercent.toFixed(2) : '';
         }
     }
-    var total = harga - discAmount;
+    var usedPoint = pakaiPoinInput ? parseInt(pakaiPoinInput.value) || 0 : 0;
+    var errorMsg = '';
+    var subtotal = harga - discAmount;
+    if (pakaiPoinInput) {
+        if (usedPoint > memberPoints) {
+            errorMsg = 'Poin melebihi saldo member';
+        } else if (usedPoint > subtotal) {
+            errorMsg = 'Poin melebihi total harga';
+        }
+        if (pakaiPoinError) pakaiPoinError.textContent = errorMsg;
+        pakaiPoinInput.classList.toggle('is-invalid', errorMsg !== '');
+        if (errorMsg) { usedPoint = 0; }
+    }
+    var total = subtotal - usedPoint;
     if (totalBayarInput) totalBayarInput.value = total > 0 ? total.toFixed(0) : '0';
 }
 if (courtSelect) courtSelect.addEventListener('change', updatePayment);
@@ -207,6 +251,7 @@ if (endInput) endInput.addEventListener('change', updatePayment);
 <?php if ($this->session->userdata('role') === 'kasir'): ?>
 if (diskonPersenInput) diskonPersenInput.addEventListener('input', updatePayment);
 if (diskonRupiahInput) diskonRupiahInput.addEventListener('input', updatePayment);
+if (pakaiPoinInput) pakaiPoinInput.addEventListener('input', updatePayment);
 <?php endif; ?>
 updatePayment();
 </script>
