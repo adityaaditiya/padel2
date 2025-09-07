@@ -34,8 +34,15 @@ class Finance extends CI_Controller
         $start    = $this->input->get('start_date');
         $end      = $this->input->get('end_date');
         $category = $this->input->get('category');
+        $view_mode = $this->input->get('view');
+        if (!$view_mode) {
+            $view_mode = 'rekap';
+        }
         if (!$category) {
             $category = 'semua';
+        }
+        if ($view_mode === 'detail' && !in_array($category, ['product','booking','batal'], true)) {
+            $category = 'booking';
         }
         if (!$start) {
             $start = date('Y-m-01');
@@ -51,11 +58,20 @@ class Finance extends CI_Controller
         $page     = max(1, (int) $this->input->get('page'));
         $keyword  = $this->input->get('q');
 
-        $report = $this->Report_model->get_financial_report($start, $end, $category);
+        if ($view_mode === 'detail') {
+            $report = $this->Report_model->get_financial_report_detail($start, $end, $category);
+        } else {
+            $report = $this->Report_model->get_financial_report($start, $end, $category);
+        }
         $all_details = $report['details'];
         if ($keyword) {
-            $all_details = array_filter($all_details, function($row) use ($keyword) {
-                return stripos($row['keterangan'], $keyword) !== false || stripos($row['tanggal'], $keyword) !== false;
+            $all_details = array_filter($all_details, function ($row) use ($keyword) {
+                foreach ($row as $value) {
+                    if (is_scalar($value) && stripos((string) $value, $keyword) !== false) {
+                        return true;
+                    }
+                }
+                return false;
             });
         }
         $all_details = array_values($all_details);
@@ -75,6 +91,7 @@ class Finance extends CI_Controller
         $data['per_page']     = $per_page;
         $data['all_details']  = $all_details;
         $data['search']       = $keyword;
+        $data['view_mode']    = $view_mode;
         $this->load->view('finance/index', $data);
     }
 }
