@@ -47,7 +47,6 @@ function booking_sort_url($field, $start, $end, $status, $sort, $order)
     <table class="table table-bordered" id="booking-table">
         <thead>
             <tr>
-
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('booking_code', $start_date, $end_date, $status, $sort, $order)); ?>">Kode Booking</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('id_court', $start_date, $end_date, $status, $sort, $order)); ?>">Lapangan</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_mulai', $start_date, $end_date, $status, $sort, $order)); ?>">Jam Mulai</a></th>
