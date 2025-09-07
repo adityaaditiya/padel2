@@ -253,6 +253,22 @@ CREATE TABLE `reward_redemptions` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `point_usages`
+--
+
+CREATE TABLE `point_usages` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `point_awal` int(11) NOT NULL,
+  `point_used` int(11) NOT NULL,
+  `point_akhir` int(11) NOT NULL,
+  `tanggal` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `point_rules`
 --
 
@@ -360,6 +376,13 @@ ALTER TABLE `reward_redemptions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `reward_id` (`reward_id`);
+
+--
+-- Indexes for table `point_usages`
+--
+ALTER TABLE `point_usages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `point_rules`
@@ -476,6 +499,12 @@ ALTER TABLE `reward_redemptions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `point_usages`
+--
+ALTER TABLE `point_usages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `point_rules`
 --
 ALTER TABLE `point_rules`
@@ -524,6 +553,12 @@ ALTER TABLE `payments`
 ALTER TABLE `reward_redemptions`
   ADD CONSTRAINT `reward_redemptions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `reward_redemptions_ibfk_2` FOREIGN KEY (`reward_id`) REFERENCES `reward_products` (`id`);
+
+--
+-- Constraints for table `point_usages`
+--
+ALTER TABLE `point_usages`
+  ADD CONSTRAINT `point_usages_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `sales`

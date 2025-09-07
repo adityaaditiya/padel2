@@ -190,6 +190,29 @@ class Report_model extends CI_Model
             ];
         }
 
+        // Log penggunaan poin untuk potongan booking
+        $this->db->select('m.kode_member, u.tanggal, u.description, u.point_awal, u.point_used, u.point_akhir');
+        $this->db->from('point_usages u');
+        $this->db->join('member_data m', 'm.user_id = u.user_id');
+        $this->db->where('u.tanggal >=', $start . ' 00:00:00');
+        $this->db->where('u.tanggal <=', $end . ' 23:59:59');
+        $usage_rows = $this->db->get()->result();
+
+        foreach ($usage_rows as $row) {
+            $details[] = [
+                'kode_member'  => $row->kode_member,
+                'tanggal'      => date('Y-m-d', strtotime($row->tanggal)),
+                'barang_tukar' => $row->description,
+                'point_awal'   => (int) $row->point_awal,
+                'harga_point'  => (int) $row->point_used,
+                'point_akhir'  => (int) $row->point_akhir,
+            ];
+        }
+
+        usort($details, function($a, $b) {
+            return strcmp($a['tanggal'], $b['tanggal']);
+        });
+
         return $details;
     }
 

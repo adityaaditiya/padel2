@@ -13,7 +13,7 @@ class Booking extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model(['Court_model','Booking_model','Store_model','Member_model','Point_rule_model']);
+        $this->load->model(['Court_model','Booking_model','Store_model','Member_model','Point_rule_model','Point_usage_model']);
         $this->load->library(['session','form_validation']);
         $this->load->helper(['url','form']);
     }
@@ -176,6 +176,7 @@ class Booking extends CI_Controller
             if ($total < 0) {
                 $total = 0;
             }
+            $pakai_poin = (int) $this->input->post('pakai_poin');
             $id_user = $this->session->userdata('id');
             if ($this->session->userdata('role') === 'kasir') {
                 $type = $this->input->post('customer_type');
@@ -187,7 +188,27 @@ class Booking extends CI_Controller
                         return;
                     }
                     $id_user = $cust;
+                    if ($pakai_poin > 0) {
+                        $member = $this->Member_model->get_by_id($id_user);
+                        $saldo = $member ? (int)$member->poin : 0;
+                        if ($pakai_poin > $saldo) {
+                            $this->session->set_flashdata('error', 'Poin melebihi saldo member.');
+                            redirect('booking/create');
+                            return;
+                        }
+                        if ($pakai_poin > $total) {
+                            $this->session->set_flashdata('error', 'Poin melebihi total harga booking.');
+                            redirect('booking/create');
+                            return;
+                        }
+                        $total -= $pakai_poin;
+                        $poin_awal  = $saldo;
+                        $poin_akhir = $saldo - $pakai_poin;
+                    }
                 }
+            }
+            if ($total < 0) {
+                $total = 0;
             }
 
             $bukti_file = null;
@@ -230,6 +251,10 @@ class Booking extends CI_Controller
                 $data['bukti_pembayaran'] = $bukti_file;
             }
             $this->Booking_model->insert($data);
+            if (isset($pakai_poin) && $pakai_poin > 0 && isset($poin_awal)) {
+                $this->Member_model->deduct_points($id_user, $pakai_poin);
+                $this->Point_usage_model->log($id_user, 'Potongan Booking', $poin_awal, $pakai_poin, $poin_akhir);
+            }
             $this->session->set_flashdata('success', 'booking telah ditambahkan');
             redirect('booking');
             return;
