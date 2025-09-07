@@ -113,6 +113,45 @@ class Pos extends CI_Controller
         $this->load->view('pos/transactions', $data);
     }
 
+    public function cancelled()
+    {
+        $this->authorize();
+        $start   = $this->input->get('start');
+        $end     = $this->input->get('end');
+        $keyword = $this->input->get('q');
+
+        $per_page = (int) $this->input->get('per_page');
+        $allowed_per_page = [10, 25, 50, 100];
+        if (!in_array($per_page, $allowed_per_page, true)) {
+            $per_page = 10;
+        }
+        $page = max(1, (int) $this->input->get('page'));
+
+        $start_index = ($page - 1) * $per_page;
+        if ($start && $end) {
+            $total_rows = $this->Sale_model->count_filtered($start, $end, $keyword, 'dibatalkan');
+            $sales      = $this->Sale_model->get_paginated($start, $end, $per_page, $start_index, $keyword, 'dibatalkan');
+        } else {
+            $total_rows = 0;
+            $sales = [];
+        }
+
+        $page_total = 0;
+        foreach ($sales as $sale) {
+            $page_total += $sale->total_belanja;
+        }
+
+        $data['filter_start'] = $start;
+        $data['filter_end']   = $end;
+        $data['sales']        = $sales;
+        $data['page_total']   = $page_total;
+        $data['page']         = $page;
+        $data['total_pages']  = (int) ceil($total_rows / $per_page);
+        $data['per_page']     = $per_page;
+        $data['search_query'] = $keyword;
+        $this->load->view('pos/cancelled', $data);
+    }
+
     /**
      * Cetak ulang nota untuk transaksi yang sudah ada.
      */
@@ -130,6 +169,37 @@ class Pos extends CI_Controller
             return;
         }
         $this->print_receipt($id);
+    }
+
+    public function cancel($id)
+    {
+        $this->authorize();
+        if (!is_numeric($id)) {
+            redirect('pos/transactions');
+            return;
+        }
+        $sale = $this->Sale_model->get_by_id($id);
+        if (!$sale || $sale->status === 'dibatalkan') {
+            redirect('pos/transactions');
+            return;
+        }
+        if (date('Y-m-d', strtotime($sale->tanggal_transaksi)) !== date('Y-m-d')) {
+            $this->session->set_flashdata('error', 'Hanya transaksi hari ini yang dapat dibatalkan.');
+            redirect('pos/transactions');
+            return;
+        }
+
+        $details = $this->Sale_detail_model->get_by_sale($id);
+        foreach ($details as $detail) {
+            $this->Product_model->increase_stock($detail->id_product, $detail->jumlah);
+        }
+
+        if ($sale->customer_id && $sale->poin_member > 0) {
+            $this->Member_model->deduct_points($sale->customer_id, $sale->poin_member);
+        }
+
+        $this->Sale_model->cancel($id);
+        redirect('pos/transactions');
     }
     /**
      * Tambah produk ke keranjang.
