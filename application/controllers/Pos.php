@@ -349,9 +349,10 @@ class Pos extends CI_Controller
             'id_kasir'       => $this->session->userdata('id')
         ];
         $this->Payment_model->insert($payment);
-        // Kosongkan keranjang
+        // Kosongkan keranjang dan kembali ke halaman POS
         $this->session->unset_userdata('cart');
-        $this->print_receipt($sale_id);
+        $this->session->set_flashdata('success', 'Transaksi berhasil disimpan.');
+        redirect('pos');
     }
 
     private function print_receipt($sale_id)
