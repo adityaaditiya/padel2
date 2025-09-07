@@ -14,6 +14,11 @@
         <option value="cash_in" <?php echo $category === 'cash_in' ? 'selected' : ''; ?>>Tambah Uang Kas</option>
         <option value="cash_out" <?php echo $category === 'cash_out' ? 'selected' : ''; ?>>Ambil Uang Kas</option>
     </select>
+    <label for="view" class="mr-2">Tampilan:</label>
+    <select name="view" id="view" class="form-control mr-2">
+        <option value="rekap" <?php echo $view_mode === 'rekap' ? 'selected' : ''; ?>>Rekap</option>
+        <option value="detail" <?php echo $view_mode === 'detail' ? 'selected' : ''; ?>>Detail</option>
+    </select>
     <button type="submit" class="btn btn-primary">Tampilkan</button>
     <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
     <input type="hidden" name="page" value="1">
@@ -25,46 +30,147 @@
     <input type="hidden" name="start_date" value="<?php echo htmlspecialchars($start_date); ?>">
     <input type="hidden" name="end_date" value="<?php echo htmlspecialchars($end_date); ?>">
     <input type="hidden" name="category" value="<?php echo htmlspecialchars($category); ?>">
+    <input type="hidden" name="view" value="<?php echo htmlspecialchars($view_mode); ?>">
     <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
     <input type="hidden" name="page" value="1">
 </form>
-<table class="table table-bordered" id="financeTable">
-    <thead>
-        <tr>
-            <th>Tanggal</th>
-            <th>Keterangan</th>
-            <th>Uang Masuk</th>
-            <th>Uang Keluar</th>
-        </tr>
-    </thead>
-    <tbody>
-    <?php if (!empty($report['details'])): ?>
-        <?php foreach ($report['details'] as $row): ?>
-        <tr>
-            <td><?php echo htmlspecialchars($row['tanggal']); ?></td>
-            <td><?php echo htmlspecialchars($row['keterangan']); ?></td>
-            <td>Rp <?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
-            <td>Rp <?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
-        </tr>
-        <?php endforeach; ?>
+<?php if ($view_mode === 'detail'): ?>
+    <?php if ($category === 'product'): ?>
+    <table class="table table-bordered" id="financeTable">
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th>Nomor Nota</th>
+                <th>Nama Member</th>
+                <th>Nomor Member</th>
+                <th>Nama Produk</th>
+                <th>Harga Jual Produk</th>
+                <th>Total Harga</th>
+                <th>Uang Masuk</th>
+                <th>Uang Keluar</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php if (!empty($report['details'])): ?>
+            <?php foreach ($report['details'] as $row): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($row['tanggal']); ?></td>
+                <td><?php echo htmlspecialchars($row['nomor_nota']); ?></td>
+                <td><?php echo htmlspecialchars($row['nama_member']); ?></td>
+                <td><?php echo htmlspecialchars($row['nomor_member']); ?></td>
+                <td><?php echo htmlspecialchars($row['nama_produk']); ?></td>
+                <td><?php echo number_format($row['harga_jual'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['total_harga'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+            </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="9" class="text-center">Tidak ada data</td>
+            </tr>
+        <?php endif; ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="7">Total</th>
+                <th>Rp <?php echo number_format($report['total_masuk'], 0, ',', '.'); ?></th>
+                <th>Rp <?php echo number_format($report['total_keluar'], 0, ',', '.'); ?></th>
+            </tr>
+            <tr>
+                <th colspan="7">Saldo</th>
+                <th colspan="2">Rp <?php echo number_format($report['saldo'], 0, ',', '.'); ?></th>
+            </tr>
+        </tfoot>
+    </table>
     <?php else: ?>
-        <tr>
-            <td colspan="4" class="text-center">Tidak ada data</td>
-        </tr>
+    <table class="table table-bordered" id="financeTable">
+        <thead>
+            <tr>
+                <th>Kode Booking</th>
+                <th>Tanggal Booking</th>
+                <th>Nama Member</th>
+                <th>Nomor Member</th>
+                <th>Poin Dipakai</th>
+                <th>Diskon</th>
+                <th>Total Harga</th>
+                <th>Uang Masuk</th>
+                <th>Uang Keluar</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php if (!empty($report['details'])): ?>
+            <?php foreach ($report['details'] as $row): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($row['kode_booking']); ?></td>
+                <td><?php echo htmlspecialchars($row['tanggal_booking']); ?></td>
+                <td><?php echo htmlspecialchars($row['nama_member']); ?></td>
+                <td><?php echo htmlspecialchars($row['nomor_member']); ?></td>
+                <td><?php echo (int) $row['poin_dipakai']; ?></td>
+                <td><?php echo number_format($row['diskon'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['total_harga'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+            </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="9" class="text-center">Tidak ada data</td>
+            </tr>
+        <?php endif; ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="7">Total</th>
+                <th>Rp <?php echo number_format($report['total_masuk'], 0, ',', '.'); ?></th>
+                <th>Rp <?php echo number_format($report['total_keluar'], 0, ',', '.'); ?></th>
+            </tr>
+            <tr>
+                <th colspan="7">Saldo</th>
+                <th colspan="2">Rp <?php echo number_format($report['saldo'], 0, ',', '.'); ?></th>
+            </tr>
+        </tfoot>
+    </table>
     <?php endif; ?>
-    </tbody>
-    <tfoot>
-        <tr>
-            <th colspan="2">Total</th>
-            <th>Rp <?php echo number_format($report['total_masuk'], 0, ',', '.'); ?></th>
-            <th>Rp <?php echo number_format($report['total_keluar'], 0, ',', '.'); ?></th>
-        </tr>
-        <tr>
-            <th colspan="2">Saldo</th>
-            <th colspan="2">Rp <?php echo number_format($report['saldo'], 0, ',', '.'); ?></th>
-        </tr>
-    </tfoot>
-</table>
+<?php else: ?>
+    <table class="table table-bordered" id="financeTable">
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th>Keterangan</th>
+                <th>Uang Masuk</th>
+                <th>Uang Keluar</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php if (!empty($report['details'])): ?>
+            <?php foreach ($report['details'] as $row): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($row['tanggal']); ?></td>
+                <td><?php echo htmlspecialchars($row['keterangan']); ?></td>
+                <td><?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+            </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="4" class="text-center">Tidak ada data</td>
+            </tr>
+        <?php endif; ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="2">Total</th>
+                <th>Rp <?php echo number_format($report['total_masuk'], 0, ',', '.'); ?></th>
+                <th>Rp <?php echo number_format($report['total_keluar'], 0, ',', '.'); ?></th>
+            </tr>
+            <tr>
+                <th colspan="2">Saldo</th>
+                <th colspan="2">Rp <?php echo number_format($report['saldo'], 0, ',', '.'); ?></th>
+            </tr>
+        </tfoot>
+    </table>
+<?php endif; ?>
 <div class="d-flex align-items-center">
     <?php if ($total_pages > 1): ?>
     <?php
@@ -73,7 +179,8 @@
             'end_date'   => $end_date,
             'category'   => $category,
             'per_page'   => $per_page,
-            'q'          => $search
+            'q'          => $search,
+            'view'       => $view_mode
         ];
         $max_links  = 5;
         $start_page = max(1, $page - intdiv($max_links, 2));
@@ -115,6 +222,7 @@
         <input type="hidden" name="start_date" value="<?php echo htmlspecialchars($start_date); ?>">
         <input type="hidden" name="end_date" value="<?php echo htmlspecialchars($end_date); ?>">
         <input type="hidden" name="category" value="<?php echo htmlspecialchars($category); ?>">
+        <input type="hidden" name="view" value="<?php echo htmlspecialchars($view_mode); ?>">
         <input type="hidden" name="q" value="<?php echo htmlspecialchars($search); ?>">
         <input type="hidden" name="page" value="1">
     </form>
@@ -124,37 +232,125 @@
     <button id="exportExcel" class="btn btn-success ml-2">Export Excel</button>
 </div>
 
-<table id="allFinanceTable" style="display:none;">
-    <thead>
-        <tr>
-            <th>Tanggal</th>
-            <th>Keterangan</th>
-            <th>Uang Masuk</th>
-            <th>Uang Keluar</th>
-        </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($all_details as $row): ?>
-        <tr>
-            <td><?php echo htmlspecialchars($row['tanggal']); ?></td>
-            <td><?php echo htmlspecialchars($row['keterangan']); ?></td>
-            <td>Rp <?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
-            <td>Rp <?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-    <tfoot>
-        <tr>
-            <th colspan="2">Total</th>
-            <th>Rp <?php echo number_format($report['total_masuk'], 0, ',', '.'); ?></th>
-            <th>Rp <?php echo number_format($report['total_keluar'], 0, ',', '.'); ?></th>
-        </tr>
-        <tr>
-            <th colspan="2">Saldo</th>
-            <th colspan="2">Rp <?php echo number_format($report['saldo'], 0, ',', '.'); ?></th>
-        </tr>
-    </tfoot>
-</table>
+<?php if ($view_mode === 'detail'): ?>
+    <?php if ($category === 'product'): ?>
+    <table id="allFinanceTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th>Nomor Nota</th>
+                <th>Nama Member</th>
+                <th>Nomor Member</th>
+                <th>Nama Produk</th>
+                <th>Harga Jual Produk</th>
+                <th>Total Harga</th>
+                <th>Uang Masuk</th>
+                <th>Uang Keluar</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($all_details as $row): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($row['tanggal']); ?></td>
+                <td><?php echo htmlspecialchars($row['nomor_nota']); ?></td>
+                <td><?php echo htmlspecialchars($row['nama_member']); ?></td>
+                <td><?php echo htmlspecialchars($row['nomor_member']); ?></td>
+                <td><?php echo htmlspecialchars($row['nama_produk']); ?></td>
+                <td><?php echo number_format($row['harga_jual'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['total_harga'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="7">Total</th>
+                <th>Rp <?php echo number_format($report['total_masuk'], 0, ',', '.'); ?></th>
+                <th>Rp <?php echo number_format($report['total_keluar'], 0, ',', '.'); ?></th>
+            </tr>
+            <tr>
+                <th colspan="7">Saldo</th>
+                <th colspan="2">Rp <?php echo number_format($report['saldo'], 0, ',', '.'); ?></th>
+            </tr>
+        </tfoot>
+    </table>
+    <?php else: ?>
+    <table id="allFinanceTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>Kode Booking</th>
+                <th>Tanggal Booking</th>
+                <th>Nama Member</th>
+                <th>Nomor Member</th>
+                <th>Poin Dipakai</th>
+                <th>Diskon</th>
+                <th>Total Harga</th>
+                <th>Uang Masuk</th>
+                <th>Uang Keluar</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($all_details as $row): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($row['kode_booking']); ?></td>
+                <td><?php echo htmlspecialchars($row['tanggal_booking']); ?></td>
+                <td><?php echo htmlspecialchars($row['nama_member']); ?></td>
+                <td><?php echo htmlspecialchars($row['nomor_member']); ?></td>
+                <td><?php echo (int) $row['poin_dipakai']; ?></td>
+                <td><?php echo number_format($row['diskon'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['total_harga'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="7">Total</th>
+                <th>Rp <?php echo number_format($report['total_masuk'], 0, ',', '.'); ?></th>
+                <th>Rp <?php echo number_format($report['total_keluar'], 0, ',', '.'); ?></th>
+            </tr>
+            <tr>
+                <th colspan="7">Saldo</th>
+                <th colspan="2">Rp <?php echo number_format($report['saldo'], 0, ',', '.'); ?></th>
+            </tr>
+        </tfoot>
+    </table>
+    <?php endif; ?>
+<?php else: ?>
+    <table id="allFinanceTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th>Keterangan</th>
+                <th>Uang Masuk</th>
+                <th>Uang Keluar</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($all_details as $row): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($row['tanggal']); ?></td>
+                <td><?php echo htmlspecialchars($row['keterangan']); ?></td>
+                <td><?php echo number_format($row['uang_masuk'], 0, ',', '.'); ?></td>
+                <td><?php echo number_format($row['uang_keluar'], 0, ',', '.'); ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="2">Total</th>
+                <th>Rp <?php echo number_format($report['total_masuk'], 0, ',', '.'); ?></th>
+                <th>Rp <?php echo number_format($report['total_keluar'], 0, ',', '.'); ?></th>
+            </tr>
+            <tr>
+                <th colspan="2">Saldo</th>
+                <th colspan="2">Rp <?php echo number_format($report['saldo'], 0, ',', '.'); ?></th>
+            </tr>
+        </tfoot>
+    </table>
+<?php endif; ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
