@@ -57,6 +57,7 @@ class Products extends CI_Controller
         $data['search_query'] = $keyword;
         $data['categories']   = $categories;
         $data['selected_category'] = $kategori;
+        $data['all_products'] = $this->Product_model->get_all($start_date, $end_date, null, null, $keyword, $kategori);
         $this->load->view('products/index', $data);
     }
 
