@@ -110,4 +110,16 @@ class Product_model extends CI_Model
             $this->db->where('id', $id)->update($this->table, ['stok' => $newStock]);
         }
     }
+
+    /**
+     * Tambah stok produk ketika transaksi dibatalkan.
+     */
+    public function increase_stock($id, $qty)
+    {
+        $product = $this->get_by_id($id);
+        if ($product) {
+            $newStock = $product->stok + $qty;
+            $this->db->where('id', $id)->update($this->table, ['stok' => $newStock]);
+        }
+    }
 }
