@@ -215,18 +215,26 @@ class Report_model extends CI_Model
                 ];
             }
         } else { // booking atau batal
-            $this->db->select('b.booking_code, b.tanggal_booking, b.total_harga, b.diskon, b.status_booking, u.nama_lengkap, m.kode_member, b.confirmed_at, MAX(pu.point_used) as point_used', false);
+            $this->db->select(
+                "b.booking_code, b.tanggal_booking, b.total_harga, b.diskon, b.status_booking, u.nama_lengkap, m.kode_member, COALESCE(MAX(pu.point_used),0) as point_used",
+                false
+            );
             $this->db->from('bookings b');
             $this->db->join('users u', 'u.id = b.id_user');
             $this->db->join('member_data m', 'm.user_id = b.id_user', 'left');
-            $this->db->join('point_usages pu', "pu.user_id = b.id_user AND pu.description = 'Potongan Booking' AND DATE(pu.tanggal) = DATE(b.created_at)", 'left');
-            $this->db->where('b.confirmed_at >=', $start . ' 00:00:00');
-            $this->db->where('b.confirmed_at <=', $end . ' 23:59:59');
+            $this->db->join(
+                'point_usages pu',
+                "pu.user_id = b.id_user AND pu.description = 'Potongan Booking' AND DATE(pu.tanggal) = DATE(b.created_at)",
+                'left'
+            );
+            $this->db->where('b.tanggal_booking >=', $start);
+            $this->db->where('b.tanggal_booking <=', $end);
             if ($category === 'batal') {
                 $this->db->where('b.status_booking', 'batal');
             } else {
                 $this->db->where_in('b.status_booking', ['confirmed', 'selesai']);
             }
+            $this->db->group_by('b.id');
             $rows = $this->db->get()->result();
             foreach ($rows as $r) {
                 $details[] = [
