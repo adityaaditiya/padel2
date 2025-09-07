@@ -188,6 +188,7 @@ CREATE TABLE `sales` (
   `nomor_nota` varchar(50) NOT NULL,
   `total_belanja` decimal(10,2) NOT NULL,
   `poin_member` int(11) NOT NULL DEFAULT 0,
+  `status` enum('selesai','dibatalkan') NOT NULL DEFAULT 'selesai',
   `tanggal_transaksi` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -195,8 +196,8 @@ CREATE TABLE `sales` (
 -- Dumping data for table `sales`
 --
 
-INSERT INTO `sales` (`id`, `id_kasir`, `customer_id`, `nomor_nota`, `total_belanja`, `poin_member`, `tanggal_transaksi`) VALUES
-(1, 1, NULL, 'INV-1756190933', '25000.00', 0, '2025-08-26 13:48:53');
+INSERT INTO `sales` (`id`, `id_kasir`, `customer_id`, `nomor_nota`, `total_belanja`, `poin_member`, `status`, `tanggal_transaksi`) VALUES
+(1, 1, NULL, 'INV-1756190933', '25000.00', 0, 'selesai', '2025-08-26 13:48:53');
 
 -- --------------------------------------------------------
 

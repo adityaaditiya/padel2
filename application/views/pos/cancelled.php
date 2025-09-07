@@ -1,5 +1,5 @@
 <?php $this->load->view('templates/header'); ?>
-<h2>Daftar Transaksi POS</h2>
+<h2>Laporan Batal Transaksi</h2>
 <form method="get" class="form-inline mb-3">
     <input type="date" name="start" class="form-control mr-2" value="<?php echo set_value('', date('Y-m-d')); ?>">
     <input type="date" name="end" class="form-control mr-2" value="<?php echo set_value('', date('Y-m-d')); ?>">
@@ -24,7 +24,6 @@
                     <th>Customer</th>
                     <th>Total</th>
                     <th>Tanggal</th>
-                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,18 +33,13 @@
                     <td><?php echo htmlspecialchars($s->customer_name ?: 'non member'); ?></td>
                     <td>Rp <?php echo number_format($s->total_belanja, 0, ',', '.'); ?></td>
                     <td><?php echo htmlspecialchars($s->tanggal_transaksi); ?></td>
-                    <td>
-                        <a href="<?php echo site_url('pos/reprint/'.$s->id); ?>" class="btn btn-sm btn-secondary" title="Print nota" aria-label="Print nota"><i class="fas fa-print"></i></a>
-                        <a href="<?php echo site_url('pos/cancel/'.$s->id); ?>" class="btn btn-sm btn-secondary" title="Batal" aria-label="Batal" onclick="return confirm('Apakah Anda yakin ingin membatalkan transaksi ini? Tindakan ini tidak dapat dibatalkan.');"><i class="fas fa-times"></i></a>
-                    </td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
             <tfoot>
                 <tr>
-                    <!-- <th colspan="2" class="text-right">Total Halaman</th> -->
                     <th id="page-total">Rp <?php echo number_format($page_total, 0, ',', '.'); ?></th>
-                    <th colspan="2"></th>
+                    <th colspan="3"></th>
                 </tr>
             </tfoot>
         </table>
@@ -102,9 +96,10 @@
             </form>
         </div>
     <?php else: ?>
-        <p>Tidak ada transaksi pada rentang tanggal tersebut.</p>
+        <p>Tidak ada transaksi batal pada rentang tanggal tersebut.</p>
     <?php endif; ?>
 <?php else: ?>
-    <p>Silakan pilih rentang tanggal untuk melihat transaksi.</p>
+    <p>Silakan pilih rentang tanggal untuk melihat transaksi batal.</p>
 <?php endif; ?>
 <?php $this->load->view('templates/footer'); ?>
+
