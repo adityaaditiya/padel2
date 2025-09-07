@@ -215,10 +215,11 @@ class Report_model extends CI_Model
                 ];
             }
         } else { // booking atau batal
-            $this->db->select('b.booking_code, b.tanggal_booking, b.total_harga, b.poin_member, b.diskon, b.status_booking, u.nama_lengkap, m.kode_member, b.confirmed_at');
+            $this->db->select('b.booking_code, b.tanggal_booking, b.total_harga, b.diskon, b.status_booking, u.nama_lengkap, m.kode_member, b.confirmed_at, MAX(pu.point_used) as point_used', false);
             $this->db->from('bookings b');
             $this->db->join('users u', 'u.id = b.id_user');
             $this->db->join('member_data m', 'm.user_id = b.id_user', 'left');
+            $this->db->join('point_usages pu', "pu.user_id = b.id_user AND pu.description = 'Potongan Booking' AND DATE(pu.tanggal) = DATE(b.created_at)", 'left');
             $this->db->where('b.confirmed_at >=', $start . ' 00:00:00');
             $this->db->where('b.confirmed_at <=', $end . ' 23:59:59');
             if ($category === 'batal') {
@@ -234,7 +235,7 @@ class Report_model extends CI_Model
                     'tanggal_booking'=> $r->tanggal_booking,
                     'nama_member'    => $r->nama_lengkap,
                     'nomor_member'   => $r->kode_member,
-                    'poin_dipakai'   => (int) $r->poin_member,
+                    'poin_dipakai'   => (int) $r->point_used,
                     'diskon'         => (float) $r->diskon,
                     'total_harga'    => (float) $r->total_harga,
                     'uang_masuk'     => ($category === 'batal') ? 0 : (float) $r->total_harga,
