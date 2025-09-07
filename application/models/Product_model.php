@@ -8,20 +8,24 @@ class Product_model extends CI_Model
 {
     protected $table = 'products';
     /**
-     * Daftar kategori yang digunakan di seluruh aplikasi.
+     * Ambil semua kategori produk yang tersedia di database.
      *
-     * Menggunakan satu sumber kebenaran agar halaman lain
-     * (seperti POS) dapat menampilkan semua kategori meski
-     * belum ada produk di dalamnya.
-     */
-    public $categories = ['makanan','snack','cofee','non cofee','tea','perlengkapan padel'];
-
-    /**
-     * Ambil semua kategori yang diizinkan.
+     * Mengambil nilai unik dari kolom `kategori` agar seluruh
+     * daftar kategori dapat digunakan pada filter ataupun form
+     * penambahan produk.
      */
     public function get_categories()
     {
-        return $this->categories;
+        $query = $this->db
+            ->select('kategori')
+            ->distinct()
+            ->order_by('kategori')
+            ->get($this->table);
+        $categories = [];
+        foreach ($query->result() as $row) {
+            $categories[] = $row->kategori;
+        }
+        return $categories;
     }
 
     public function get_all($start_date = null, $end_date = null, $limit = null, $offset = null, $keyword = null)
