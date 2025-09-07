@@ -14,7 +14,7 @@ class Product_model extends CI_Model
      * (seperti POS) dapat menampilkan semua kategori meski
      * belum ada produk di dalamnya.
      */
-    public $categories = ['makanan','snack','cofee','non cofee','tea','perlengkapan padel'];
+    public $categories = ['makanan','snack','coffee','non coffee','tea','perlengkapan padel'];
 
     /**
      * Ambil semua kategori yang diizinkan.
