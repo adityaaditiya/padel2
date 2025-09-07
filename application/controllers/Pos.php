@@ -183,6 +183,11 @@ class Pos extends CI_Controller
             redirect('pos/transactions');
             return;
         }
+        if (date('Y-m-d', strtotime($sale->tanggal_transaksi)) !== date('Y-m-d')) {
+            $this->session->set_flashdata('error', 'Hanya transaksi hari ini yang dapat dibatalkan.');
+            redirect('pos/transactions');
+            return;
+        }
 
         $details = $this->Sale_detail_model->get_by_sale($id);
         foreach ($details as $detail) {
