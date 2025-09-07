@@ -52,46 +52,6 @@
     </tbody>
 </table>
 
-
-<?php if ($start_date && $end_date): ?>
-    <?php if (!empty($products)): ?>
-    <form method="get" class="mb-3" style="max-width:250px;">
-        <input type="text" name="q" class="form-control <?php echo ($search_query && empty($products)) ? 'is-invalid' : ''; ?>" placeholder="Cari produk..." value="<?php echo html_escape($search_query); ?>">
-        <div class="invalid-feedback">Produk tidak ditemukan</div>
-        <input type="hidden" name="start_date" value="<?php echo html_escape($start_date); ?>">
-        <input type="hidden" name="end_date" value="<?php echo html_escape($end_date); ?>">
-        <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
-        <input type="hidden" name="page" value="1">
-    </form>
-
-    <table id="productsTable" class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nama Produk</th>
-                <th>Harga Jual</th>
-                <th>Stok</th>
-                <th>Kategori</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($products as $product): ?>
-            <tr>
-                <td><?php echo $product->id; ?></td>
-                <td><?php echo htmlspecialchars($product->nama_produk); ?></td>
-                <td><?php echo number_format($product->harga_jual, 0, ',', '.'); ?></td>
-                <td><?php echo $product->stok; ?></td>
-                <td><?php echo htmlspecialchars($product->kategori); ?></td>
-                <td>
-                    <a href="<?php echo site_url('products/edit/'.$product->id); ?>" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="<?php echo site_url('products/delete/'.$product->id); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin?');">Hapus</a>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
-
     <div class="d-flex align-items-center mt-3">
         <?php if ($total_pages > 1): ?>
         <?php
@@ -145,13 +105,6 @@
         </form>
     </div>
 
-    <?php $params = http_build_query(['start_date' => $start_date, 'end_date' => $end_date, 'q' => $search_query]); ?>
-    <a href="<?php echo site_url('products/export_excel?' . $params); ?>" class="btn btn-success mt-2">Export Excel</a>
-    <?php else: ?>
-        <p>Tidak ada tambah produk di tanggal ini.</p>
-    <?php endif; ?>
-<?php else: ?>
-    <p>Silahkan pilih tanggal tambah produk.</p>
-<?php endif; ?>
+
 
 <?php $this->load->view('templates/footer'); ?>
