@@ -219,6 +219,7 @@ class Report_model extends CI_Model
         $this->db->join('sales', 'sales.id = sale_details.id_sale');
         $this->db->where('sales.tanggal_transaksi >=', $start);
         $this->db->where('sales.tanggal_transaksi <=', $end . ' 23:59:59');
+        $this->db->where('sales.status', 'selesai');
         $this->db->group_by('sale_details.id_product');
         $this->db->order_by('qty', 'DESC');
         $this->db->limit(5);
