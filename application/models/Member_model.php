@@ -119,6 +119,15 @@ class Member_model extends CI_Model
         return $this->db->trans_status();
     }
 
+    public function ktp_exists($nomor_ktp, $exclude_user_id = NULL)
+    {
+        $this->db->where('nomor_ktp', $nomor_ktp);
+        if ($exclude_user_id !== NULL) {
+            $this->db->where('user_id !=', $exclude_user_id);
+        }
+        return $this->db->get($this->table)->num_rows() > 0;
+    }
+
     public function add_points($user_id, $points)
     {
         if ($points <= 0) {

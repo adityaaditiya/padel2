@@ -7,6 +7,12 @@
 <form method="get" class="form-inline mb-3">
     <input type="date" name="start_date" class="form-control mr-2" value="<?php echo html_escape($start_date); ?>">
     <input type="date" name="end_date" class="form-control mr-2" value="<?php echo html_escape($end_date); ?>">
+    <select name="kategori" class="form-control mr-2">
+        <option value="">Semua Kategori</option>
+        <?php foreach ($categories as $cat): ?>
+        <option value="<?php echo $cat; ?>" <?php echo ($selected_category === $cat) ? 'selected' : ''; ?>><?php echo ucwords($cat); ?></option>
+        <?php endforeach; ?>
+    </select>
     <input type="hidden" name="q" value="<?php echo html_escape($search_query); ?>">
     <button type="submit" class="btn btn-secondary">Filter</button>
     <a href="<?php echo site_url('products/create'); ?>" class="btn btn-primary ml-2">Tambah Produk</a>
@@ -16,6 +22,7 @@
     <div class="invalid-feedback">Produk tidak ditemukan</div>
     <input type="hidden" name="start_date" value="<?php echo html_escape($start_date); ?>">
     <input type="hidden" name="end_date" value="<?php echo html_escape($end_date); ?>">
+    <input type="hidden" name="kategori" value="<?php echo html_escape($selected_category); ?>">
     <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
     <input type="hidden" name="page" value="1">
 </form>
@@ -60,6 +67,7 @@
         <div class="invalid-feedback">Produk tidak ditemukan</div>
         <input type="hidden" name="start_date" value="<?php echo html_escape($start_date); ?>">
         <input type="hidden" name="end_date" value="<?php echo html_escape($end_date); ?>">
+        <input type="hidden" name="kategori" value="<?php echo html_escape($selected_category); ?>">
         <input type="hidden" name="per_page" value="<?php echo $per_page; ?>">
         <input type="hidden" name="page" value="1">
     </form>
@@ -99,7 +107,8 @@
                 'start_date' => $start_date,
                 'end_date'   => $end_date,
                 'per_page'   => $per_page,
-                'q'          => $search_query
+                'q'          => $search_query,
+                'kategori'   => $selected_category
             ];
             $max_links  = 5;
             $start_page = max(1, $page - intdiv($max_links, 2));
@@ -141,11 +150,12 @@
             <input type="hidden" name="start_date" value="<?php echo html_escape($start_date); ?>">
             <input type="hidden" name="end_date" value="<?php echo html_escape($end_date); ?>">
             <input type="hidden" name="q" value="<?php echo html_escape($search_query); ?>">
+            <input type="hidden" name="kategori" value="<?php echo html_escape($selected_category); ?>">
             <input type="hidden" name="page" value="1">
         </form>
     </div>
 
-    <?php $params = http_build_query(['start_date' => $start_date, 'end_date' => $end_date, 'q' => $search_query]); ?>
+    <?php $params = http_build_query(['start_date' => $start_date, 'end_date' => $end_date, 'q' => $search_query, 'kategori' => $selected_category]); ?>
     <a href="<?php echo site_url('products/export_excel?' . $params); ?>" class="btn btn-success mt-2">Export Excel</a>
     <?php else: ?>
         <p>Tidak ada tambah produk di tanggal ini.</p>
