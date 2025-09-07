@@ -162,6 +162,104 @@ class Report_model extends CI_Model
     }
 
     /**
+     * Mengambil detail transaksi keuangan (booking atau penjualan produk).
+     *
+     * @param string $start    Tanggal awal (YYYY-MM-DD)
+     * @param string $end      Tanggal akhir (YYYY-MM-DD)
+     * @param string $category booking|batal|product|semua
+     * @return array           Detail transaksi dan total uang masuk/keluar
+     */
+    public function get_financial_report_detail($start, $end, $category = 'booking')
+    {
+        $details = [];
+
+        if ($category === 'semua') {
+            $booking = $this->get_financial_report_detail($start, $end, 'booking');
+            $product = $this->get_financial_report_detail($start, $end, 'product');
+            $details = array_merge($booking['details'], $product['details']);
+            usort($details, function ($a, $b) {
+                return strcmp($a['tanggal'], $b['tanggal']);
+            });
+            $total_masuk  = array_sum(array_column($details, 'uang_masuk'));
+            $total_keluar = array_sum(array_column($details, 'uang_keluar'));
+            return [
+                'details'      => $details,
+                'total_masuk'  => $total_masuk,
+                'total_keluar' => $total_keluar,
+                'saldo'        => $total_masuk - $total_keluar,
+            ];
+        }
+
+        if ($category === 'product') {
+            $this->db->select('s.nomor_nota, s.tanggal_transaksi, u.nama_lengkap, m.kode_member, p.nama_produk, p.harga_jual, d.subtotal');
+            $this->db->from('sale_details d');
+            $this->db->join('sales s', 's.id = d.id_sale');
+            $this->db->join('products p', 'p.id = d.id_product');
+            $this->db->join('users u', 'u.id = s.customer_id', 'left');
+            $this->db->join('member_data m', 'm.user_id = u.id', 'left');
+            $this->db->where('s.tanggal_transaksi >=', $start . ' 00:00:00');
+            $this->db->where('s.tanggal_transaksi <=', $end . ' 23:59:59');
+            $this->db->where('s.status', 'selesai');
+            $rows = $this->db->get()->result();
+            foreach ($rows as $r) {
+                $details[] = [
+                    'tanggal'      => date('Y-m-d', strtotime($r->tanggal_transaksi)),
+                    'nomor_nota'   => $r->nomor_nota,
+                    'nama_member'  => $r->nama_lengkap,
+                    'nomor_member' => $r->kode_member,
+                    'nama_produk'  => $r->nama_produk,
+                    'harga_jual'   => (float) $r->harga_jual,
+                    'total_harga'  => (float) $r->subtotal,
+                    'uang_masuk'   => (float) $r->subtotal,
+                    'uang_keluar'  => 0,
+                ];
+            }
+        } else { // booking atau batal
+            $this->db->select(
+                "b.booking_code, b.tanggal_booking, b.harga_booking, b.diskon, b.total_harga, b.status_booking, u.nama_lengkap, m.kode_member, (b.harga_booking - b.diskon - b.total_harga) AS point_used",
+                false
+            );
+            $this->db->from('bookings b');
+            $this->db->join('users u', 'u.id = b.id_user');
+            $this->db->join('member_data m', 'm.user_id = b.id_user', 'left');
+            $this->db->where('b.tanggal_booking >=', $start);
+            $this->db->where('b.tanggal_booking <=', $end);
+            if ($category === 'batal') {
+                $this->db->where('b.status_booking', 'batal');
+            } else {
+                $this->db->where_in('b.status_booking', ['confirmed', 'selesai']);
+            }
+            $rows = $this->db->get()->result();
+            foreach ($rows as $r) {
+                $details[] = [
+                    'tanggal'        => $r->tanggal_booking,
+                    'kode_booking'   => $r->booking_code,
+                    'tanggal_booking'=> $r->tanggal_booking,
+                    'nama_member'    => $r->nama_lengkap,
+                    'nomor_member'   => $r->kode_member,
+                    'poin_dipakai'   => (int) $r->point_used,
+                    'diskon'         => (float) $r->diskon,
+                    'total_harga'    => (float) $r->total_harga,
+                    'uang_masuk'     => ($category === 'batal') ? 0 : (float) $r->total_harga,
+                    'uang_keluar'    => ($category === 'batal') ? (float) $r->total_harga : 0,
+                ];
+            }
+        }
+
+        usort($details, function ($a, $b) {
+            return strcmp($a['tanggal'], $b['tanggal']);
+        });
+        $total_masuk  = array_sum(array_column($details, 'uang_masuk'));
+        $total_keluar = array_sum(array_column($details, 'uang_keluar'));
+        return [
+            'details'      => $details,
+            'total_masuk'  => $total_masuk,
+            'total_keluar' => $total_keluar,
+            'saldo'        => $total_masuk - $total_keluar,
+        ];
+    }
+
+    /**
      * Mengambil riwayat penukaran poin pada rentang tanggal.
      *
      * @param string $start Tanggal awal (YYYY-MM-DD)

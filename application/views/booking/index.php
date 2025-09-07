@@ -47,7 +47,7 @@ function booking_sort_url($field, $start, $end, $status, $sort, $order)
     <table class="table table-bordered" id="booking-table">
         <thead>
             <tr>
-                <th><a href="<?php echo htmlspecialchars(booking_sort_url('tanggal_booking', $start_date, $end_date, $status, $sort, $order)); ?>">Tanggal</a></th>
+                <th><a href="<?php echo htmlspecialchars(booking_sort_url('booking_code', $start_date, $end_date, $status, $sort, $order)); ?>">Kode Booking</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('id_court', $start_date, $end_date, $status, $sort, $order)); ?>">Lapangan</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_mulai', $start_date, $end_date, $status, $sort, $order)); ?>">Jam Mulai</a></th>
                 <th><a href="<?php echo htmlspecialchars(booking_sort_url('jam_selesai', $start_date, $end_date, $status, $sort, $order)); ?>">Jam Selesai</a></th>
@@ -64,7 +64,7 @@ function booking_sort_url($field, $start, $end, $status, $sort, $order)
         <tbody>
         <?php foreach ($bookings as $b): ?>
             <tr>
-                <td><?php echo htmlspecialchars($b->tanggal_booking); ?></td>
+                <td><?php echo htmlspecialchars($b->booking_code); ?></td>
                 <td><?php echo htmlspecialchars($b->nama_lapangan); ?></td>
                 <td><?php echo htmlspecialchars(date('H:i', strtotime($b->jam_mulai))); ?></td>
                 <td><?php echo htmlspecialchars(date('H:i', strtotime($b->jam_selesai))); ?></td>
