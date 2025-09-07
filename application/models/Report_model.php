@@ -25,6 +25,7 @@ class Report_model extends CI_Model
         $this->db->select_sum('total_belanja', 'total_sales');
         $this->db->where('tanggal_transaksi >=', $start);
         $this->db->where('tanggal_transaksi <=', $end . ' 23:59:59');
+        $this->db->where('status', 'selesai');
         $sales = $this->db->get('sales')->row()->total_sales ?: 0;
 
         return [
@@ -102,6 +103,7 @@ class Report_model extends CI_Model
             $this->db->from('sales');
             $this->db->where('tanggal_transaksi >=', $start);
             $this->db->where('tanggal_transaksi <=', $end . ' 23:59:59');
+            $this->db->where('status', 'selesai');
             $rows = $this->db->get()->result();
             foreach ($rows as $s) {
                 $details[] = [
