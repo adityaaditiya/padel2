@@ -227,7 +227,6 @@ class Report_model extends CI_Model
             } else {
                 $this->db->where_in('b.status_booking', ['confirmed', 'selesai']);
             }
-            $this->db->group_by('b.id');
             $rows = $this->db->get()->result();
             foreach ($rows as $r) {
                 $details[] = [
