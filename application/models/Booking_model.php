@@ -29,6 +29,7 @@ class Booking_model extends CI_Model
         $allowed = [
             'id_court'       => 'courts.nama_lapangan',
             'kode_member'    => 'm.kode_member',
+            'booking_code'   => 'bookings.booking_code',
             'tanggal_booking'=> 'bookings.tanggal_booking',
             'jam_mulai'      => 'bookings.jam_mulai',
             'jam_selesai'    => 'bookings.jam_selesai',
@@ -54,6 +55,7 @@ class Booking_model extends CI_Model
         $allowed = [
             'id_court'       => 'courts.nama_lapangan',
             'kode_member'    => 'm.kode_member',
+            'booking_code'   => 'bookings.booking_code',
             'tanggal_booking'=> 'bookings.tanggal_booking',
             'jam_mulai'      => 'bookings.jam_mulai',
             'jam_selesai'    => 'bookings.jam_selesai',
@@ -80,6 +82,7 @@ class Booking_model extends CI_Model
         $allowed = [
             'id_court'       => 'courts.nama_lapangan',
             'kode_member'    => 'm.kode_member',
+            'booking_code'   => 'bookings.booking_code',
             'tanggal_booking'=> 'bookings.tanggal_booking',
             'jam_mulai'      => 'bookings.jam_mulai',
             'jam_selesai'    => 'bookings.jam_selesai',
@@ -106,6 +109,7 @@ class Booking_model extends CI_Model
         $allowed = [
             'id_court'       => 'courts.nama_lapangan',
             'kode_member'    => 'm.kode_member',
+            'booking_code'   => 'bookings.booking_code',
             'tanggal_booking'=> 'bookings.tanggal_booking',
             'jam_mulai'      => 'bookings.jam_mulai',
             'jam_selesai'    => 'bookings.jam_selesai',
