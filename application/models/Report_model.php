@@ -199,12 +199,14 @@ class Report_model extends CI_Model
         // Jumlah booking
         $this->db->where('tanggal_booking >=', $start);
         $this->db->where('tanggal_booking <=', $end);
+        $this->db->where('status_booking', 'confirmed');
         $total_bookings = $this->db->count_all_results('bookings');
 
         // Jumlah pelanggan unik
         $this->db->select('id_user');
         $this->db->where('tanggal_booking >=', $start);
         $this->db->where('tanggal_booking <=', $end);
+        $this->db->where('status_booking', 'confirmed');
         $this->db->group_by('id_user');
         $customers = $this->db->get('bookings')->num_rows();
 
