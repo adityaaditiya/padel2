@@ -48,5 +48,4 @@ document.getElementById('exportExcel').addEventListener('click', function () {
     XLSX.writeFile(wb, 'laporan_stock_opname.xlsx');
 });
 </script>
-
 <?php $this->load->view('templates/footer'); ?>
