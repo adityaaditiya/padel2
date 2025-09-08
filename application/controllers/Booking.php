@@ -176,8 +176,10 @@ class Booking extends CI_Controller
             if ($total < 0) {
                 $total = 0;
             }
-            $pakai_poin = (int) $this->input->post('pakai_poin');
-            $id_user = $this->session->userdata('id');
+            $pakai_poin   = (int) $this->input->post('pakai_poin');
+            $id_user      = $this->session->userdata('id');
+            $customer_name = null;
+            $member_number = null;
             if ($this->session->userdata('role') === 'kasir') {
                 $type = $this->input->post('customer_type');
                 if ($type === 'member') {
@@ -205,6 +207,15 @@ class Booking extends CI_Controller
                         $poin_awal  = $saldo;
                         $poin_akhir = $saldo - $pakai_poin;
                     }
+                } else {
+                    $customer_name = trim($this->input->post('customer_name'));
+                    if ($customer_name === '') {
+                        $this->session->set_flashdata('error', 'Nama pelanggan wajib diisi.');
+                        redirect('booking/create');
+                        return;
+                    }
+                    $id_user = null;
+                    $member_number = 'non member';
                 }
             }
             if ($total < 0) {
@@ -247,6 +258,10 @@ class Booking extends CI_Controller
                 'status_booking'   => 'pending',
                 'status_pembayaran'=> 'belum_bayar'
             ];
+            if ($customer_name !== null) {
+                $data['customer_name'] = $customer_name;
+                $data['member_number'] = $member_number;
+            }
             if ($bukti_file) {
                 $data['bukti_pembayaran'] = $bukti_file;
             }
