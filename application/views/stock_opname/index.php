@@ -94,6 +94,7 @@ function renderProducts(items) {
                        '<td class="difference">' + diff + '</td>';
         productsBody.appendChild(tr);
     });
+
     attachDiffListeners();
     setupProductPagination();
 }
@@ -172,6 +173,7 @@ function updateProducts() {
             }
         });
     }
+
     var params = new URLSearchParams();
     if (categorySelect.value) params.append('kategori', categorySelect.value);
     if (searchInput.value) params.append('q', searchInput.value);
@@ -206,6 +208,7 @@ if (stockForm) {
         }
     });
 }
+
 
 if (searchInput && categorySelect) {
     searchInput.addEventListener('input', updateProducts);
