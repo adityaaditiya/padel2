@@ -70,6 +70,7 @@ class Product_model extends CI_Model
      */
     public function get_filtered($kategori = null, $keyword = null)
     {
+        $this->db->where('stok >', 0);
         if ($kategori) {
             $this->db->where('kategori', $kategori);
         }
