@@ -292,6 +292,14 @@ class Pos extends CI_Controller
         if (!is_numeric($customerId)) {
             $customerId = null;
         }
+        $customerName = trim($this->input->post('customer_name'));
+        $customerPhone = trim($this->input->post('customer_phone'));
+        $customerAddress = trim($this->input->post('customer_address'));
+        if ($customerName === '' || $customerPhone === '' || $customerAddress === '') {
+            $this->session->set_flashdata('error', 'Data customer tidak boleh kosong.');
+            redirect('pos');
+            return;
+        }
         $cart = $this->session->userdata('cart') ?: [];
         if (empty($cart)) {
             $this->session->set_flashdata('error', 'Keranjang kosong.');

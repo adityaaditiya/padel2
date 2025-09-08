@@ -216,7 +216,7 @@ class Report_model extends CI_Model
             }
         } else { // booking atau batal
             $this->db->select(
-                "b.booking_code, b.tanggal_booking, b.harga_booking, b.diskon, b.total_harga, b.status_booking, u.nama_lengkap, m.kode_member, (b.harga_booking - b.diskon - b.total_harga) AS point_used",
+                "b.booking_code, b.tanggal_booking, b.harga_booking, b.diskon, b.total_harga, b.status_booking, b.customer_name, u.nama_lengkap, m.kode_member, (b.harga_booking - b.diskon - b.total_harga) AS point_used",
                 false
             );
             $this->db->from('bookings b');
@@ -231,12 +231,15 @@ class Report_model extends CI_Model
             }
             $rows = $this->db->get()->result();
             foreach ($rows as $r) {
+                $is_member    = !empty($r->kode_member);
+                $nama_member  = $is_member ? $r->nama_lengkap : (isset($r->customer_name) ? $r->customer_name : '');
+                $nomor_member = $is_member ? $r->kode_member : 'non member';
                 $details[] = [
                     'tanggal'        => $r->tanggal_booking,
                     'kode_booking'   => $r->booking_code,
                     'tanggal_booking'=> $r->tanggal_booking,
-                    'nama_member'    => $r->nama_lengkap,
-                    'nomor_member'   => $r->kode_member,
+                    'nama_member'    => $nama_member,
+                    'nomor_member'   => $nomor_member,
                     'poin_dipakai'   => (int) $r->point_used,
                     'diskon'         => (float) $r->diskon,
                     'total_harga'    => (float) $r->total_harga,
