@@ -603,6 +603,33 @@ ALTER TABLE `stock_opnames`
 --
 ALTER TABLE `stock_opnames`
   ADD CONSTRAINT `stock_opnames_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
+
+-- --------------------------------------------------------
+
+-- Table structure for table `manual_stock_logs`
+--
+CREATE TABLE `manual_stock_logs` (
+  `id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `type` enum('tambah','ambil') NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `note` varchar(255) DEFAULT NULL,
+  `total_stock` int(11) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Indexes for table `manual_stock_logs`
+ALTER TABLE `manual_stock_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `product_id` (`product_id`);
+
+-- AUTO_INCREMENT for table `manual_stock_logs`
+ALTER TABLE `manual_stock_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+-- Constraints for table `manual_stock_logs`
+ALTER TABLE `manual_stock_logs`
+  ADD CONSTRAINT `manual_stock_logs_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
