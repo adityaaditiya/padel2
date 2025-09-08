@@ -321,16 +321,25 @@ class Pos extends CI_Controller
         // Buat nomor nota sederhana
         $nomor_nota = 'INV-' . time();
         $earnedPoints = 0;
+        $memberNumber = 'non member';
         if ($customerId) {
             $rules = $this->Point_rule_model->get();
             $rate = $rules && (int)$rules->product_rate > 0 ? (int)$rules->product_rate : 200;
             $earnedPoints = (int) floor($total / $rate);
+            $member = $this->Member_model->get_by_id($customerId);
+            if ($member && !empty($member->kode_member)) {
+                $memberNumber = $member->kode_member;
+            } else {
+                $memberNumber = null;
+            }
         }
         $saleData = [
             'id_kasir'      => $this->session->userdata('id'),
             'nomor_nota'    => $nomor_nota,
             'total_belanja' => $total,
             'customer_id'   => $customerId,
+            'customer_name' => $customerId ? null : $customerName,
+            'member_number' => $memberNumber,
             'poin_member'   => $earnedPoints
         ];
         $sale_id = $this->Sale_model->insert($saleData);

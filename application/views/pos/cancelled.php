@@ -30,7 +30,7 @@
             <?php foreach ($sales as $s): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($s->nomor_nota); ?></td>
-                    <td><?php echo htmlspecialchars($s->customer_name ?: 'non member'); ?></td>
+                    <td><?php echo htmlspecialchars($s->customer_name ?: ($s->member_name ?: 'non member')); ?></td>
                     <td>Rp <?php echo number_format($s->total_belanja, 0, ',', '.'); ?></td>
                     <td><?php echo htmlspecialchars($s->tanggal_transaksi); ?></td>
                 </tr>

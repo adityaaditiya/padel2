@@ -13,6 +13,8 @@ class Sale_model extends CI_Model
         $insertData = [
             'id_kasir'      => $data['id_kasir'],
             'customer_id'   => isset($data['customer_id']) ? $data['customer_id'] : null,
+            'customer_name' => isset($data['customer_name']) ? $data['customer_name'] : null,
+            'member_number' => isset($data['member_number']) ? $data['member_number'] : null,
             'nomor_nota'    => $data['nomor_nota'],
             'total_belanja' => $data['total_belanja'],
             'poin_member'   => isset($data['poin_member']) ? $data['poin_member'] : 0,
@@ -30,7 +32,7 @@ class Sale_model extends CI_Model
 
     public function get_all($start_date = null, $end_date = null)
     {
-        $this->db->select('s.*, u.nama_lengkap AS customer_name');
+        $this->db->select('s.*, u.nama_lengkap AS member_name');
         $this->db->from($this->table . ' s');
         $this->db->join('users u', 'u.id = s.customer_id', 'left');
         if ($start_date) {
@@ -60,6 +62,7 @@ class Sale_model extends CI_Model
             $this->db->group_start();
             $this->db->like('s.nomor_nota', $keyword);
             $this->db->or_like('u.nama_lengkap', $keyword);
+            $this->db->or_like('s.customer_name', $keyword);
             $this->db->group_end();
         }
         $this->db->where('s.status', $status);
@@ -71,7 +74,7 @@ class Sale_model extends CI_Model
      */
     public function get_paginated($start_date = null, $end_date = null, $limit = 10, $offset = 0, $keyword = null, $status = 'selesai')
     {
-        $this->db->select('s.*, u.nama_lengkap AS customer_name');
+        $this->db->select('s.*, u.nama_lengkap AS member_name');
         $this->db->from($this->table . ' s');
         $this->db->join('users u', 'u.id = s.customer_id', 'left');
         if ($start_date) {
@@ -84,6 +87,7 @@ class Sale_model extends CI_Model
             $this->db->group_start();
             $this->db->like('s.nomor_nota', $keyword);
             $this->db->or_like('u.nama_lengkap', $keyword);
+            $this->db->or_like('s.customer_name', $keyword);
             $this->db->group_end();
         }
         $this->db->where('s.status', $status);
