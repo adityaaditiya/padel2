@@ -191,7 +191,7 @@ class Report_model extends CI_Model
         }
 
         if ($category === 'product') {
-            $this->db->select('s.nomor_nota, s.tanggal_transaksi, u.nama_lengkap, m.kode_member, p.nama_produk, p.harga_jual, d.subtotal');
+            $this->db->select('s.nomor_nota, s.tanggal_transaksi, s.customer_name, s.member_number, u.nama_lengkap, m.kode_member, p.nama_produk, p.harga_jual, d.subtotal');
             $this->db->from('sale_details d');
             $this->db->join('sales s', 's.id = d.id_sale');
             $this->db->join('products p', 'p.id = d.id_product');
@@ -202,11 +202,15 @@ class Report_model extends CI_Model
             $this->db->where('s.status', 'selesai');
             $rows = $this->db->get()->result();
             foreach ($rows as $r) {
-                $nomor_member = $r->kode_member ?: 'non member';
+                $nama_member  = !empty($r->customer_name) ? $r->customer_name : $r->nama_lengkap;
+                $nomor_member = !empty($r->member_number) ? $r->member_number : $r->kode_member;
+                if (empty($nomor_member)) {
+                    $nomor_member = 'non member';
+                }
                 $details[] = [
                     'tanggal'      => date('Y-m-d', strtotime($r->tanggal_transaksi)),
                     'nomor_nota'   => $r->nomor_nota,
-                    'nama_member'  => $r->nama_lengkap,
+                    'nama_member'  => $nama_member,
                     'nomor_member' => $nomor_member,
                     'nama_produk'  => $r->nama_produk,
                     'harga_jual'   => (float) $r->harga_jual,

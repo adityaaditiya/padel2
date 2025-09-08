@@ -187,6 +187,8 @@ CREATE TABLE `sales` (
   `id` int(11) NOT NULL,
   `id_kasir` int(11) NOT NULL,
   `customer_id` int(11) DEFAULT NULL,
+  `customer_name` varchar(100) DEFAULT NULL,
+  `member_number` varchar(100) DEFAULT NULL,
   `nomor_nota` varchar(50) NOT NULL,
   `total_belanja` decimal(10,2) NOT NULL,
   `poin_member` int(11) NOT NULL DEFAULT 0,
@@ -198,8 +200,8 @@ CREATE TABLE `sales` (
 -- Dumping data for table `sales`
 --
 
-INSERT INTO `sales` (`id`, `id_kasir`, `customer_id`, `nomor_nota`, `total_belanja`, `poin_member`, `status`, `tanggal_transaksi`) VALUES
-(1, 1, NULL, 'INV-1756190933', '25000.00', 0, 'selesai', '2025-08-26 13:48:53');
+INSERT INTO `sales` (`id`, `id_kasir`, `customer_id`, `customer_name`, `member_number`, `nomor_nota`, `total_belanja`, `poin_member`, `status`, `tanggal_transaksi`) VALUES
+(1, 1, NULL, NULL, 'non member', 'INV-1756190933', '25000.00', 0, 'selesai', '2025-08-26 13:48:53');
 
 -- --------------------------------------------------------
 
