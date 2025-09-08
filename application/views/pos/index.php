@@ -79,6 +79,8 @@
                                     <div class="input-group input-group-sm">
                                         <input type="text" name="customer_name" id="customer-name" class="form-control" readonly form="checkout-form">
                                         <input type="hidden" name="customer_id" id="customer-id" form="checkout-form">
+                                        <input type="hidden" name="customer_phone" id="customer-phone-hidden" form="checkout-form">
+                                        <input type="hidden" name="customer_address" id="customer-address-hidden" form="checkout-form">
                                         <div class="input-group-append">
                                             <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#memberModal">Pilih</button>
                                         </div>
@@ -324,9 +326,13 @@ var chooseBtn = document.getElementById('choose-member');
 var lookupUrl = '<?php echo site_url('pos/member_lookup'); ?>';
 var customerIdInput = document.getElementById('customer-id');
 var customerNameInput = document.getElementById('customer-name');
+var customerPhoneHidden = document.getElementById('customer-phone-hidden');
+var customerAddressHidden = document.getElementById('customer-address-hidden');
 if (typeSelect && typeSelect.value === 'non') {
     numberInput.value = 'non member';
     if (customerIdInput) customerIdInput.value = '';
+    if (customerPhoneHidden) customerPhoneHidden.value = '';
+    if (customerAddressHidden) customerAddressHidden.value = '';
 }
 
 if (typeSelect) {
@@ -341,6 +347,8 @@ if (typeSelect) {
             phoneInput.value = '';
             addressInput.value = '';
             if (customerIdInput) customerIdInput.value = '';
+            if (customerPhoneHidden) customerPhoneHidden.value = '';
+            if (customerAddressHidden) customerAddressHidden.value = '';
             numberInput.focus();
         } else {
             numberInput.value = 'non member';
@@ -352,6 +360,8 @@ if (typeSelect) {
             phoneInput.value = '';
             addressInput.value = '';
             if (customerIdInput) customerIdInput.value = '';
+            if (customerPhoneHidden) customerPhoneHidden.value = '';
+            if (customerAddressHidden) customerAddressHidden.value = '';
         }
     });
 }
@@ -368,11 +378,15 @@ if (numberInput) {
                         nameInput.value = m.nama_lengkap;
                         phoneInput.value = m.no_telepon || '';
                         addressInput.value = m.alamat || '';
+                        if (customerPhoneHidden) customerPhoneHidden.value = m.no_telepon || '';
+                        if (customerAddressHidden) customerAddressHidden.value = m.alamat || '';
                     } else {
                         if (customerIdInput) customerIdInput.value = '';
                         nameInput.value = '';
                         phoneInput.value = '';
                         addressInput.value = '';
+                        if (customerPhoneHidden) customerPhoneHidden.value = '';
+                        if (customerAddressHidden) customerAddressHidden.value = '';
                     }
                 });
         } else {
@@ -380,6 +394,8 @@ if (numberInput) {
             nameInput.value = '';
             phoneInput.value = '';
             addressInput.value = '';
+            if (customerPhoneHidden) customerPhoneHidden.value = '';
+            if (customerAddressHidden) customerAddressHidden.value = '';
         }
     });
 }
@@ -387,6 +403,8 @@ if (numberInput) {
 if (chooseBtn && customerNameInput) {
     chooseBtn.addEventListener('click', function() {
         customerNameInput.value = nameInput.value;
+        if (customerPhoneHidden) customerPhoneHidden.value = phoneInput.value;
+        if (customerAddressHidden) customerAddressHidden.value = addressInput.value;
         $('#memberModal').modal('hide');
     });
 }
