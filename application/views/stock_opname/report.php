@@ -8,7 +8,6 @@
         <option value="diff">Ada Selisih</option>
     </select>
 </div>
-
 <table id="stockOpnameReportTable" class="table table-bordered">
     <thead>
         <tr>
@@ -53,7 +52,6 @@ document.getElementById('selisihFilter').addEventListener('change', function () 
         }
     });
 });
-
 document.getElementById('exportPdf').addEventListener('click', function () {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -70,5 +68,4 @@ document.getElementById('exportExcel').addEventListener('click', function () {
     XLSX.writeFile(wb, 'laporan_stock_opname.xlsx');
 });
 </script>
-
 <?php $this->load->view('templates/footer'); ?>
