@@ -572,6 +572,37 @@ ALTER TABLE `sales`
 ALTER TABLE `sale_details`
   ADD CONSTRAINT `sale_details_ibfk_1` FOREIGN KEY (`id_sale`) REFERENCES `sales` (`id`),
   ADD CONSTRAINT `sale_details_ibfk_2` FOREIGN KEY (`id_product`) REFERENCES `products` (`id`);
+
+--
+-- Table structure for table `stock_opnames`
+--
+CREATE TABLE `stock_opnames` (
+  `id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `stok_sistem` int(11) NOT NULL,
+  `stok_fisik` int(11) NOT NULL,
+  `selisih` int(11) NOT NULL,
+  `opname_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Indexes for table `stock_opnames`
+--
+ALTER TABLE `stock_opnames`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `product_id` (`product_id`);
+
+--
+-- AUTO_INCREMENT for table `stock_opnames`
+--
+ALTER TABLE `stock_opnames`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for table `stock_opnames`
+--
+ALTER TABLE `stock_opnames`
+  ADD CONSTRAINT `stock_opnames_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

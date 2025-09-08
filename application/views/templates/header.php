@@ -48,6 +48,9 @@ $formatted_store_date = $store_date ? date('d-m-Y', strtotime($store_date)) : da
                             <a class="dropdown-item" href="<?php echo site_url('pos'); ?>">Tambah Transaksi</a>
                             <a class="dropdown-item" href="<?php echo site_url('pos/transactions'); ?>">Lihat Transaksi</a>
                             <a class="dropdown-item" href="<?php echo site_url('products'); ?>">Tambah Produk</a>
+                            <?php if (in_array($role, ['admin_keuangan','owner'])): ?>
+                                <a class="dropdown-item" href="<?php echo site_url('stock_opname'); ?>">Stock Opname</a>
+                            <?php endif; ?>
                         </div>
                     </li>
                 <?php endif; ?>
