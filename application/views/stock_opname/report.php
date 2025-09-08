@@ -1,5 +1,13 @@
 <?php $this->load->view('templates/header'); ?>
 <h2>Laporan Stock Opname</h2>
+
+<div class="mb-3">
+    <label for="selisihFilter" class="mr-2">Filter:</label>
+    <select id="selisihFilter" class="form-control w-auto d-inline-block">
+        <option value="all">Semua</option>
+        <option value="diff">Ada Selisih</option>
+    </select>
+</div>
 <table id="stockOpnameReportTable" class="table table-bordered">
     <thead>
         <tr>
@@ -32,6 +40,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
+document.getElementById('selisihFilter').addEventListener('change', function () {
+    const showDiffOnly = this.value === 'diff';
+    const rows = document.querySelectorAll('#stockOpnameReportTable tbody tr');
+    rows.forEach(row => {
+        const diff = parseFloat(row.cells[3].textContent);
+        if (showDiffOnly && diff === 0) {
+            row.style.display = 'none';
+        } else {
+            row.style.display = '';
+        }
+    });
+});
 document.getElementById('exportPdf').addEventListener('click', function () {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
