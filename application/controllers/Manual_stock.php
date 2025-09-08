@@ -9,7 +9,7 @@ class Manual_stock extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model(['Product_model','Stock_manual_model']);
+        $this->load->model(['Product_model','Stock_manual_model','Store_model']);
         $this->load->library(['session','form_validation']);
         $this->load->helper(['url','form']);
     }
@@ -32,6 +32,7 @@ class Manual_stock extends CI_Controller
     {
         $this->authorize();
         $data['products'] = $this->Product_model->get_all();
+        $data['store']    = $this->Store_model->get_current();
         $this->load->view('manual_stock/index', $data);
     }
 
