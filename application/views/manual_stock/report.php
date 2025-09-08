@@ -24,7 +24,11 @@
         <tr>
             <td><?php echo $r->created_at; ?></td>
             <td><?php echo htmlspecialchars($r->nama_produk); ?></td>
-            <td><?php echo ucfirst($r->type); ?></td>
+            <!-- <td><?php echo ucfirst($r->type); ?></td> -->
+             <td>
+    <?php echo ($r->type == 'tambah') ? 'Restock' : ucfirst($r->type); ?>
+</td>
+
             <td><?php echo $r->quantity; ?></td>
             <td><?php echo htmlspecialchars($r->note); ?></td>
             <td><?php echo $r->total_stock; ?></td>

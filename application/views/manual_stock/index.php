@@ -13,10 +13,11 @@
             <label for="product">Cari Produk</label>
             <input list="products" name="product_id" id="product" class="form-control" required>
             <datalist id="products">
-                <?php foreach ($products as $p): ?>
-                <option value="<?php echo $p->id; ?>"><?php echo htmlspecialchars($p->nama_produk); ?></option>
-                <?php endforeach; ?>
-            </datalist>
+  <?php foreach ($products as $p): ?>
+    <option value="<?php echo $p->id . ' - ' . htmlspecialchars($p->nama_produk); ?>">
+  <?php endforeach; ?>
+</datalist>
+
         </div>
         <div class="col-md-2">
             <label for="qty">Jumlah</label>
@@ -25,7 +26,7 @@
         <div class="col-md-3">
             <label for="type">Jenis Transaksi</label>
             <select name="type" id="type" class="form-control" required>
-                <option value="Tambah">Tambah</option>
+                <option value="Tambah">Restock</option>
                 <option value="Ambil">Ambil</option>
             </select>
         </div>
