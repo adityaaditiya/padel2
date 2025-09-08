@@ -31,7 +31,15 @@ class Stock_opname extends CI_Controller
     public function index()
     {
         $this->authorize();
-        $data['products'] = $this->Product_model->get_all();
+
+        $kategori = $this->input->get('kategori');
+        $keyword  = $this->input->get('q');
+
+        $data['products'] = $this->Product_model->get_filtered($kategori, $keyword);
+        $data['categories'] = $this->Product_model->get_categories();
+        $data['selected_category'] = $kategori;
+        $data['search_query'] = $keyword;
+
         $this->load->view('stock_opname/index', $data);
     }
 
@@ -82,5 +90,19 @@ class Stock_opname extends CI_Controller
         $timestamp = $this->input->get('at');
         $data['records'] = $this->Stock_opname_model->get_report($timestamp);
         $this->load->view('stock_opname/report', $data);
+    }
+
+    /**
+     * Endpoint AJAX untuk mengambil daftar produk terfilter.
+     */
+    public function search()
+    {
+        $this->authorize();
+        $kategori = $this->input->get('kategori');
+        $keyword  = $this->input->get('q');
+        $products = $this->Product_model->get_filtered($kategori, $keyword);
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode($products));
     }
 }
