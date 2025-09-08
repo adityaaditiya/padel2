@@ -71,13 +71,12 @@ class Stock_opname extends CI_Controller
                 'selisih'     => $diff,
                 'opname_at'   => $timestamp
             ];
-            // update stok produk sesuai jumlah fisik
-            $this->Product_model->update($product_id, ['stok' => $phys]);
+            // stok produk tidak diperbarui di sini; hanya simpan data opname
         }
         if ($batch) {
             $this->Stock_opname_model->insert_batch($batch);
         }
-        $this->session->set_flashdata('success', 'Stok opname berhasil disimpan.');
+        $this->session->set_flashdata('success', 'Data opname berhasil disimpan.');
         redirect('stock_opname/report?at='.urlencode($timestamp));
     }
 

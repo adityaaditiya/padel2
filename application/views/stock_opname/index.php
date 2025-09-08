@@ -52,7 +52,7 @@
         <ul id="product-pagination" class="pagination mb-0"></ul>
     </nav>
 </div>
-<button type="submit" class="btn btn-primary mt-2">Simpan</button>
+<button type="submit" class="btn btn-primary mt-2">Simpan Data Opname</button>
 </form>
 
 <script>
@@ -173,7 +173,6 @@ function updateProducts() {
             }
         });
     }
-
     var params = new URLSearchParams();
     if (categorySelect.value) params.append('kategori', categorySelect.value);
     if (searchInput.value) params.append('q', searchInput.value);
@@ -208,7 +207,6 @@ if (stockForm) {
         }
     });
 }
-
 
 if (searchInput && categorySelect) {
     searchInput.addEventListener('input', updateProducts);
