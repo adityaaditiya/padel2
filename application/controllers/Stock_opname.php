@@ -74,10 +74,13 @@ class Stock_opname extends CI_Controller
             // stok produk tidak diperbarui di sini; hanya simpan data opname
         }
         if ($batch) {
+            $this->db->trans_start();
             $this->Stock_opname_model->insert_batch($batch);
+            $this->Stock_opname_model->delete_except($timestamp);
+            $this->db->trans_complete();
         }
         $this->session->set_flashdata('success', 'Data opname berhasil disimpan.');
-        redirect('stock_opname/report?at='.urlencode($timestamp));
+        redirect('stock_opname/report');
     }
 
     /**
@@ -86,8 +89,7 @@ class Stock_opname extends CI_Controller
     public function report()
     {
         $this->authorize();
-        $timestamp = $this->input->get('at');
-        $data['records'] = $this->Stock_opname_model->get_report($timestamp);
+        $data['records'] = $this->Stock_opname_model->get_report();
         $this->load->view('stock_opname/report', $data);
     }
 

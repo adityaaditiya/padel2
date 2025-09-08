@@ -13,14 +13,17 @@ class Stock_opname_model extends CI_Model
         return $this->db->insert_batch($this->table, $data);
     }
 
-    public function get_report($timestamp)
+    public function get_report()
     {
         $this->db->select('s.*, p.nama_produk');
         $this->db->from($this->table . ' s');
         $this->db->join('products p', 'p.id = s.product_id');
-        if ($timestamp) {
-            $this->db->where('s.opname_at', $timestamp);
-        }
         return $this->db->get()->result();
+    }
+
+    public function delete_except($timestamp)
+    {
+        $this->db->where('opname_at !=', $timestamp);
+        return $this->db->delete($this->table);
     }
 }

@@ -94,7 +94,6 @@ function renderProducts(items) {
                        '<td class="difference">' + diff + '</td>';
         productsBody.appendChild(tr);
     });
-
     attachDiffListeners();
     setupProductPagination();
 }
