@@ -14,7 +14,7 @@
     <input type="text" name="q" id="product-search" value="<?php echo htmlspecialchars($search_query); ?>" class="form-control" placeholder="Cari produk">
 </form>
 
-<form method="post" action="<?php echo site_url('stock_opname/save'); ?>">
+<form id="stock-form" method="post" action="<?php echo site_url('stock_opname/save'); ?>">
 <table class="table table-bordered" id="products-table">
     <thead>
         <tr>
@@ -62,6 +62,8 @@ var productsBody = document.querySelector('#products-table tbody');
 var rowsPerPageSelect = document.getElementById('product-rows-per-page');
 var pagination = document.getElementById('product-pagination');
 var searchUrl = '<?php echo site_url('stock_opname/search'); ?>';
+var stockForm = document.getElementById('stock-form');
+var physicalValues = {};
 
 function attachDiffListeners() {
     if (!productsBody) return;
@@ -71,22 +73,28 @@ function attachDiffListeners() {
             var physical = parseInt(this.value, 10) || 0;
             var diff = physical - system;
             this.closest('tr').querySelector('.difference').textContent = diff;
+            var idMatch = this.name.match(/physical\[(\d+)\]/);
+            if (idMatch) {
+                physicalValues[idMatch[1]] = this.value;
+            }
         });
     });
 }
 
 function renderProducts(items) {
     productsBody.innerHTML = '';
-    for (var i = 0; i < items.length; i++) {
-        var p = items[i];
+    items.forEach(function(p){
+        var stored = physicalValues[p.id] !== undefined ? physicalValues[p.id] : '';
+        var diff = stored ? (parseInt(stored, 10) - parseInt(p.stok, 10)) : 0;
         var tr = document.createElement('tr');
         tr.innerHTML = '<td>' + p.nama_produk + '</td>' +
                        '<td>' + (p.kategori || '') + '</td>' +
                        '<td>' + p.stok + '</td>' +
-                       '<td><input type="number" name="physical[' + p.id + ']" class="form-control physical-input" data-system="' + p.stok + '" required></td>' +
-                       '<td class="difference">0</td>';
+                       '<td><input type="number" name="physical[' + p.id + ']" class="form-control physical-input" data-system="' + p.stok + '" value="' + stored + '" required></td>' +
+                       '<td class="difference">' + diff + '</td>';
         productsBody.appendChild(tr);
-    }
+    });
+
     attachDiffListeners();
     setupProductPagination();
 }
@@ -157,6 +165,15 @@ function setupProductPagination() {
 }
 
 function updateProducts() {
+    if (productsBody) {
+        productsBody.querySelectorAll('.physical-input').forEach(function(inp){
+            var idMatch = inp.name.match(/physical\[(\d+)\]/);
+            if (idMatch) {
+                physicalValues[idMatch[1]] = inp.value;
+            }
+        });
+    }
+
     var params = new URLSearchParams();
     if (categorySelect.value) params.append('kategori', categorySelect.value);
     if (searchInput.value) params.append('q', searchInput.value);
@@ -164,6 +181,34 @@ function updateProducts() {
         .then(function(r){ return r.json(); })
         .then(renderProducts);
 }
+
+if (stockForm) {
+    stockForm.addEventListener('submit', function(){
+        if (productsBody) {
+            productsBody.querySelectorAll('.physical-input').forEach(function(inp){
+                var idMatch = inp.name.match(/physical\[(\d+)\]/);
+                if (idMatch) {
+                    physicalValues[idMatch[1]] = inp.value;
+                }
+            });
+        }
+        this.querySelectorAll('.hidden-physical').forEach(function(el){ el.remove(); });
+        for (var id in physicalValues) {
+            if (!physicalValues.hasOwnProperty(id)) continue;
+            if (!this.querySelector('input[name="physical[' + id + ']"]')) {
+                var hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = 'physical[' + id + ']';
+                hidden.value = physicalValues[id];
+                hidden.className = 'hidden-physical';
+                this.appendChild(hidden);
+            } else {
+                this.querySelector('input[name="physical[' + id + ']"]').value = physicalValues[id];
+            }
+        }
+    });
+}
+
 
 if (searchInput && categorySelect) {
     searchInput.addEventListener('input', updateProducts);
