@@ -15,7 +15,7 @@
     </select>
     <input type="hidden" name="q" value="<?php echo html_escape($search_query); ?>">
     <button type="submit" class="btn btn-secondary">Filter</button>
-    <a href="<?php echo site_url('products/create'); ?>" class="btn btn-primary ml-2">Tambah Produk</a>
+    <a href="<?php echo site_url('products/create'); ?>" class="btn btn-primary ml-2">Tambah Produk Baru</a>
 </form>
 <form method="get" class="mb-3" style="max-width:250px;">
     <input type="text" name="q" class="form-control <?php echo ($search_query && empty($products)) ? 'is-invalid' : ''; ?>" placeholder="Cari produk..." value="<?php echo html_escape($search_query); ?>">
