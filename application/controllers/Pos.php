@@ -366,10 +366,10 @@ class Pos extends CI_Controller
             'id_kasir'       => $this->session->userdata('id')
         ];
         $this->Payment_model->insert($payment);
-        // Kosongkan keranjang dan kembali ke halaman POS
+        // Kosongkan keranjang lalu unduh nota
         $this->session->unset_userdata('cart');
         $this->session->set_flashdata('success', 'Transaksi berhasil disimpan.');
-        redirect('pos');
+        $this->print_receipt($sale_id);
     }
 
     private function print_receipt($sale_id)
@@ -383,13 +383,16 @@ class Pos extends CI_Controller
         $lines   = [];
         $lines[] = str_pad('Padel Store', $lineWidth, ' ', STR_PAD_BOTH);
         $lines[] = str_pad(date('d-m-Y H:i'), $lineWidth, ' ', STR_PAD_BOTH);
-        $lines[] = str_pad('Nota: ' . $sale->nomor_nota, $lineWidth, ' ', STR_PAD_BOTH);
         if ($member) {
-            $lines[] = str_pad('Nomor Member: ' . $member->kode_member, $lineWidth, ' ', STR_PAD_BOTH);
             $lines[] = str_pad('Nama: ' . $member->nama_lengkap, $lineWidth, ' ', STR_PAD_BOTH);
+            $lines[] = str_pad('Nomor Member: ' . $member->kode_member, $lineWidth, ' ', STR_PAD_BOTH);
         } else {
+            if (!empty($sale->customer_name)) {
+                $lines[] = str_pad('Nama: ' . $sale->customer_name, $lineWidth, ' ', STR_PAD_BOTH);
+            }
             $lines[] = str_pad('-Non Member-', $lineWidth, ' ', STR_PAD_BOTH);
         }
+        $lines[] = str_pad('Nota: ' . $sale->nomor_nota, $lineWidth, ' ', STR_PAD_BOTH);
         $lines[] = str_repeat('-', $lineWidth);
         foreach ($details as $d) {
             $lines[] = $d->nama_produk;
