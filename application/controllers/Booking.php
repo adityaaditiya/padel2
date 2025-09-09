@@ -158,6 +158,13 @@ class Booking extends CI_Controller
                 $this->session->set_flashdata('error', 'Jam selesai harus lebih besar dari jam mulai.');
                 redirect('booking/create');
             }
+            $currentDate = date('Y-m-d');
+            $currentTime = date('H:i');
+            if ($date === $currentDate && strtotime($start) < strtotime($currentTime)) {
+                $this->session->set_flashdata('error', 'booking gagal, waktu booking tidak sesuai dengan waktu sekarang');
+                redirect('booking/create');
+                return;
+            }
             // Cek ketersediaan
             if (!$this->Booking_model->is_available($id_court, $date, $start, $end)) {
                 $this->session->set_flashdata('error', 'Lapangan sudah terbooking pada jam tersebut.');

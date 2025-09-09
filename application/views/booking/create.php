@@ -192,6 +192,20 @@ if (numberInput) {
 var courtSelect = document.getElementById('id_court');
 var startInput = document.getElementById('jam_mulai');
 var endInput = document.getElementById('jam_selesai');
+var dateInput = document.getElementById('tanggal_booking');
+var todayStr = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
+var nowTime = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);
+function updateStartMin(){
+    if (startInput){
+        if (dateInput && dateInput.value === todayStr){
+            startInput.min = nowTime;
+        } else {
+            startInput.min = '08:00';
+        }
+    }
+}
+if (dateInput) dateInput.addEventListener('change', updateStartMin);
+updateStartMin();
 var hargaBookingInput = document.getElementById('harga-booking');
 var diskonPersenInput = document.getElementById('diskon-persen');
 var diskonRupiahInput = document.getElementById('diskon-rupiah');
