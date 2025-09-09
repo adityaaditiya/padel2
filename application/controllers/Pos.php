@@ -45,6 +45,7 @@ class Pos extends CI_Controller
         }
         $data['store'] = $this->Store_model->get_current();
         $data['nota'] = $this->Payment_model->get_next_sale_id();
+        $data['receipt_sale_id'] = (int) $this->session->flashdata('receipt_sale_id');
         $this->load->view('pos/index', $data);
     }
 
@@ -321,16 +322,25 @@ class Pos extends CI_Controller
         // Buat nomor nota sederhana
         $nomor_nota = 'INV-' . time();
         $earnedPoints = 0;
+        $memberNumber = 'non member';
         if ($customerId) {
             $rules = $this->Point_rule_model->get();
             $rate = $rules && (int)$rules->product_rate > 0 ? (int)$rules->product_rate : 200;
             $earnedPoints = (int) floor($total / $rate);
+            $member = $this->Member_model->get_by_id($customerId);
+            if ($member && !empty($member->kode_member)) {
+                $memberNumber = $member->kode_member;
+            } else {
+                $memberNumber = null;
+            }
         }
         $saleData = [
             'id_kasir'      => $this->session->userdata('id'),
             'nomor_nota'    => $nomor_nota,
             'total_belanja' => $total,
             'customer_id'   => $customerId,
+            'customer_name' => $customerId ? null : $customerName,
+            'member_number' => $memberNumber,
             'poin_member'   => $earnedPoints
         ];
         $sale_id = $this->Sale_model->insert($saleData);
@@ -357,10 +367,17 @@ class Pos extends CI_Controller
             'id_kasir'       => $this->session->userdata('id')
         ];
         $this->Payment_model->insert($payment);
-        // Kosongkan keranjang dan kembali ke halaman POS
+        // Kosongkan keranjang lalu tetapkan ID nota untuk diunduh setelah redirect
         $this->session->unset_userdata('cart');
         $this->session->set_flashdata('success', 'Transaksi berhasil disimpan.');
+        $this->session->set_flashdata('receipt_sale_id', $sale_id);
         redirect('pos');
+    }
+
+    public function receipt($sale_id)
+    {
+        $this->authorize();
+        $this->print_receipt($sale_id);
     }
 
     private function print_receipt($sale_id)
@@ -374,13 +391,16 @@ class Pos extends CI_Controller
         $lines   = [];
         $lines[] = str_pad('Padel Store', $lineWidth, ' ', STR_PAD_BOTH);
         $lines[] = str_pad(date('d-m-Y H:i'), $lineWidth, ' ', STR_PAD_BOTH);
-        $lines[] = str_pad('Nota: ' . $sale->nomor_nota, $lineWidth, ' ', STR_PAD_BOTH);
         if ($member) {
-            $lines[] = str_pad('Nomor Member: ' . $member->kode_member, $lineWidth, ' ', STR_PAD_BOTH);
             $lines[] = str_pad('Nama: ' . $member->nama_lengkap, $lineWidth, ' ', STR_PAD_BOTH);
+            $lines[] = str_pad('Nomor Member: ' . $member->kode_member, $lineWidth, ' ', STR_PAD_BOTH);
         } else {
+            if (!empty($sale->customer_name)) {
+                $lines[] = str_pad('Nama: ' . $sale->customer_name, $lineWidth, ' ', STR_PAD_BOTH);
+            }
             $lines[] = str_pad('-Non Member-', $lineWidth, ' ', STR_PAD_BOTH);
         }
+        $lines[] = str_pad('Nota: ' . $sale->nomor_nota, $lineWidth, ' ', STR_PAD_BOTH);
         $lines[] = str_repeat('-', $lineWidth);
         foreach ($details as $d) {
             $lines[] = $d->nama_produk;
