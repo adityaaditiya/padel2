@@ -370,11 +370,11 @@ class Booking extends CI_Controller
         $lines[] = str_pad('Padel Store', $lineWidth, ' ', STR_PAD_BOTH);
         $lines[] = str_pad(date('d-m-Y H:i'), $lineWidth, ' ', STR_PAD_BOTH);
         if ($member && !empty($member->kode_member)) {
-            $lines[] = str_pad('Nama: ' . $member->nama_lengkap, $lineWidth, ' ', STR_PAD_BOTH);
-            $lines[] = str_pad('Nomor Member: ' . $member->kode_member, $lineWidth, ' ', STR_PAD_BOTH);
+            $lines[] = str_pad('' . $member->nama_lengkap, $lineWidth, ' ', STR_PAD_BOTH);
+            $lines[] = str_pad('' . $member->kode_member, $lineWidth, ' ', STR_PAD_BOTH);
         } else {
             if (!empty($booking->customer_name)) {
-                $lines[] = str_pad('Nama: ' . $booking->customer_name, $lineWidth, ' ', STR_PAD_BOTH);
+                $lines[] = str_pad('' . $booking->customer_name, $lineWidth, ' ', STR_PAD_BOTH);
             }
             $lines[] = str_pad('-Non Member-', $lineWidth, ' ', STR_PAD_BOTH);
         }
@@ -388,6 +388,9 @@ class Booking extends CI_Controller
         $lines[] = 'Harga      : Rp ' . number_format($booking->harga_booking,0,',','.');
         $lines[] = 'Diskon     : Rp ' . number_format($booking->diskon,0,',','.');
         $lines[] = 'Total      : Rp ' . number_format($booking->total_harga,0,',','.');
+        $lines[] = str_repeat('-', $lineWidth);
+        $lines[] = str_pad('Kritik & Saran', $lineWidth, ' ', STR_PAD_BOTH);
+        $lines[] = str_pad('WA 0877-3383-6235', $lineWidth, ' ', STR_PAD_BOTH);
         $lines[] = '';
 
         $content  = implode("\n", $lines);

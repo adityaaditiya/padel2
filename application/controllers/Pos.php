@@ -392,15 +392,15 @@ class Pos extends CI_Controller
         $lines[] = str_pad('Padel Store', $lineWidth, ' ', STR_PAD_BOTH);
         $lines[] = str_pad(date('d-m-Y H:i'), $lineWidth, ' ', STR_PAD_BOTH);
         if ($member) {
-            $lines[] = str_pad('Nama: ' . $member->nama_lengkap, $lineWidth, ' ', STR_PAD_BOTH);
-            $lines[] = str_pad('Nomor Member: ' . $member->kode_member, $lineWidth, ' ', STR_PAD_BOTH);
+            $lines[] = str_pad('' . $member->nama_lengkap, $lineWidth, ' ', STR_PAD_BOTH);
+            $lines[] = str_pad('' . $member->kode_member, $lineWidth, ' ', STR_PAD_BOTH);
         } else {
             if (!empty($sale->customer_name)) {
-                $lines[] = str_pad('Nama: ' . $sale->customer_name, $lineWidth, ' ', STR_PAD_BOTH);
+                $lines[] = str_pad('' . $sale->customer_name, $lineWidth, ' ', STR_PAD_BOTH);
             }
             $lines[] = str_pad('-Non Member-', $lineWidth, ' ', STR_PAD_BOTH);
         }
-        $lines[] = str_pad('Nota: ' . $sale->nomor_nota, $lineWidth, ' ', STR_PAD_BOTH);
+        $lines[] = str_pad('' . $sale->nomor_nota, $lineWidth, ' ', STR_PAD_BOTH);
         $lines[] = str_repeat('-', $lineWidth);
         foreach ($details as $d) {
             $lines[] = $d->nama_produk;
