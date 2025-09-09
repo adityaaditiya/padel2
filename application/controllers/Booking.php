@@ -176,8 +176,10 @@ class Booking extends CI_Controller
             if ($total < 0) {
                 $total = 0;
             }
-            $pakai_poin = (int) $this->input->post('pakai_poin');
-            $id_user = $this->session->userdata('id');
+            $pakai_poin   = (int) $this->input->post('pakai_poin');
+            $id_user      = $this->session->userdata('id');
+            $customer_name = null;
+            $member_number = null;
             if ($this->session->userdata('role') === 'kasir') {
                 $type = $this->input->post('customer_type');
                 if ($type === 'member') {
@@ -205,6 +207,15 @@ class Booking extends CI_Controller
                         $poin_awal  = $saldo;
                         $poin_akhir = $saldo - $pakai_poin;
                     }
+                } else {
+                    $customer_name = trim($this->input->post('customer_name'));
+                    if ($customer_name === '') {
+                        $this->session->set_flashdata('error', 'Nama pelanggan wajib diisi.');
+                        redirect('booking/create');
+                        return;
+                    }
+                    $id_user = null;
+                    $member_number = 'non member';
                 }
             }
             if ($total < 0) {
@@ -247,6 +258,10 @@ class Booking extends CI_Controller
                 'status_booking'   => 'pending',
                 'status_pembayaran'=> 'belum_bayar'
             ];
+            if ($customer_name !== null) {
+                $data['customer_name'] = $customer_name;
+                $data['member_number'] = $member_number;
+            }
             if ($bukti_file) {
                 $data['bukti_pembayaran'] = $bukti_file;
             }
@@ -355,8 +370,12 @@ class Booking extends CI_Controller
         $lines[] = str_pad('Padel Store', $lineWidth, ' ', STR_PAD_BOTH);
         $lines[] = str_pad(date('d-m-Y H:i'), $lineWidth, ' ', STR_PAD_BOTH);
         if ($member && !empty($member->kode_member)) {
+            $lines[] = str_pad('Nama: ' . $member->nama_lengkap, $lineWidth, ' ', STR_PAD_BOTH);
             $lines[] = str_pad('Nomor Member: ' . $member->kode_member, $lineWidth, ' ', STR_PAD_BOTH);
         } else {
+            if (!empty($booking->customer_name)) {
+                $lines[] = str_pad('Nama: ' . $booking->customer_name, $lineWidth, ' ', STR_PAD_BOTH);
+            }
             $lines[] = str_pad('-Non Member-', $lineWidth, ' ', STR_PAD_BOTH);
         }
         $lines[] = str_repeat('-', $lineWidth);

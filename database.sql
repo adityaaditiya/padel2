@@ -31,7 +31,9 @@ SET time_zone = "+00:00";
 CREATE TABLE `bookings` (
   `id` int(11) NOT NULL,
   `booking_code` varchar(20) NOT NULL,
-  `id_user` int(11) NOT NULL,
+  `id_user` int(11) DEFAULT NULL,
+  `customer_name` varchar(100) DEFAULT NULL,
+  `member_number` varchar(100) DEFAULT NULL,
   `id_court` int(11) NOT NULL,
   `tanggal_booking` date NOT NULL,
   `jam_mulai` time NOT NULL,
@@ -53,13 +55,13 @@ CREATE TABLE `bookings` (
 -- Dumping data for table `bookings`
 --
 
-INSERT INTO `bookings` (`id`, `booking_code`, `id_user`, `id_court`, `tanggal_booking`, `jam_mulai`, `jam_selesai`, `durasi`, `harga_booking`, `diskon`, `total_harga`, `poin_member`, `status_booking`, `keterangan`, `bukti_pembayaran`, `status_pembayaran`, `created_at`, `confirmed_at`) VALUES
-(1, '250826-0001', 1, 1, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 01:59:44', NULL),
-(2, '250826-0002', 1, 1, '2025-08-27', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:00:29', NULL),
-(3, '250825-0001', 3, 2, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-25 02:27:04', NULL),
-(4, '250825-0002', 3, 3, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'batal', '', NULL, 'belum_bayar', '2025-08-25 02:33:16', NULL),
-(5, '250826-0003', 1, 1, '2025-08-25', '14:00:00', '15:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'batal', '', NULL, 'belum_bayar', '2025-08-26 02:38:42', NULL),
-(6, '250826-0004', 1, 2, '2025-08-24', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:39:50', NULL);
+INSERT INTO `bookings` (`id`, `booking_code`, `id_user`, `customer_name`, `member_number`, `id_court`, `tanggal_booking`, `jam_mulai`, `jam_selesai`, `durasi`, `harga_booking`, `diskon`, `total_harga`, `poin_member`, `status_booking`, `keterangan`, `bukti_pembayaran`, `status_pembayaran`, `created_at`, `confirmed_at`) VALUES
+(1, '250826-0001', 1, NULL, NULL, 1, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 01:59:44', NULL),
+(2, '250826-0002', 1, NULL, NULL, 1, '2025-08-27', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:00:29', NULL),
+(3, '250825-0001', 3, NULL, NULL, 2, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-25 02:27:04', NULL),
+(4, '250825-0002', 3, NULL, NULL, 3, '2025-08-25', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'batal', '', NULL, 'belum_bayar', '2025-08-25 02:33:16', NULL),
+(5, '250826-0003', 1, NULL, NULL, 1, '2025-08-25', '14:00:00', '15:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'batal', '', NULL, 'belum_bayar', '2025-08-26 02:38:42', NULL),
+(6, '250826-0004', 1, NULL, NULL, 2, '2025-08-24', '13:00:00', '14:00:00', 60, '300000.00', '0.00', '300000.00', 0, 'pending', NULL, NULL, 'belum_bayar', '2025-08-26 02:39:50', NULL);
 
 -- --------------------------------------------------------
 
@@ -185,6 +187,8 @@ CREATE TABLE `sales` (
   `id` int(11) NOT NULL,
   `id_kasir` int(11) NOT NULL,
   `customer_id` int(11) DEFAULT NULL,
+  `customer_name` varchar(100) DEFAULT NULL,
+  `member_number` varchar(100) DEFAULT NULL,
   `nomor_nota` varchar(50) NOT NULL,
   `total_belanja` decimal(10,2) NOT NULL,
   `poin_member` int(11) NOT NULL DEFAULT 0,
@@ -196,8 +200,8 @@ CREATE TABLE `sales` (
 -- Dumping data for table `sales`
 --
 
-INSERT INTO `sales` (`id`, `id_kasir`, `customer_id`, `nomor_nota`, `total_belanja`, `poin_member`, `status`, `tanggal_transaksi`) VALUES
-(1, 1, NULL, 'INV-1756190933', '25000.00', 0, 'selesai', '2025-08-26 13:48:53');
+INSERT INTO `sales` (`id`, `id_kasir`, `customer_id`, `customer_name`, `member_number`, `nomor_nota`, `total_belanja`, `poin_member`, `status`, `tanggal_transaksi`) VALUES
+(1, 1, NULL, NULL, 'non member', 'INV-1756190933', '25000.00', 0, 'selesai', '2025-08-26 13:48:53');
 
 -- --------------------------------------------------------
 
