@@ -45,6 +45,7 @@ class Pos extends CI_Controller
         }
         $data['store'] = $this->Store_model->get_current();
         $data['nota'] = $this->Payment_model->get_next_sale_id();
+        $data['receipt_sale_id'] = (int) $this->session->flashdata('receipt_sale_id');
         $this->load->view('pos/index', $data);
     }
 
@@ -366,9 +367,16 @@ class Pos extends CI_Controller
             'id_kasir'       => $this->session->userdata('id')
         ];
         $this->Payment_model->insert($payment);
-        // Kosongkan keranjang lalu unduh nota
+        // Kosongkan keranjang lalu tetapkan ID nota untuk diunduh setelah redirect
         $this->session->unset_userdata('cart');
         $this->session->set_flashdata('success', 'Transaksi berhasil disimpan.');
+        $this->session->set_flashdata('receipt_sale_id', $sale_id);
+        redirect('pos');
+    }
+
+    public function receipt($sale_id)
+    {
+        $this->authorize();
         $this->print_receipt($sale_id);
     }
 
@@ -392,7 +400,7 @@ class Pos extends CI_Controller
             }
             $lines[] = str_pad('-Non Member-', $lineWidth, ' ', STR_PAD_BOTH);
         }
-        $lines[] = str_pad('Nota: ' . $sale->nomor_nota, $lineWidth, ' ', STR_PAD_BOTH);
+        $lines[] = str_pad('' . $sale->nomor_nota, $lineWidth, ' ', STR_PAD_BOTH);
         $lines[] = str_repeat('-', $lineWidth);
         foreach ($details as $d) {
             $lines[] = $d->nama_produk;

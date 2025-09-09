@@ -419,4 +419,15 @@ document.addEventListener('click', function(e) {
     }
 });
 </script>
+<?php if (!empty($receipt_sale_id)): ?>
+<script>
+window.addEventListener('load', function() {
+    var link = document.createElement('a');
+    link.href = '<?php echo site_url('pos/receipt/'); ?><?php echo $receipt_sale_id; ?>';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+</script>
+<?php endif; ?>
 <?php $this->load->view('templates/footer'); ?>
