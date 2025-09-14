@@ -3,6 +3,9 @@
 <?php if ($this->session->flashdata('success')): ?>
     <div class="alert alert-success"><?php echo $this->session->flashdata('success'); ?></div>
 <?php endif; ?>
+<?php if (validation_errors()): ?>
+    <div class="alert alert-danger"><?php echo validation_errors(); ?></div>
+<?php endif; ?>
 <?php echo form_open(); ?>
 <div class="form-group">
     <label>Nama Lengkap</label>

@@ -62,8 +62,8 @@ class Users extends CI_Controller
 
         if ($this->input->method() === 'post') {
             $this->form_validation->set_rules('nama_lengkap', 'Nama Lengkap', 'required');
-            $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-            $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|numeric|min_length[10]');
+            $this->form_validation->set_rules('email', 'Email', 'required|valid_email|callback_email_check['.$id.']');
+            $this->form_validation->set_rules('no_telepon', 'No Telepon', 'required|numeric|min_length[10]|callback_phone_check['.$id.']');
             if ($this->input->post('password')) {
                 $this->form_validation->set_rules('password', 'Password', 'min_length[6]');
             }
@@ -109,5 +109,23 @@ class Users extends CI_Controller
         $data['user'] = $user;
         $data['editing_self'] = ((int)$id === (int)$current_id);
         $this->load->view('users/profile', $data);
+    }
+
+    public function email_check($email, $id = NULL)
+    {
+        if ($this->User_model->email_exists($email, $id)) {
+            $this->form_validation->set_message('email_check', 'Email sudah digunakan.');
+            return FALSE;
+        }
+        return TRUE;
+    }
+
+    public function phone_check($no_telepon, $id = NULL)
+    {
+        if ($this->User_model->phone_exists($no_telepon, $id)) {
+            $this->form_validation->set_message('phone_check', 'No telepon sudah digunakan.');
+            return FALSE;
+        }
+        return TRUE;
     }
 }
